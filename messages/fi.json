@@ -9,6 +9,7 @@
     "apps": "Sovellukset",
     "support": "Tuki",
     "info": "Tieto",
+    "about": "Meistä",
     "community": "Yhteisö"
   },
   "info": {
@@ -24,10 +25,37 @@
     "openFedora": "Avaa Fedora (uusi välilehti)",
     "notConfigured": "Selaindemoa ei ole kytketty. Ylläpito: aseta NEXT_PUBLIC_TRY_LINUX_PROXY_BASE (esim. http://192.168.2.100:8080) ja infra/try-linux -proxy."
   },
+  "about": {
+    "title": "Tietoa meistä",
+    "intro": "Verso on pieni suomalainen yritys. Uusiokäytämme kannettavia ja pöytäkoneita: SSD, muistin lisäys ja Linux-asennukset — kotiin ja yrityksille.",
+    "companyTitle": "Yritys",
+    "companyName": "Verso Oy",
+    "businessIdLabel": "Y-tunnus",
+    "businessIdValue": "—",
+    "companyNote": "Arvonlisäverovelvollinen. Toimitamme Suomessa.",
+    "addressTitle": "Käynti- ja postiosoite",
+    "addressLines": "Verso Oy\nEsimerkkikatu 1 A 2\n00100 Helsinki\nSuomi",
+    "teamTitle": "Tiimi",
+    "person1Name": "Tekijä 1",
+    "person1Role": "Palvelu, laitearviot ja logistiikka",
+    "person1Bio": "Vastaa kenttähuolloista, yhteensopivuusarvioista ja asennuksista.",
+    "person2Name": "Tekijä 2",
+    "person2Role": "Oppaat, verkkopalvelu ja asiakastuki",
+    "person2Bio": "Vastaa oppaista, verkkosivuista ja yhteydenotoista.",
+    "contactTitle": "Yhteystiedot",
+    "phoneLabel": "Puhelin",
+    "phoneValue": "+358 00 000 0000",
+    "emailLabel": "Sähköposti",
+    "emailValue": "tuki@verso.fi",
+    "hoursLabel": "Aukiolo",
+    "hoursValue": "Arkisin 9–17",
+    "supportPageLink": "Siirry tukisivulle"
+  },
   "footer": {
     "brand": "Verso",
     "tagline": "Vanhoista tietokoneista nopeita ja kestäviä — SSD, RAM ja Linux.",
     "support": "Asiakaspalvelu",
+    "about": "Tietoa meistä",
     "discord": "Discord-yhteisö"
   },
   "home": {

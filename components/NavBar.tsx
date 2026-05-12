@@ -10,6 +10,7 @@ const links = [
   { href: "/sovellukset", key: "apps" as const },
   { href: "/tuki", key: "support" as const },
   { href: "/info", key: "info" as const },
+  { href: "/about", key: "about" as const },
   { href: "/yhteiso", key: "community" as const },
 ];
 

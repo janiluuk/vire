@@ -22,6 +22,12 @@ export async function Footer() {
             >
               {t("support")}
             </Link>
+            <Link
+              href="/about"
+              className="min-h-tap rounded-lg px-1 py-2 text-lg font-medium text-gray-200 underline-offset-4 hover:text-white hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green"
+            >
+              {t("about")}
+            </Link>
             <a
               href={process.env.NEXT_PUBLIC_DISCORD_INVITE ?? "#"}
               className="min-h-tap rounded-lg px-1 py-2 text-lg font-medium text-gray-200 underline-offset-4 hover:text-white hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green"

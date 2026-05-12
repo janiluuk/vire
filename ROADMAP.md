@@ -423,6 +423,7 @@ verso.fi/
 ├── /sovellukset         App alternatives directory
 ├── /tuki                Support page
 ├── /info                Info + browser try-Linux (noVNC) subsection
+├── /about               Company, team, address & contact
 ├── /yhteiso             Community / Discord
 └── /admin               Admin panel (protected)
     ├── /admin/orders

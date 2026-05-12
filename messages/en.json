@@ -9,6 +9,7 @@
     "apps": "Apps",
     "support": "Support",
     "info": "Info",
+    "about": "About",
     "community": "Community"
   },
   "info": {
@@ -24,10 +25,37 @@
     "openFedora": "Open Fedora demo (new tab)",
     "notConfigured": "Browser demo is not wired yet. Set NEXT_PUBLIC_TRY_LINUX_PROXY_BASE (e.g. http://192.168.2.100:8080) and deploy infra/try-linux."
   },
+  "about": {
+    "title": "About us",
+    "intro": "Verso is a small Finnish company. We refurbish laptops and desktops with SSD upgrades, extra RAM, and Linux — for homes and businesses.",
+    "companyTitle": "Company",
+    "companyName": "Verso Oy",
+    "businessIdLabel": "Business ID (Y-tunnus)",
+    "businessIdValue": "—",
+    "companyNote": "VAT liable. We operate in Finland.",
+    "addressTitle": "Visiting & postal address",
+    "addressLines": "Verso Oy\nExample Street 1 A 2\nFI-00100 Helsinki\nFinland",
+    "teamTitle": "Team",
+    "person1Name": "Team member 1",
+    "person1Role": "Service, hardware assessments & logistics",
+    "person1Bio": "Field service, compatibility checks, and installations.",
+    "person2Name": "Team member 2",
+    "person2Role": "Guides, web & customer support",
+    "person2Bio": "Guides, website, and customer enquiries.",
+    "contactTitle": "Contact",
+    "phoneLabel": "Phone",
+    "phoneValue": "+358 00 000 0000",
+    "emailLabel": "Email",
+    "emailValue": "support@verso.fi",
+    "hoursLabel": "Hours",
+    "hoursValue": "Weekdays 9–17",
+    "supportPageLink": "Go to support page"
+  },
   "footer": {
     "brand": "Verso",
     "tagline": "Turn older computers into fast, durable machines — SSD, RAM, and Linux.",
     "support": "Customer support",
+    "about": "About us",
     "discord": "Discord community"
   },
   "home": {
