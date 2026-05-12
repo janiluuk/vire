@@ -1,0 +1,182 @@
+[
+  {
+    "id": "ms-word",
+    "name": "Microsoft Word",
+    "category": "toimisto",
+    "icon": "file-text",
+    "alternatives": [
+      {
+        "name": "LibreOffice Writer",
+        "descFi": "Ilmainen toimisto-ohjelma. Lukee ja tallentaa .docx-tiedostoja.",
+        "descEn": "Free office suite. Reads and saves .docx files.",
+        "url": "https://www.libreoffice.org",
+        "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "ms-excel",
+    "name": "Microsoft Excel",
+    "category": "toimisto",
+    "icon": "table",
+    "alternatives": [
+      {
+        "name": "LibreOffice Calc",
+        "descFi": "Taulukkolaskenta. Yhteensopiva useimpien .xlsx-tiedostojen kanssa.",
+        "descEn": "Spreadsheets compatible with most .xlsx files.",
+        "url": "https://www.libreoffice.org",
+        "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "chrome",
+    "name": "Google Chrome",
+    "category": "selain",
+    "icon": "world",
+    "alternatives": [
+      {
+        "name": "Mozilla Firefox",
+        "descFi": "Nopea selain, vahva yksityisyys.",
+        "descEn": "Fast browser with strong privacy features.",
+        "url": "https://www.mozilla.org/firefox/",
+        "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "outlook",
+    "name": "Microsoft Outlook",
+    "category": "sahkoposti",
+    "icon": "mail",
+    "alternatives": [
+      {
+        "name": "Thunderbird",
+        "descFi": "Ilmainen sähköposti- ja kalenterisovellus.",
+        "descEn": "Free email and calendar client.",
+        "url": "https://www.thunderbird.net",
+        "preinstalled": false
+      }
+    ]
+  },
+  {
+    "id": "spotify",
+    "name": "Spotify",
+    "category": "musiikki",
+    "icon": "music",
+    "alternatives": [
+      {
+        "name": "Spotify (Linux)",
+        "descFi": "Virallinen Linux-versio tai selain.",
+        "descEn": "Official Linux client or web player.",
+        "url": "https://www.spotify.com/download/linux/",
+        "preinstalled": false
+      }
+    ]
+  },
+  {
+    "id": "photoshop",
+    "name": "Adobe Photoshop",
+    "category": "kuvat",
+    "icon": "photo",
+    "alternatives": [
+      {
+        "name": "GIMP",
+        "descFi": "Ilmainen kuvankäsittely. Oppimiskäyrä jyrkempi.",
+        "descEn": "Free image editor; steeper learning curve.",
+        "url": "https://www.gimp.org",
+        "preinstalled": false
+      }
+    ]
+  },
+  {
+    "id": "teams",
+    "name": "Microsoft Teams",
+    "category": "viestinta",
+    "icon": "messages",
+    "alternatives": [
+      {
+        "name": "Teams (PWA) / Zoom",
+        "descFi": "Selainversiot ja natiivit Linux-sovellukset.",
+        "descEn": "Web apps and native Linux clients where available.",
+        "url": "https://teams.microsoft.com",
+        "preinstalled": false
+      }
+    ]
+  },
+  {
+    "id": "defender",
+    "name": "Windows Defender",
+    "category": "tietoturva",
+    "icon": "shield",
+    "alternatives": [
+      {
+        "name": "ClamAV / Firejail",
+        "descFi": "Avoimen lähdekoodin työkaluja. Linuxissa eri uhkamalli.",
+        "descEn": "Open-source tools; different threat model on Linux.",
+        "url": "https://www.clamav.net",
+        "preinstalled": false
+      }
+    ]
+  },
+  {
+    "id": "steam",
+    "name": "Steam (Windows games)",
+    "category": "pelit",
+    "icon": "device-gamepad",
+    "alternatives": [
+      {
+        "name": "Steam / Proton",
+        "descFi": "Valve Protonilla monet Windows-pelit toimivat Linuxissa.",
+        "descEn": "Many Windows games run via Proton on Linux.",
+        "url": "https://store.steampowered.com/linux",
+        "preinstalled": false
+      }
+    ]
+  },
+  {
+    "id": "edge",
+    "name": "Microsoft Edge",
+    "category": "selain",
+    "icon": "world",
+    "alternatives": [
+      {
+        "name": "Firefox / Chromium",
+        "descFi": "Vaihtoehtoiset selaimet Linuxille.",
+        "descEn": "Alternative browsers for Linux.",
+        "url": "https://www.chromium.org",
+        "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "notepad",
+    "name": "Notepad",
+    "category": "toimisto",
+    "icon": "file-text",
+    "alternatives": [
+      {
+        "name": "gedit / Kate / Neovim",
+        "descFi": "Kevyet tekstieditorit jakelusta riippuen.",
+        "descEn": "Lightweight text editors depending on distro.",
+        "url": "https://gedit-text-editor.org",
+        "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "vlc",
+    "name": "Windows Media Player",
+    "category": "musiikki",
+    "icon": "player-play",
+    "alternatives": [
+      {
+        "name": "VLC",
+        "descFi": "Toistaa lähes kaikki mediamuodot.",
+        "descEn": "Plays almost all media formats.",
+        "url": "https://www.videolan.org",
+        "preinstalled": true
+      }
+    ]
+  }
+]

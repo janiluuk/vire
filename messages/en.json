@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "brand": "Verso",
+    "mainNav": "Main navigation",
+    "home": "Home",
+    "service": "Service",
+    "diy": "DIY",
+    "apps": "Apps",
+    "support": "Support",
+    "community": "Community"
+  },
+  "footer": {
+    "brand": "Verso",
+    "tagline": "Turn older computers into fast, durable machines — SSD, RAM, and Linux.",
+    "support": "Customer support",
+    "discord": "Discord community"
+  },
+  "home": {
+    "title": "Your computer deserves a second life",
+    "subtitle": "We install an SSD, more RAM, and Linux. Fast boot, safer use, smaller footprint.",
+    "ctaService": "Book the service",
+    "ctaDiy": "DIY — guides",
+    "speedBefore": "Before: HDD boot",
+    "speedAfter": "After: SSD + Linux",
+    "stepsTitle": "How it works",
+    "step1": "Tell us your model or share specs",
+    "step2": "You get a compatibility readout",
+    "step3": "Pick tier and delivery",
+    "pricingTitle": "Pricing",
+    "tierBasic": "SSD basic",
+    "tierRam": "SSD + RAM",
+    "tierFull": "Full service",
+    "benefitCo2": "Less e-waste",
+    "benefitCost": "Save vs buying new",
+    "benefitApps": "Free, safer apps",
+    "benefitSupport": "90-day support",
+    "trustTitle": "Trust",
+    "trustSupport": "90-day support on selected tiers",
+    "trustParts": "Quality parts",
+    "trustDelivery": "Pickup, drop-off, or on-site"
+  },
+  "palvelu": {
+    "title": "Service",
+    "intro": "We refurbish laptops and desktops. Tell us about your machine — we handle the rest.",
+    "howTitle": "How it works",
+    "pricingTitle": "Packages",
+    "phase2Note": "Order wizard and Stripe integration ship in phase 2 (ROADMAP)."
+  },
+  "itse": {
+    "title": "Do it yourself",
+    "intro": "Guides, videos, and Linux USB order.",
+    "guidesTitle": "Guides",
+    "readGuide": "Open guide",
+    "usbTitle": "Linux install USB",
+    "usbBlurb": "€9.90 — Stripe integration (phase 2).",
+    "usbCta": "Order USB"
+  },
+  "sovellukset": {
+    "title": "App alternatives",
+    "intro": "Windows apps often have a free Linux-friendly option.",
+    "filterAll": "All",
+    "preinstalledBadge": "Preinstalled"
+  },
+  "tuki": {
+    "title": "Support",
+    "intro": "We help before and after installation.",
+    "contactTitle": "Contact",
+    "phone": "Phone",
+    "phoneValue": "+358 00 000 0000",
+    "email": "Email",
+    "emailValue": "support@verso.fi",
+    "hours": "Weekdays 9–17"
+  },
+  "yhteiso": {
+    "title": "Community",
+    "intro": "Join Discord — questions, tips, and peer help.",
+    "guidelinesTitle": "Guidelines",
+    "guidelinesBody": "Be kind, no spam. Focus on computers and Linux.",
+    "discordCta": "Open Discord"
+  },
+  "admin": {
+    "loginTitle": "Admin — sign in",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signInFailed": "Sign in failed. Check email and password.",
+    "dashboard": "Dashboard",
+    "orders": "Orders",
+    "models": "Model queue",
+    "guides": "Guides",
+    "logout": "Sign out",
+    "welcome": "Welcome",
+    "statsSoon": "Stats coming in phase 3.",
+    "ordersStub": "Order list and filters — phase 3 (ROADMAP).",
+    "modelsStub": "Model queue — phase 3 (ROADMAP).",
+    "guidesStub": "Guide editor — phase 3 (ROADMAP)."
+  }
+}

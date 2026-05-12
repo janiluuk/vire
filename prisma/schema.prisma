@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id               String         @id @default(cuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  status           OrderStatus    @default(PENDING)
+  tier             ServiceTier
+  supportTier      SupportTier
+  deliveryMethod   DeliveryMethod
+  computerMake     String?
+  computerModel    String?
+  customerName     String
+  customerEmail    String
+  customerPhone    String?
+  address          String?
+  preferredDate    DateTime?
+  notes            String?
+  stripeSessionId  String?
+  priceEur         Int
+  adminNotes       String?
+  completedAt      DateTime?
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+enum ServiceTier {
+  SSD_BASIC
+  SSD_RAM
+  FULL_SERVICE
+  B2B
+}
+
+enum SupportTier {
+  FULL
+  EMAIL
+  DISCORD_ONLY
+}
+
+enum DeliveryMethod {
+  HOME_PICKUP
+  DROP_OFF
+  SELF
+}
+
+model UsbOrder {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  status          String   @default("pending")
+  customerName    String
+  customerEmail   String
+  address         String
+  stripeSessionId String?
+}
+
+model ComputerModel {
+  id         String           @id @default(cuid())
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  make       String
+  model      String
+  yearFrom   Int?
+  yearTo     Int?
+  status     ModelCheckStatus @default(UNCHECKED)
+  compatible Boolean?
+  verdict    String?
+  ssdSlot    String?
+  maxRamGb   Int?
+  notes      String?
+  checkedBy  String?
+  checkedAt  DateTime?
+
+  @@unique([make, model])
+}
+
+enum ModelCheckStatus {
+  UNCHECKED
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model Guide {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  slug       String   @unique
+  titleFi    String
+  titleEn    String?
+  descFi     String
+  descEn     String?
+  category   String
+  difficulty String
+  minutesFi  Int
+  published  Boolean  @default(false)
+  order      Int      @default(0)
+  videoUrl   String?
+  coverImage String?
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  email        String    @unique
+  name         String?
+  passwordHash String
+  role         AdminRole @default(EDITOR)
+}
+
+enum AdminRole {
+  SUPER
+  EDITOR
+}

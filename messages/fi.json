@@ -1,0 +1,98 @@
+{
+  "nav": {
+    "brand": "Verso",
+    "mainNav": "Päävalikko",
+    "home": "Etusivu",
+    "service": "Palvelu",
+    "diy": "Itse",
+    "apps": "Sovellukset",
+    "support": "Tuki",
+    "community": "Yhteisö"
+  },
+  "footer": {
+    "brand": "Verso",
+    "tagline": "Vanhoista tietokoneista nopeita ja kestäviä — SSD, RAM ja Linux.",
+    "support": "Asiakaspalvelu",
+    "discord": "Discord-yhteisö"
+  },
+  "home": {
+    "title": "Tietokoneesi ansaitsee toisen elämän",
+    "subtitle": "Asennamme SSD:n, lisäämme muistia ja Linuxin. Nopea käynnistys, turvallinen käyttö, pienempi hiilijalanjälki.",
+    "ctaService": "Tilaa palvelu",
+    "ctaDiy": "Tee itse — oppaat",
+    "speedBefore": "Ennen: HDD-käynnistys",
+    "speedAfter": "Jälkeen: SSD + Linux",
+    "stepsTitle": "Näin helppoa se on",
+    "step1": "Kerrot koneen mallin tai tuot speksit",
+    "step2": "Saat yhteensopivuusarvion",
+    "step3": "Valitset tason ja toimitustavan",
+    "pricingTitle": "Hinnoittelu",
+    "tierBasic": "SSD-perus",
+    "tierRam": "SSD + RAM",
+    "tierFull": "Täysi huolto",
+    "benefitCo2": "Vähemmän elektroniikkajätettä",
+    "benefitCost": "Säästät uutta konetta ostamalla",
+    "benefitApps": "Ilmaiset, turvalliset sovellukset",
+    "benefitSupport": "90 päivän tuki",
+    "trustTitle": "Luottamus",
+    "trustSupport": "90 päivän tuki valituissa paketeissa",
+    "trustParts": "Laadukkaat osat",
+    "trustDelivery": "Nouto, toimitus tai paikan päällä"
+  },
+  "palvelu": {
+    "title": "Palvelu",
+    "intro": "Uusiokäytämme kannettavia ja pöytäkoneita. Kerro koneestasi — hoidamme loput.",
+    "howTitle": "Miten tämä toimii",
+    "pricingTitle": "Paketit",
+    "phase2Note": "Tilausvelho ja Stripe-integraatio tulevat vaiheessa 2 (ROADMAP)."
+  },
+  "itse": {
+    "title": "Tee itse",
+    "intro": "Ohjeet, videot ja Linux-USB-tilaus.",
+    "guidesTitle": "Oppaat",
+    "readGuide": "Avaa opas",
+    "usbTitle": "Linux-asennus-USB",
+    "usbBlurb": "€9,90 — Stripe-integraatio (vaihe 2).",
+    "usbCta": "Tilaa USB"
+  },
+  "sovellukset": {
+    "title": "Sovellusvaihtoehdot",
+    "intro": "Windows-ohjelmille löytyy usein ilmainen Linux-vastine.",
+    "filterAll": "Kaikki",
+    "preinstalledBadge": "Esiasennettu"
+  },
+  "tuki": {
+    "title": "Tuki",
+    "intro": "Autamme ennen ja jälkeen asennuksen.",
+    "contactTitle": "Yhteystiedot",
+    "phone": "Puhelin",
+    "phoneValue": "+358 00 000 0000",
+    "email": "Sähköposti",
+    "emailValue": "tuki@verso.fi",
+    "hours": "Arkisin 9–17"
+  },
+  "yhteiso": {
+    "title": "Yhteisö",
+    "intro": "Liity Discordiin — kysymyksiä, vinkkejä ja vertaistukea.",
+    "guidelinesTitle": "Pelisäännöt",
+    "guidelinesBody": "Ole ystävällinen, ei roskapostia. Keskity tietokoneisiin ja Linuxiin.",
+    "discordCta": "Avaa Discord"
+  },
+  "admin": {
+    "loginTitle": "Hallinta — kirjaudu",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "signIn": "Kirjaudu",
+    "signInFailed": "Kirjautuminen epäonnistui. Tarkista sähköposti ja salasana.",
+    "dashboard": "Etusivu",
+    "orders": "Tilaukset",
+    "models": "Mallijono",
+    "guides": "Oppaat",
+    "logout": "Kirjaudu ulos",
+    "welcome": "Tervetuloa",
+    "statsSoon": "Tilastot tulossa (vaihe 3).",
+    "ordersStub": "Tilauslista ja suodattimet — vaihe 3 (ROADMAP).",
+    "modelsStub": "Mallijono — vaihe 3 (ROADMAP).",
+    "guidesStub": "Oppaiden muokkaus — vaihe 3 (ROADMAP)."
+  }
+}

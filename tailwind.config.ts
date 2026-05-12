@@ -11,6 +11,13 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        verso: {
+          green: "#1D9E75",
+          amber: "#F59E0B",
+        },
+      },
+      minHeight: {
+        tap: "48px",
       },
     },
   },
