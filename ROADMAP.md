@@ -422,6 +422,7 @@ verso.fi/
 ├── /itse                DIY hub (guides, videos, USB order)
 ├── /sovellukset         App alternatives directory
 ├── /tuki                Support page
+├── /info                Info + browser try-Linux (noVNC) subsection
 ├── /yhteiso             Community / Discord
 └── /admin               Admin panel (protected)
     ├── /admin/orders
@@ -474,6 +475,8 @@ verso/
 │   └── guides/                 ← .mdx files
 ├── data/
 │   └── apps.json               ← App alternatives (static)
+├── infra/
+│   └── try-linux/              ← noVNC reverse proxy (deploy to lab host)
 ├── lib/
 │   ├── prisma.ts               ← Prisma client singleton
 │   ├── compatibility.ts        ← Pure function: specs → verdict
@@ -711,6 +714,48 @@ ADMIN_EMAIL="admin@verso.fi"
 - [ ] Switch component sourcing to wholesale (Crucial/Kingston) when volume > 20 units/month
 - [ ] Admin dashboard stats: revenue chart, orders per week, model approval rate
 - [ ] Rate limiting on API routes (use `@upstash/ratelimit` or simple IP check)
+
+---
+
+### Phase 6 — Browser try-Linux (noVNC) `Lab / post-MVP`
+
+**Goal:** On the public **Info** page (`/[locale]/info`), add a subsection where visitors choose **Linux Mint** or **Fedora** and open a **noVNC** session to a disposable / demo desktop on the lab server. Desktop layout and preinstalled apps are intentionally minimal for now; you customize images and VM templates later.
+
+**UX (site):**
+
+- [x] `/info` — short intro + **“Try Linux in your browser”** subsection with two large choices (Mint | Fedora).
+- [x] Each choice opens the noVNC UI in a **new tab** (recommended over embedding: cookies, keyboard capture, and mixed content are simpler).
+- [x] URLs come from env (see below) so production can point at HTTPS on your edge while the lab stays on a private IP.
+
+**Infra (separate deployable bundle):**
+
+- [x] Folder **`infra/try-linux/`** — self-contained stack you copy to the lab host (default **`192.168.2.100`**) or to a small DMZ proxy VM.
+- [x] **Reverse proxy (nginx)** in front of **websockify** / noVNC:
+  - Path-based routes, e.g. **`/try/mint/`** → upstream websockify for the Mint VNC display, **`/try/fedora/`** → upstream for Fedora.
+  - **WebSocket** upgrade headers and long `proxy_read_timeout` (VNC sessions are long-lived).
+- [x] **Two upstream targets** (defaults in `nginx/default.conf`):
+  - Mint: `192.168.2.100:6080` (or `host.docker.internal` / bridge gateway if proxy runs on the same machine as websockify — see `infra/try-linux/README.md`).
+  - Fedora: `192.168.2.100:6081`
+- [ ] **You provide** the actual desktops (VMs or bare-metal sessions) + **TigerVNC/x11vnc** (or equivalent) and **websockify** listening on those ports; the repo ships the **proxy contract** and compose skeleton, not full Mint/Fedora OCI images (those you tailor later).
+
+**Environment (Verso Next app):**
+
+```bash
+# Public base URL of the try-linux proxy (no trailing slash). Example:
+# NEXT_PUBLIC_TRY_LINUX_PROXY_BASE="https://try-linux.example.com"
+# Lab default for local/LAN testing:
+NEXT_PUBLIC_TRY_LINUX_PROXY_BASE="http://192.168.2.100:8080"
+```
+
+noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../try/mint/vnc_lite.html` and `.../try/fedora/vnc_lite.html` once paths match nginx).
+
+**Security (non-negotiable before wide exposure):**
+
+- [ ] Treat as **lab / demo** only until TLS, auth (even a shared token), and rate limits exist.
+- [ ] Do not expose raw VNC (590x) to the internet; only **websockify + HTTPS** via your proxy.
+- [ ] Plan snapshots / reset of demo VMs after sessions.
+
+**Deliverable:** Info page subsection live; `infra/try-linux` documented and `docker compose up` brings up the proxy on a configurable host/port; Mint/Fedora sessions reachable behind it when VNC+websockify are running on the lab.
 
 ---
 

@@ -9,6 +9,7 @@ const links = [
   { href: "/itse", key: "diy" as const },
   { href: "/sovellukset", key: "apps" as const },
   { href: "/tuki", key: "support" as const },
+  { href: "/info", key: "info" as const },
   { href: "/yhteiso", key: "community" as const },
 ];
 
@@ -36,7 +37,7 @@ export function NavBar({ locale }: { locale: string }) {
               key={key}
               href={href}
               className={`min-h-tap rounded-xl px-3 py-2 text-[1.05rem] font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green ${
-                pathname === href
+                pathname === href || (href !== "/" && pathname.startsWith(`${href}/`))
                   ? "bg-gray-900 text-white shadow-sm"
                   : "text-gray-800 hover:bg-gray-100/90"
               }`}

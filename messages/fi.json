@@ -8,7 +8,21 @@
     "diy": "Itse",
     "apps": "Sovellukset",
     "support": "Tuki",
+    "info": "Tieto",
     "community": "Yhteisö"
+  },
+  "info": {
+    "title": "Tietoa",
+    "intro": "Lyhyt katsaus Versoon ja mahdollisuus kokeilla Linuxia selaimessa ennen päätöstä.",
+    "tryLinuxTitle": "Kokeile Linuxia selaimessa",
+    "tryLinuxIntro": "Valitse Linux Mint tai Fedora. Avautuu uuteen välilehteen noVNC-yhteydellä laboratorio­palvelimelle. Tämä on demoympäristö: älä syötä arkaluonteisia tietoja.",
+    "mintTitle": "Linux Mint",
+    "mintBody": "Tuttu Cinnamon-työpöytä ja rauhallinen päivitystempo — hyvä ensikosketus.",
+    "fedoraTitle": "Fedora",
+    "fedoraBody": "Uudempi ohjelmistopino ja vahva työkalutuki — kokeile, jos haluat nähdä uudemman pään.",
+    "openMint": "Avaa Linux Mint (uusi välilehti)",
+    "openFedora": "Avaa Fedora (uusi välilehti)",
+    "notConfigured": "Selaindemoa ei ole kytketty. Ylläpito: aseta NEXT_PUBLIC_TRY_LINUX_PROXY_BASE (esim. http://192.168.2.100:8080) ja infra/try-linux -proxy."
   },
   "footer": {
     "brand": "Verso",

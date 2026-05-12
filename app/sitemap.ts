@@ -3,7 +3,7 @@ import { routing } from "@/i18n/routing";
 import { prisma } from "@/lib/prisma";
 import { getSiteUrl } from "@/lib/site-url";
 
-const STATIC_PATHS = ["", "/palvelu", "/itse", "/sovellukset", "/tuki", "/yhteiso"] as const;
+const STATIC_PATHS = ["", "/palvelu", "/itse", "/sovellukset", "/tuki", "/info", "/yhteiso"] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
