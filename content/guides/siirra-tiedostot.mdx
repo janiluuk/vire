@@ -1,0 +1,38 @@
+---
+slug: siirra-tiedostot
+titleFi: Tiedostojen siirto vanhalta levyltä — ulkoinen levy ja rsync
+difficulty: medium
+minutes: 15
+---
+
+## Tavoitteet
+
+Siirtää **henkilökohtaiset tiedostot** (Kuvat, Dokumentit, työhakemistot) uudelle levylle tai ulkoiselle levylle ennen puhdasta asennusta — **älä** kopioi koko Windows-järjestelmää Linuxin päälle.
+
+## Vaihe 1 — Ulkoinen levy
+
+- Alusta levy **exFAT**- tai **NTFS**-tiedostojärjestelmällä, jotta sekä Windows että Linux voivat lukea sitä asennuksen aikana.
+- Varmista, että kopio mahtuu — jätä 10–15 % tyhjää.
+
+## Vaihe 2 — Windowsissa
+
+- Käytä Resurssienhallintaa: vedä kansiot **Kuvat**, **Dokumentit**, **Lataukset** ulkoiselle levylle.
+- Tarkista selaimen **kirjanmerkit** ja **sähköpostin offline-tiedostot** erikseen.
+
+## Vaihe 3 — Linuxissa (rsync-esimerkki)
+
+Kun molemmat levyt näkyvät poluilla `/media/käyttäjä/Vanha` ja `/media/käyttäjä/Uusi`:
+
+```bash
+rsync -aHAX --info=progress2 /media/käyttäjä/Vanha/Kuvat/ /media/käyttäjä/Uusi/Kuvat/
+```
+
+`-a` säilyttää oikeudet ja linkit; testaa ensin `--dry-run`.
+
+## Vaihe 4 — Tarkista hash tärkeille
+
+Suurille videolle tai projektille voit laskea **SHA256** ennen ja jälkeen, jotta varmistat bit-identtisyyden.
+
+## Loppu
+
+Kun kopio on varmistettu, vasta sitten formatoi vanha järjestelmälevy tai aloita Linux-asennus tyhjälle levylle.

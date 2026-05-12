@@ -1,0 +1,35 @@
+---
+slug: asenna-linux-usb
+titleFi: Linux-asennus USB-medialta — käynnistysvalikko ja asennuspolku
+difficulty: easy
+minutes: 10
+---
+
+## Mitä tarvitset
+
+- **USB-tikku** (vähintään 8 GB) tai Verson valmistama asennusmedia.
+- **Varmuuskopio** tärkeistä tiedostoista, jos korvaat järjestelmälevyn.
+
+## Vaihe 1 — Käynnistysvalikko
+
+Sammuta kone. Liitä USB. Käynnistä ja paina heti **F12**, **F10**, **Esc** tai valmistajan näppäintä (yleinen boot-valikko).
+
+Valitse listasta **USB** / **UEFI: …**. Jos näet sekä UEFI- että Legacy-vaihtoehdon, valitse **UEFI**, jos kone on alle ~10 vuotta vanha.
+
+## Vaihe 2 — Asennusohjelma
+
+- Valitse kieli ja näppäimistö.
+- **Kokeile ilman asennusta** (Live) on turvallinen tapa testata verkkoa ja näppäimistöä ennen levyformatointia.
+
+## Vaihe 3 — Levy ja osiot
+
+- **Automaattinen koko levy** on helpoin, jos et tarvitse Windowsia.
+- **Rinnalle** (dual-boot) vaatii vapaata tilaa ja osioiden ymmärrystä — epävarmassa tapauksessa ota yhteyttä tukeen tai käytä Verson palvelua.
+
+## Vaihe 4 — Päivitykset ja käyttäjä
+
+Asennuksen jälkeen asenna päivitykset ja luo **vahva salasana**. Aktivoi levy **salattu** vain, jos ymmärrät palautusavaimen merkityksen.
+
+## Vinkki
+
+Jos näyttö jää mustaksi, kokeile **nomodeset** -kerneliparametria asennusmedian boot-valikosta ( edistyneet asetukset ).

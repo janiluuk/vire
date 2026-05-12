@@ -3,6 +3,86 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+const guides = [
+  {
+    slug: "tarkista-levy",
+    order: 0,
+    titleFi: "Miten tiedän, onko koneessani HDD vai SSD?",
+    titleEn: "How do I know if I have HDD or SSD?",
+    descFi: "Nopea tarkistus ennen päivitystä.",
+    descEn: "Quick check before upgrading.",
+    category: "install",
+    difficulty: "easy",
+    minutesFi: 5,
+  },
+  {
+    slug: "valitse-ssd",
+    order: 1,
+    titleFi: "Valitse oikea SSD vanhaan tai uuteen koneeseen",
+    titleEn: "Pick the right SSD for your machine",
+    descFi: "SATA, NVMe, koko ja kapasiteetti selkokielellä.",
+    descEn: "SATA, NVMe, form factor, and capacity in plain language.",
+    category: "hardware",
+    difficulty: "medium",
+    minutesFi: 12,
+  },
+  {
+    slug: "asenna-kannettava",
+    order: 2,
+    titleFi: "SSD:n vaihto kannettavaan — turvallinen työjärjestys",
+    titleEn: "Laptop SSD swap — safe workflow",
+    descFi: "Ruuvit, akku ja M.2 / 2,5\" ilman turhia riskejä.",
+    descEn: "Screws, battery, and M.2 / 2.5\" without needless risk.",
+    category: "install",
+    difficulty: "medium",
+    minutesFi: 20,
+  },
+  {
+    slug: "asenna-poytatietokone",
+    order: 3,
+    titleFi: "SSD:n vaihto pöytäkoneessa — virta, kaapelit ja tilanjako",
+    titleEn: "Desktop SSD swap — power, cables, and airflow",
+    descFi: "Kotelo auki, SATA/NVMe ja ilmavirtaus kuntoon.",
+    descEn: "Open the case, SATA/NVMe, and tidy airflow.",
+    category: "install",
+    difficulty: "medium",
+    minutesFi: 18,
+  },
+  {
+    slug: "asenna-linux-usb",
+    order: 4,
+    titleFi: "Linux-asennus USB-medialta — käynnistysvalikko ja asennuspolku",
+    titleEn: "Install Linux from USB — boot menu and install path",
+    descFi: "UEFI-boot, live-kokeilu ja osioiden perusteet.",
+    descEn: "UEFI boot, live session, and partitioning basics.",
+    category: "install",
+    difficulty: "easy",
+    minutesFi: 10,
+  },
+  {
+    slug: "siirra-tiedostot",
+    order: 5,
+    titleFi: "Tiedostojen siirto vanhalta levyltä — ulkoinen levy ja rsync",
+    titleEn: "Move files off the old drive — external disk and rsync",
+    descFi: "Varmuuskopio ennen formatointia; Windows ja Linux.",
+    descEn: "Backup before wipe; Windows and Linux tips.",
+    category: "backup",
+    difficulty: "medium",
+    minutesFi: 15,
+  },
+  {
+    slug: "linux-mint-ensiaskeleet",
+    order: 6,
+    titleFi: "Linux Mint — ensiaskeleet asennuksen jälkeen",
+    titleEn: "Linux Mint — first steps after install",
+    descFi: "Päivitykset, ajurit, turva ja seuraavat kokeilut.",
+    descEn: "Updates, drivers, basics, and what to try next.",
+    category: "desktop",
+    difficulty: "easy",
+    minutesFi: 12,
+  },
+] as const;
+
 async function main() {
   const email = process.env.ADMIN_EMAIL ?? "admin@verso.fi";
   const password = process.env.ADMIN_PASSWORD ?? "changeme";
@@ -30,32 +110,34 @@ async function main() {
     });
   }
 
-  await prisma.guide.upsert({
-    where: { slug: "tarkista-levy" },
-    update: {
-      titleFi: "Miten tiedän, onko koneessani HDD vai SSD?",
-      titleEn: "How do I know if I have HDD or SSD?",
-      descFi: "Nopea tarkistus ennen päivitystä.",
-      descEn: "Quick check before upgrading.",
-      category: "install",
-      difficulty: "easy",
-      minutesFi: 5,
-      published: true,
-      order: 0,
-    },
-    create: {
-      slug: "tarkista-levy",
-      titleFi: "Miten tiedän, onko koneessani HDD vai SSD?",
-      titleEn: "How do I know if I have HDD or SSD?",
-      descFi: "Nopea tarkistus ennen päivitystä.",
-      descEn: "Quick check before upgrading.",
-      category: "install",
-      difficulty: "easy",
-      minutesFi: 5,
-      published: true,
-      order: 0,
-    },
-  });
+  for (const g of guides) {
+    await prisma.guide.upsert({
+      where: { slug: g.slug },
+      update: {
+        titleFi: g.titleFi,
+        titleEn: g.titleEn,
+        descFi: g.descFi,
+        descEn: g.descEn,
+        category: g.category,
+        difficulty: g.difficulty,
+        minutesFi: g.minutesFi,
+        published: true,
+        order: g.order,
+      },
+      create: {
+        slug: g.slug,
+        titleFi: g.titleFi,
+        titleEn: g.titleEn,
+        descFi: g.descFi,
+        descEn: g.descEn,
+        category: g.category,
+        difficulty: g.difficulty,
+        minutesFi: g.minutesFi,
+        published: true,
+        order: g.order,
+      },
+    });
+  }
 
   console.log("Seed complete.");
 }

@@ -710,7 +710,7 @@ ADMIN_EMAIL="admin@verso.fi"
 
 - [x] Order tracking page `app/[locale]/tilaus/[id]/page.tsx` (+ hub `/tilaus`) — public lookup by order ID + email; service and USB orders.
 - [x] Bulk B2B quote form on `/palvelu` — different flow from single-unit order (`/[locale]/palvelu/b2b`, email via `B2B_QUOTE_NOTIFY_EMAIL` + Resend).
-- [ ] Expand guide library: all 7 guides written and published
+- [x] Expand guide library: all 7 guides written and published (`content/guides/*.mdx` + seed `Guide` rows; FI body / EN titles in DB).
 - [x] Verso YouTube channel linked everywhere (when `NEXT_PUBLIC_YOUTUBE_CHANNEL_URL` is set: home, footer, community).
 - [ ] Verso Checker desktop app (Tauri, wraps `lib/compatibility.ts` logic, outputs JSON)
 - [ ] Switch component sourcing to wholesale (Crucial/Kingston) when volume > 20 units/month

@@ -1,0 +1,36 @@
+---
+slug: asenna-poytatietokone
+titleFi: SSD:n vaihto pöytäkoneessa — virta, kaapelit ja tilanjako
+difficulty: medium
+minutes: 18
+---
+
+## Turvallisuus
+
+- Irrota **virtajohto** pistorasiasta.
+- Paina virtapainiketta kerran — purkaa jännitteet.
+- Työskentele hyvin valaistussa tilassa.
+
+## Vaihe 1 — Kansi pois
+
+- Irrota sivupaneelin ruuvit.
+- Joissain koteloissa etupaneeli irtoaa ensin — tarkista kotelo-ohje.
+
+## Vaihe 2 — Vanha levy
+
+- **2,5"** usein kiinni kelkassa tai suoraan kotelon levyhyllyssä.
+- **M.2** emolevyllä: ruuvi + 30–45° ulosveto (PCIe- ja SATA-M.2 eivät ole yhteensopivia — tarkista väylä).
+
+## Vaihe 3 — Kaapelit
+
+- SATA: **datakaapeli** emolevylle + **SATA-virtajohto** PSU:sta.
+- NVMe M.2: ei erillisiä virtajohtoja; kiinnitä ruuvilla kevyesti.
+
+## Vaihe 4 — Ilmavirtaus
+
+- Älä peitä **etu- tai takatuuletinta** levynkelkalla.
+- Jos lisäät toisen levyn, varmista että **kaapelit** eivät osu tuulettimen siipiin.
+
+## Testi
+
+Käynnistä BIOSiin (Del/F2/F12) ja varmista, että uusi levy näkyy. Tämän jälkeen voit asentaa Linuxin tai kloonata vanhan levyn sisällön erillisellä ohjelmalla.

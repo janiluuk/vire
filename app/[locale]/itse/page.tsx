@@ -52,25 +52,29 @@ export default async function ItsePage({
           {t("guidesTitle")}
         </h2>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-          {guides.map((g) => (
-            <li key={g.id}>
-              <Link
-                href={`/itse/${g.slug}`}
-                className="block min-h-tap rounded-2xl border border-edge bg-card p-6 transition hover:border-verso-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
-              >
-                <span className="text-xs font-semibold uppercase tracking-wide text-verso-green">
-                  {g.category} · {g.difficulty}
-                </span>
-                <h3 className="mt-2 text-xl font-bold text-ink">
-                  {g.titleFi}
-                </h3>
-                <p className="mt-2 text-lg text-ink">{g.descFi}</p>
-                <span className="mt-4 inline-block font-semibold text-verso-green">
-                  {t("readGuide")} →
-                </span>
-              </Link>
-            </li>
-          ))}
+          {guides.map((g) => {
+            const title =
+              locale === "en" && g.titleEn?.trim() ? g.titleEn : g.titleFi;
+            const desc =
+              locale === "en" && g.descEn?.trim() ? g.descEn : g.descFi;
+            return (
+              <li key={g.id}>
+                <Link
+                  href={`/itse/${g.slug}`}
+                  className="block min-h-tap rounded-2xl border border-edge bg-card p-6 transition hover:border-verso-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
+                >
+                  <span className="text-xs font-semibold uppercase tracking-wide text-verso-green">
+                    {g.category} · {g.difficulty}
+                  </span>
+                  <h3 className="mt-2 text-xl font-bold text-ink">{title}</h3>
+                  <p className="mt-2 text-lg text-ink">{desc}</p>
+                  <span className="mt-4 inline-block font-semibold text-verso-green">
+                    {t("readGuide")} →
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </section>
       <section

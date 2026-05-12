@@ -5,6 +5,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/prisma";
 import { readGuideMdxSource } from "@/lib/guide-content";
+import { parseGuideMdx } from "@/lib/guide-mdx";
 import { localePathAlternates } from "@/lib/seo";
 
 type Props = { params: { locale: string; slug: string } };
@@ -38,13 +39,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function GuidePage({ params }: Props) {
-  const guide = await prisma.guide.findUnique({ where: { slug: params.slug } });
+  const { slug, locale } = params;
+  const guide = await prisma.guide.findUnique({ where: { slug } });
   if (!guide || !guide.published) notFound();
 
-  const source = readGuideMdxSource(params.slug);
+  const source = readGuideMdxSource(slug);
   if (!source) notFound();
+  const { content: mdxBody } = parseGuideMdx(source);
 
   const t = await getTranslations("itse");
+  const title =
+    locale === "en" && guide.titleEn?.trim() ? guide.titleEn : guide.titleFi;
+  const description =
+    locale === "en" && guide.descEn?.trim() ? guide.descEn : guide.descFi;
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12">
@@ -52,8 +59,8 @@ export default async function GuidePage({ params }: Props) {
         <p className="text-sm font-semibold uppercase text-verso-green">
           {guide.category}
         </p>
-        <h1 className="mt-2 text-4xl font-bold text-ink">{guide.titleFi}</h1>
-        <p className="mt-4 text-xl text-ink">{guide.descFi}</p>
+        <h1 className="mt-2 text-4xl font-bold text-ink">{title}</h1>
+        <p className="mt-4 text-xl text-ink">{description}</p>
         {guide.videoUrl ? (
           <div className="mt-8 aspect-video w-full overflow-hidden rounded-xl bg-black">
             <iframe
@@ -67,8 +74,8 @@ export default async function GuidePage({ params }: Props) {
           </div>
         ) : null}
       </header>
-      <div className="mt-10 space-y-6 text-lg leading-relaxed text-ink [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6">
-        <MDXRemote source={source} />
+      <div className="mt-10 space-y-6 text-lg leading-relaxed text-ink [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_ul]:list-disc [&_ul]:pl-6 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:border [&_pre]:border-edge [&_pre]:bg-sunken [&_pre]:p-4 [&_code]:font-mono [&_code]:text-[0.95em]">
+        <MDXRemote source={mdxBody} />
       </div>
       <p className="mt-12">
         <Link
