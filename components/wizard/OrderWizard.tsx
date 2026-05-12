@@ -131,7 +131,7 @@ export function OrderWizard({ locale }: { locale: string }) {
 
   return (
     <section
-      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-10"
+      className="verso-card mx-auto max-w-4xl p-6 shadow-soft md:p-10"
       aria-labelledby="wizard-title"
     >
       <h2 id="wizard-title" className="text-3xl font-bold text-gray-900">

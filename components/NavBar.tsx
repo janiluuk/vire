@@ -17,35 +17,42 @@ export function NavBar({ locale }: { locale: string }) {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-gray-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+    <header className="sticky top-0 z-30 border-b border-gray-200/70 bg-white/75 shadow-sm shadow-slate-900/[0.04] backdrop-blur-md backdrop-saturate-150">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:py-4">
         <Link
           href="/"
-          className="text-xl font-bold text-verso-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green min-h-tap flex items-center"
+          className="flex min-h-tap items-center text-xl font-bold tracking-tight text-verso-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green"
         >
-          {t("brand")}
+          <span className="rounded-lg bg-verso-green/10 px-2 py-0.5 text-verso-green ring-1 ring-verso-green/15">
+            {t("brand")}
+          </span>
         </Link>
-        <nav aria-label={t("mainNav")} className="flex flex-wrap gap-2">
+        <nav
+          aria-label={t("mainNav")}
+          className="flex flex-wrap gap-1 sm:gap-2"
+        >
           {links.map(({ href, key }) => (
             <Link
               key={key}
               href={href}
-              className={`min-h-tap rounded-lg px-3 py-2 font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green ${
+              className={`min-h-tap rounded-xl px-3 py-2 text-[1.05rem] font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green ${
                 pathname === href
-                  ? "bg-verso-green/15 text-gray-900"
-                  : "text-gray-900 hover:bg-gray-100"
+                  ? "bg-gray-900 text-white shadow-sm"
+                  : "text-gray-800 hover:bg-gray-100/90"
               }`}
             >
               {t(key)}
             </Link>
           ))}
         </nav>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 rounded-xl bg-gray-100/80 p-1 ring-1 ring-gray-200/80">
           <Link
             href={pathname}
             locale="fi"
-            className={`min-h-tap rounded-lg px-3 py-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
-              locale === "fi" ? "bg-verso-green text-white" : "bg-gray-100"
+            className={`min-h-tap rounded-lg px-3 py-2 text-sm font-semibold tracking-wide transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
+              locale === "fi"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
             hrefLang="fi"
           >
@@ -54,8 +61,10 @@ export function NavBar({ locale }: { locale: string }) {
           <Link
             href={pathname}
             locale="en"
-            className={`min-h-tap rounded-lg px-3 py-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
-              locale === "en" ? "bg-verso-green text-white" : "bg-gray-100"
+            className={`min-h-tap rounded-lg px-3 py-2 text-sm font-semibold tracking-wide transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
+              locale === "en"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
             hrefLang="en"
           >

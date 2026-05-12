@@ -40,9 +40,9 @@ export function BackgroundCanvas() {
 
     for (let i = 0; i < 100; i++) {
       const mat = new THREE.MeshBasicMaterial({
-        color: Math.random() > 0.85 ? 0xf59e0b : 0x1d9e75,
+        color: Math.random() > 0.88 ? 0xf59e0b : 0x1d9e75,
         transparent: true,
-        opacity: 0.08 + Math.random() * 0.12,
+        opacity: 0.035 + Math.random() * 0.055,
         wireframe: true,
       });
       const mesh = new THREE.Mesh(geometry, mat) as unknown as MeshWithVel;

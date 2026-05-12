@@ -16,6 +16,7 @@
     "discord": "Discord-yhteisö"
   },
   "home": {
+    "eyebrow": "Uusiokäyttö",
     "title": "Tietokoneesi ansaitsee toisen elämän",
     "subtitle": "Asennamme SSD:n, lisäämme muistia ja Linuxin. Nopea käynnistys, turvallinen käyttö, pienempi hiilijalanjälki.",
     "ctaService": "Tilaa palvelu",
