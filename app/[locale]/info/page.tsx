@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { tryLinuxNovncUrls } from "@/lib/try-linux-novnc";
-import { localePathAlternates } from "@/lib/seo";
+import { tryLinuxNovncUrls } from "@/lib/site/try-linux-novnc";
+import { localePathAlternates } from "@/lib/site/seo";
 
 export async function generateMetadata({
   params: { locale },
@@ -38,7 +38,7 @@ export default async function InfoPage() {
         <p className="mt-4 text-xl leading-relaxed text-ink">{t("intro")}</p>
       </header>
 
-      <section aria-labelledby="try-linux-title" className="verso-card space-y-6 p-6 sm:p-8">
+      <section aria-labelledby="try-linux-title" className="vire-card space-y-6 p-6 sm:p-8">
         <h2 id="try-linux-title" className="text-2xl font-bold text-ink">
           {t("tryLinuxTitle")}
         </h2>
@@ -62,7 +62,7 @@ export default async function InfoPage() {
                   <h3 className="text-xl font-bold text-ink">{t("mintTitle")}</h3>
                   <p className="mt-2 text-lg text-ink">{t("mintBody")}</p>
                 </div>
-                <span className="mt-6 font-semibold text-verso-green">{t("openMint")} →</span>
+                <span className="mt-6 font-semibold text-vire-green">{t("openMint")} →</span>
               </a>
             </li>
             <li>
@@ -76,7 +76,7 @@ export default async function InfoPage() {
                   <h3 className="text-xl font-bold text-ink">{t("fedoraTitle")}</h3>
                   <p className="mt-2 text-lg text-ink">{t("fedoraBody")}</p>
                 </div>
-                <span className="mt-6 font-semibold text-verso-green">{t("openFedora")} →</span>
+                <span className="mt-6 font-semibold text-vire-green">{t("openFedora")} →</span>
               </a>
             </li>
           </ul>

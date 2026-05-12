@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { resolveLaptopSpecs } from "@/lib/laptop-specs";
-import { checkRateLimit, getClientIpFromHeaders } from "@/lib/rate-limit";
+import { resolveLaptopSpecs } from "@/lib/specs/laptop-specs";
+import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
 const bodySchema = z.object({
   make: z.string().trim().min(1).max(120),

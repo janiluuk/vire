@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Order, UsbOrder } from "@prisma/client";
-import { toPublicServiceOrder, toPublicUsbOrder } from "@/lib/public-order";
+import { toPublicServiceOrder, toPublicUsbOrder } from "@/lib/orders/public-order";
 
 const baseOrder = {
   id: "clorder1234567890",

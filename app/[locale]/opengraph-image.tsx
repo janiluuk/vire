@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Verso";
+export const alt = "Vire";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -39,7 +39,7 @@ export default function OpenGraphImage({ params }: { params: { locale: string } 
             marginBottom: 16,
           }}
         >
-          Verso
+          Vire
         </div>
         <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1.1, maxWidth: 960 }}>{headline}</div>
         <div style={{ marginTop: 28, fontSize: 26, color: "#374151", maxWidth: 960 }}>{sub}</div>

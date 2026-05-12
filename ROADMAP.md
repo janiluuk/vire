@@ -1,4 +1,4 @@
-# Verso — Implementation Roadmap
+# Vire — Implementation Roadmap
 > Drop this file in the root of your repo. It is the single source of truth for build order, tech decisions, and agent instructions.
 
 ---
@@ -24,7 +24,7 @@
 
 ## Feature expansion backlog
 
-Prioritised product specs (11 features: data migration add-on, Verso Care, `/koneet` database, spec checker PDF, components transparency, starter kit, Verso for Good, group bookings, corporate donations, workshops, annual hardware report) live in **`FEATURES.md`**. Default implementation order is the priority table there unless you are told otherwise. Stack and phases: this file (**`ROADMAP.md`**). UI: **`DESIGN_SYSTEM.md`**.
+Prioritised product specs (11 features: data migration add-on, Vire Care, `/koneet` database, spec checker PDF, components transparency, starter kit, Vire for Good, group bookings, corporate donations, workshops, annual hardware report) live in **`FEATURES.md`**. Default implementation order is the priority table there unless you are told otherwise. Stack and phases: this file (**`ROADMAP.md`**). UI: **`DESIGN_SYSTEM.md`**.
 
 ---
 
@@ -34,7 +34,7 @@ These are non-negotiable and apply to every page and component. **Canonical toke
 
 - **Font size minimum 18px body.** Never go below 16px anywhere. Elder users are a primary audience.
 - **High contrast.** WCAG AA minimum, aim for AAA on body text. Use Tailwind `text-gray-900` on white, never gray-on-gray.
-- **Bright, clear palette.** Primary: Verso green `#1D9E75`. Accent: amber `#F59E0B`. Background: white or very light gray `#F9FAFB`. Never pastels or muted tones for important UI.
+- **Bright, clear palette.** Primary: Vire green `#1D9E75`. Accent: amber `#F59E0B`. Background: white or very light gray `#F9FAFB`. Never pastels or muted tones for important UI.
 - **Large tap targets.** Buttons minimum 48px tall. Touch-friendly on mobile.
 - **One action per screen.** Wizard steps never have two choices visible at once. Guide steps are numbered and one at a time.
 - **Three.js ambient only.** The canvas is decorative — it never overlaps text, never animates aggressively, respects `prefers-reduced-motion`. Use `pointer-events: none` and `z-index: -1`.
@@ -43,7 +43,7 @@ These are non-negotiable and apply to every page and component. **Canonical toke
 
 ## Three.js ambient background — spec
 
-**What it should feel like:** Calm. Slow-floating soft shapes. Subtle color that matches the Verso green/white palette. The page reads perfectly with it disabled.
+**What it should feel like:** Calm. Slow-floating soft shapes. Subtle color that matches the Vire green/white palette. The page reads perfectly with it disabled.
 
 **Implementation:**
 - Single `<canvas>` element rendered via a `<BackgroundCanvas />` React component.
@@ -53,10 +53,10 @@ These are non-negotiable and apply to every page and component. **Canonical toke
 - Lighting: `AmbientLight` only — no shadows.
 - Performance: use `requestAnimationFrame` delta capping at 30fps. Pause when tab is not visible (`document.visibilityState`). Destroy on unmount.
 - Reduced motion: wrap entire animation in `if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches)`. If reduced motion is on, render static canvas with one centered soft shape.
-- File location: `components/BackgroundCanvas.tsx`. Import in `app/layout.tsx`.
+- File location: `components/layout/BackgroundCanvas.tsx`. Import in `app/layout.tsx`.
 
 ```tsx
-// components/BackgroundCanvas.tsx — skeleton
+// components/layout/BackgroundCanvas.tsx — skeleton
 'use client'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
@@ -422,7 +422,7 @@ export default makeSource({ contentDirPath: 'content', documentTypes: [Guide] })
 ## Site map (updated)
 
 ```
-verso.fi/
+vire.fi/
 ├── /                    Main page
 ├── /palvelu             Service detail + order wizard
 ├── /itse                DIY hub (guides, videos, USB order)
@@ -447,7 +447,7 @@ verso.fi/
 ## Project file structure
 
 ```
-verso/
+vire/
 ├── app/
 │   ├── layout.tsx              ← BackgroundCanvas here
 │   ├── page.tsx                ← /
@@ -512,7 +512,7 @@ verso/
 
 ```bash
 # Database
-DATABASE_URL="postgresql://postgres:password@localhost:5432/verso"
+DATABASE_URL="postgresql://postgres:password@localhost:5432/vire"
 
 # Auth (NextAuth)
 NEXTAUTH_SECRET="generate with: openssl rand -base64 32"
@@ -537,7 +537,7 @@ NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 NEXT_PUBLIC_DISCORD_INVITE="https://discord.gg/..."
 
 # Admin seed email
-ADMIN_EMAIL="admin@verso.fi"
+ADMIN_EMAIL="admin@vire.fi"
 ```
 
 ---
@@ -550,7 +550,7 @@ ADMIN_EMAIL="admin@verso.fi"
 
 **Goal:** Runnable project with DB, auth, and Three.js background working locally.
 
-- [x] `npx create-next-app@latest verso --typescript --tailwind --app --src-dir no`
+- [x] `npx create-next-app@latest vire --typescript --tailwind --app --src-dir no`
 - [x] Install deps: `three @types/three prisma @prisma/client next-auth @auth/prisma-adapter next-intl contentlayer next-contentlayer resend stripe @stripe/stripe-js react-hook-form zod`
 - [x] `npx prisma init` — configure `schema.prisma` with full schema from this file
 - [x] Docker compose for local Postgres:
@@ -561,13 +561,13 @@ ADMIN_EMAIL="admin@verso.fi"
       image: postgres:16
       environment:
         POSTGRES_PASSWORD: password
-        POSTGRES_DB: verso
+        POSTGRES_DB: vire
       ports:
         - "5432:5432"
   ```
 - [x] `npx prisma migrate dev --name init`
 - [x] `npx prisma db seed` — seeds one AdminUser (from `ADMIN_EMAIL` env)
-- [x] Implement `lib/prisma.ts` singleton pattern (prevent hot-reload connection leak)
+- [x] Implement `lib/db/prisma.ts` singleton pattern (prevent hot-reload connection leak)
 - [x] Implement `BackgroundCanvas.tsx` with Three.js — see spec above
 - [x] Add `BackgroundCanvas` to `app/layout.tsx`
 - [x] Verify canvas renders, does not overlap text, respects reduced motion
@@ -598,7 +598,7 @@ ADMIN_EMAIL="admin@verso.fi"
 - [x] Support tier comparison: Full / Email-only / Discord-only — what each includes
 - [x] `OrderWizard` (see Phase 2 for backend wiring):
   - Step 1: Enter computer make + model (text) or upload spec file
-  - Step 2: Compatibility verdict display (use `lib/compatibility.ts`)
+  - Step 2: Compatibility verdict display (use `lib/specs/compatibility.ts`)
   - Step 3: Select service tier
   - Step 4: Select delivery method (3 cards: pickup / drop-off / self)
   - Step 5: Support tier + contact details form
@@ -644,7 +644,7 @@ ADMIN_EMAIL="admin@verso.fi"
 - [x] Webhook signature verification: `stripe.webhooks.constructEvent()`
 - [x] Order confirmation email via Resend: sends on CONFIRMED event
 - [x] Support request email: sent when customer submits contact form on `/tuki` — `POST /api/public/support-contact` + **`SUPPORT_NOTIFY_EMAIL`** + Resend.
-- [x] `lib/compatibility.ts`: pure function `checkCompatibility(make, model, ramGb, diskType) → { status, reasons, speedGainEstimate }`. Status: 'compatible' | 'borderline' | 'incompatible'. Wire to wizard Step 2.
+- [x] `lib/specs/compatibility.ts`: pure function `checkCompatibility(make, model, ramGb, diskType) → { status, reasons, speedGainEstimate }`. Status: 'compatible' | 'borderline' | 'incompatible'. Wire to wizard Step 2.
 - [x] Prisma query: look up `ComputerModel` by make+model, return stored verdict if exists
 
 **Deliverable:** Place a test order end-to-end. Stripe test payment succeeds. Email received. Order in DB.
@@ -722,12 +722,12 @@ Planned product expansion (Care subscription, `/koneet`, group bookings, donatio
 - [x] Order tracking page `app/[locale]/tilaus/[id]/page.tsx` (+ hub `/tilaus`) — public lookup by order ID + email; service and USB orders.
 - [x] Bulk B2B quote form on `/palvelu` — different flow from single-unit order (`/[locale]/palvelu/b2b`, email via `B2B_QUOTE_NOTIFY_EMAIL` + Resend).
 - [x] Expand guide library: all 7 guides written and published (`content/guides/*.mdx` + seed `Guide` rows; FI body / EN titles in DB).
-- [x] Verso YouTube channel linked everywhere (when `NEXT_PUBLIC_YOUTUBE_CHANNEL_URL` is set: home, footer, community).
-- [x] Verso Checker desktop app — `apps/verso-checker/` (Tauri 2 + Vite). UI imports shared `lib/compatibility.ts` (`checkCompatibility`); output is JSON (`input` + `output`). Run: `cd apps/verso-checker && npm install && npm run tauri dev`.
+- [x] Vire YouTube channel linked everywhere (when `NEXT_PUBLIC_YOUTUBE_CHANNEL_URL` is set: home, footer, community).
+- [x] Vire Checker desktop app — `apps/vire-checker/` (Tauri 2 + Vite). UI imports shared `lib/specs/compatibility.ts` (`checkCompatibility`); output is JSON (`input` + `output`). Run: `cd apps/vire-checker && npm install && npm run tauri dev`.
 - [x] Switch component sourcing to wholesale (Crucial/Kingston) when volume > 20 units/month — **ops policy**: when fulfilled SSD/RAM component orders average **>20 units/month** for **two consecutive months**, open or renegotiate Crucial/Kingston (or equivalent) wholesale accounts before scaling acquisition; track unit counts in finance/ops; no storefront code change required.
 - [x] Admin dashboard stats: revenue chart, orders per week, model approval rate — 7-day order bars + week revenue + approval %.
-- [x] Rate limiting on API routes (use `@upstash/ratelimit` or simple IP check) — shared `lib/rate-limit.ts` on order lookup + Stripe checkout routes.
-- [x] Laptop spec hints from the web — `lib/laptop-specs.ts` + `POST /api/public/laptop-specs`: SearXNG when `SPECS_SEARXNG_BASE_URL` is set + optional local LLM (`SPECS_AI_BASE_URL`, OpenAI-compatible or Ollama). Wired into order wizard (debounced), public order lookup response, and admin order detail.
+- [x] Rate limiting on API routes (use `@upstash/ratelimit` or simple IP check) — shared `lib/http/rate-limit.ts` on order lookup + Stripe checkout routes.
+- [x] Laptop spec hints from the web — `lib/specs/laptop-specs.ts` + `POST /api/public/laptop-specs`: SearXNG when `SPECS_SEARXNG_BASE_URL` is set + optional local LLM (`SPECS_AI_BASE_URL`, OpenAI-compatible or Ollama). Wired into order wizard (debounced), public order lookup response, and admin order detail.
 
 ---
 
@@ -752,7 +752,7 @@ Planned product expansion (Care subscription, `/koneet`, group bookings, donatio
   - Fedora: `192.168.2.100:6081`
 - [x] **You provide** the actual desktops (VMs or bare-metal sessions) + **TigerVNC/x11vnc** (or equivalent) and **websockify** listening on those ports; the repo ships the **proxy contract** and compose skeleton, not full Mint/Fedora OCI images (those you tailor later). **Runbook:** `infra/try-linux/README.md` § *Demo desktops* and *Snapshots / reset*.
 
-**Environment (Verso Next app):**
+**Environment (Vire Next app):**
 
 ```bash
 # Public base URL of the try-linux proxy (no trailing slash). Example:
@@ -785,7 +785,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 2. **E2E** — **Shipped:** order wizard happy path with mocked checkout in **`e2e/wizard-order.spec.ts`** (Playwright fills make/model and contact fields). Admin login: **`e2e/admin-login.spec.ts`**.
 3. **Synthetic monitoring** — external ping of `/api/health` + one public page — **runbook:** **`docs/operations.md`** (Docker healthcheck already in compose).
 4. **Admin audit trail** — **shipped:** `AdminAuditLog` + order detail log; guides/models mutations logged; extend UI as needed.
-5. **Structured logging** — **shipped:** JSON + request id on checkout, support-contact, Stripe webhook (`lib/log.ts`, **`docs/operations.md`**).
+5. **Structured logging** — **shipped:** JSON + request id on checkout, support-contact, Stripe webhook (`lib/logging/log.ts`, **`docs/operations.md`**).
 
 #### Product / UX (still open from earlier phases)
 
@@ -793,7 +793,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 - [x] **Discord widget** on `/yhteiso` — **`NEXT_PUBLIC_DISCORD_WIDGET_GUILD_ID`** + Discord widget iframe.
 - [x] **`/tuki` contact form** — `POST /api/public/support-contact`, rate limit, **`SUPPORT_NOTIFY_EMAIL`** + Resend.
 - [x] **Admin orders** — search by name/email, pagination (25/page); **`/admin/usb-orders`** lists USB orders.
-- [x] **Transactional email i18n** — order / USB / done emails use **`Order.locale`** / **`UsbOrder.locale`** in `lib/email.ts`.
+- [x] **Transactional email i18n** — order / USB / done emails use **`Order.locale`** / **`UsbOrder.locale`** in `lib/email/email.ts`.
 - [x] **Global `error.tsx` / `global-error.tsx`** — `app/[locale]/error.tsx` + `app/global-error.tsx`; **`app/[locale]/not-found.tsx`**.
 - [x] **Admin USB order detail** — **`/admin/usb-orders/[id]`** from list; customer, address, status, Stripe session.
 - [x] **Admin service orders: column sort** — URL `sort` + `dir`; filters + pagination preserved.
@@ -802,7 +802,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 #### Security & compliance
 
 - [x] **HTTP security headers (baseline)** — `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`; optional **`ENABLE_HSTS=true`** in `next.config.mjs`. **CSP:** optional **`ENABLE_CSP_REPORT_ONLY=true`** (report-only); enforcing strict CSP still open.
-- [x] **Distributed rate limiting (optional)** — **`UPSTASH_REDIS_*`** in `lib/rate-limit.ts`; else in-memory (see **`docs/api-public.md`**).
+- [x] **Distributed rate limiting (optional)** — **`UPSTASH_REDIS_*`** in `lib/http/rate-limit.ts`; else in-memory (see **`docs/api-public.md`**).
 - [x] **Stripe webhook idempotency** — **`StripeProcessedEvent`** (`event.id`); duplicate → `deduped`; row removed on handler failure for Stripe retry.
 - [x] **Admin audit trail** — optional log of who changed order status, admin notes, model verdicts (who/when/old→new).
 - [x] **Privacy / cookies** — **`/[locale]/tietosuoja`** + footer link; extend legally as needed.
@@ -827,8 +827,8 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 #### Developer experience
 
-- [x] **`apps/verso-checker` LAN + spec/AI docs** — see `apps/verso-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
-- [ ] **`apps/verso-checker` optional “fetch specs” UI** — call Verso `POST /api/public/laptop-specs` when a base URL is configured (needs Tauri HTTP allowlist + env such as `VITE_VERSO_API_BASE`).
+- [x] **`apps/vire-checker` LAN + spec/AI docs** — see `apps/vire-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
+- [ ] **`apps/vire-checker` optional “fetch specs” UI** — call Vire `POST /api/public/laptop-specs` when a base URL is configured (needs Tauri HTTP allowlist + env such as `VITE_VIRE_API_BASE`).
 - [ ] **Dependency / secret hygiene** — `npm audit` in CI (informational or gated); pre-commit secret scan (gitleaks) optional.
 
 ---
@@ -844,7 +844,7 @@ These apply to every coding session on this project.
 5. **Font size floor: 18px body, 16px minimum anywhere.** Use `text-lg` as the base in Tailwind (18px).
 6. **Three.js canvas is `z-index: -1`, `pointer-events: none`.** It must never intercept clicks or cover text.
 7. **Stripe webhook must verify signature** before touching the DB. Non-negotiable.
-8. **`lib/compatibility.ts` is a pure function.** No DB calls inside it. Accept specs as arguments, return verdict.
+8. **`lib/specs/compatibility.ts` is a pure function.** No DB calls inside it. Accept specs as arguments, return verdict.
 9. **Admin routes must check session** at the top of every page and API route. Use a shared `requireAdmin()` helper.
 10. **MDX files are source of truth for guide content.** DB stores metadata and publish state only.
 11. **No `any` in TypeScript** except in the Three.js mesh velocity hack (documented inline).
@@ -880,7 +880,7 @@ These apply to every coding session on this project.
 
 Categories: `toimisto` | `selain` | `sahkoposti` | `musiikki` | `kuvat` | `viestinta` | `tietoturva` | `pelit`
 
-Minimum 15 apps at launch — see full list in `verso-implementation-spec.md`.
+Minimum 15 apps at launch — see full list in `vire-implementation-spec.md`.
 
 ---
 
@@ -894,7 +894,7 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  const email = process.env.ADMIN_EMAIL ?? 'admin@verso.fi'
+  const email = process.env.ADMIN_EMAIL ?? 'admin@vire.fi'
 
   await prisma.adminUser.upsert({
     where: { email },

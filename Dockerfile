@@ -13,7 +13,7 @@ RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /v
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG DATABASE_URL=postgresql://postgres:password@localhost:5432/verso
+ARG DATABASE_URL=postgresql://postgres:password@localhost:5432/vire
 ENV DATABASE_URL=$DATABASE_URL
 RUN npx prisma generate
 RUN npm run build

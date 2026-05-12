@@ -26,7 +26,7 @@ export function SpeedBar() {
   return (
     <section
       ref={ref}
-      className="verso-card mx-auto max-w-[340px] sm:max-w-3xl"
+      className="vire-card mx-auto max-w-[340px] sm:max-w-3xl"
       aria-labelledby="speed-heading"
     >
       <h2

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/require-admin";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { prisma } from "@/lib/db/prisma";
 import fiMessages from "@/messages/fi.json";
 
 const a = fiMessages.admin;
@@ -15,7 +15,7 @@ export default async function AdminUsbOrdersPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href="/admin" className="text-verso-green underline">
+        <Link href="/admin" className="text-vire-green underline">
           ← {a.dashboard}
         </Link>
         <Link
@@ -49,7 +49,7 @@ export default async function AdminUsbOrdersPage() {
                   <td className="px-4 py-3 font-mono text-sm">
                     <Link
                       href={`/admin/usb-orders/${o.id}`}
-                      className="text-verso-green underline"
+                      className="text-vire-green underline"
                     >
                       {o.id.slice(0, 12)}…
                     </Link>

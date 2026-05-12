@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit } from "@/lib/http/rate-limit";
 
 describe("checkRateLimit (in-memory when Upstash unset)", () => {
   it("allows requests up to max within the window", async () => {

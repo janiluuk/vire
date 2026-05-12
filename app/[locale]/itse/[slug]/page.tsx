@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Link } from "@/i18n/navigation";
-import { prisma } from "@/lib/prisma";
-import { readGuideMdxSource } from "@/lib/guide-content";
-import { parseGuideMdx } from "@/lib/guide-mdx";
-import { localePathAlternates } from "@/lib/seo";
+import { prisma } from "@/lib/db/prisma";
+import { readGuideMdxSource } from "@/lib/content/guide-content";
+import { parseGuideMdx } from "@/lib/content/guide-mdx";
+import { localePathAlternates } from "@/lib/site/seo";
 
 type Props = { params: { locale: string; slug: string } };
 
@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = params;
   const guide = await prisma.guide.findUnique({ where: { slug } });
   if (!guide || !guide.published) {
-    return { title: "Verso" };
+    return { title: "Vire" };
   }
   const title =
     locale === "en" && guide.titleEn?.trim() ? guide.titleEn : guide.titleFi;
@@ -56,7 +56,7 @@ export default async function GuidePage({ params }: Props) {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12">
       <header className="border-b border-edge pb-8">
-        <p className="text-sm font-semibold uppercase text-verso-green">
+        <p className="text-sm font-semibold uppercase text-vire-green">
           {guide.category}
         </p>
         <h1 className="mt-2 text-4xl font-bold text-ink">{title}</h1>
@@ -80,7 +80,7 @@ export default async function GuidePage({ params }: Props) {
       <p className="mt-12">
         <Link
           href="/itse"
-          className="font-medium text-verso-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
+          className="font-medium text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
         >
           ← {t("title")}
         </Link>

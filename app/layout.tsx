@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Mono, DM_Sans, Syne } from "next/font/google";
 import Script from "next/script";
-import { getSiteUrl } from "@/lib/site-url";
+import { getSiteUrl } from "@/lib/site/site-url";
 import "./globals.css";
 
 const syne = Syne({
@@ -29,7 +29,7 @@ const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: "Verso",
+  title: "Vire",
   description: "Vanhojen tietokoneiden uusiokäyttö — SSD, RAM, Linux.",
 };
 

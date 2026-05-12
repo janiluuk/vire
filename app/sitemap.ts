@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
-import { prisma } from "@/lib/prisma";
-import { getSiteUrl } from "@/lib/site-url";
+import { prisma } from "@/lib/db/prisma";
+import { getSiteUrl } from "@/lib/site/site-url";
 
 const STATIC_PATHS = ["", "/palvelu", "/palvelu/b2b", "/itse", "/sovellukset", "/tuki", "/info", "/about", "/tietosuoja", "/tilaus", "/yhteiso"] as const;
 

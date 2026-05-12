@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { thankYouFromSession } from "@/lib/checkout-thanks";
-import { localePathAlternates } from "@/lib/seo";
+import { thankYouFromSession } from "@/lib/billing/checkout-thanks";
+import { localePathAlternates } from "@/lib/site/seo";
 
 type Props = {
   params: { locale: string };
@@ -35,7 +35,7 @@ export default async function PalveluKiitosPage({ searchParams }: Props) {
           <p>
             <Link
               href={`/tilaus/${info.orderId}`}
-              className="inline-flex min-h-tap items-center justify-center rounded-xl bg-verso-green px-6 py-3 text-lg font-semibold text-canvas hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green"
+              className="inline-flex min-h-tap items-center justify-center rounded-xl bg-vire-green px-6 py-3 text-lg font-semibold text-canvas hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vire-green"
             >
               {t("trackOrder")}
             </Link>

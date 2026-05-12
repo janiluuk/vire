@@ -13,7 +13,7 @@ Configure reasonable intervals (for example 1–5 minutes) and alert on non-200 
 
 ## Structured logging
 
-API routes and the Stripe webhook emit **`logApiEvent`** lines from **`lib/log.ts`**.
+API routes and the Stripe webhook emit **`logApiEvent`** lines from **`lib/logging/log.ts`**.
 
 - In **production**, logs are **single-line JSON** (`ts`, `level`, `requestId`, `event`, plus route-specific fields).
 - In **development**, logs default to a readable `[requestId] event` format unless **`STRUCTURED_LOG=1`** is set (then JSON).
@@ -39,15 +39,15 @@ For production Postgres, schedule **`pg_dump`** (or managed backups) and documen
 
 ```bash
 # Replace container name / DB / user from your compose file.
-docker exec verso-db-1 pg_dump -U postgres -d verso -Fc -f /tmp/verso.dump
-docker cp verso-db-1:/tmp/verso.dump ./backups/verso-$(date -u +%Y%m%d-%H%M).dump
+docker exec vire-db-1 pg_dump -U postgres -d vire -Fc -f /tmp/vire.dump
+docker cp vire-db-1:/tmp/vire.dump ./backups/vire-$(date -u +%Y%m%d-%H%M).dump
 ```
 
 **Restore into a fresh database (drill / staging)**
 
 ```bash
 # Create empty DB, then:
-pg_restore -h localhost -U postgres -d verso_restore --clean --if-exists ./backups/verso-YYYYMMDD.dump
+pg_restore -h localhost -U postgres -d vire_restore --clean --if-exists ./backups/vire-YYYYMMDD.dump
 ```
 
 Verify application connectivity and row counts after restore. Run a **restore drill** at least quarterly; keep dumps **encrypted** off-site with documented retention.

@@ -44,8 +44,8 @@ export function GuidePublishToggle({
         aria-checked={on}
         disabled={pending}
         onClick={() => void toggle()}
-        className={`relative h-8 w-14 shrink-0 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-verso-green ${
-          on ? "bg-verso-green" : "bg-dust"
+        className={`relative h-8 w-14 shrink-0 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vire-green ${
+          on ? "bg-vire-green" : "bg-dust"
         } ${pending ? "opacity-60" : ""}`}
       >
         <span

@@ -28,7 +28,7 @@ const config: Config = {
         statusProgress: "var(--status-progress)",
         statusDone: "var(--status-done)",
         statusCancel: "var(--status-cancel)",
-        verso: {
+        vire: {
           green: "var(--g)",
           amber: "var(--amber)",
         },

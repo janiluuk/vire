@@ -3,10 +3,10 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { BackgroundCanvas } from "@/components/BackgroundCanvas";
+import { BackgroundCanvas } from "@/components/layout/BackgroundCanvas";
 import { DeliveryStripGate } from "@/components/layout/DeliveryStripGate";
-import { NavBar } from "@/components/NavBar";
-import { Footer } from "@/components/Footer";
+import { NavBar } from "@/components/layout/NavBar";
+import { Footer } from "@/components/layout/Footer";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

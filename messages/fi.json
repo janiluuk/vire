@@ -1,6 +1,6 @@
 {
   "nav": {
-    "brand": "Verso",
+    "brand": "Vire",
     "skipToContent": "Siirry sisältöön",
     "mainNav": "Päävalikko",
     "service": "Palvelu",
@@ -42,7 +42,7 @@
   },
   "info": {
     "title": "Tietoa",
-    "intro": "Lyhyt katsaus Versoon ja mahdollisuus kokeilla Linuxia selaimessa ennen päätöstä.",
+    "intro": "Lyhyt katsaus Vireen ja mahdollisuus kokeilla Linuxia selaimessa ennen päätöstä.",
     "tryLinuxTitle": "Kokeile Linuxia selaimessa",
     "tryLinuxIntro": "Valitse Linux Mint tai Fedora. Avautuu uuteen välilehteen noVNC-yhteydellä laboratorio­palvelimelle. Tämä on demoympäristö: älä syötä arkaluonteisia tietoja.",
     "mintTitle": "Linux Mint",
@@ -56,14 +56,14 @@
   },
   "about": {
     "title": "Tietoa meistä",
-    "intro": "Verso on pieni suomalainen yritys. Uusiokäytämme kannettavia ja pöytäkoneita: SSD, muistin lisäys ja Linux-asennukset — kotiin ja yrityksille.",
+    "intro": "Vire on pieni suomalainen yritys. Uusiokäytämme kannettavia ja pöytäkoneita: SSD, muistin lisäys ja Linux-asennukset — kotiin ja yrityksille.",
     "companyTitle": "Yritys",
-    "companyName": "Verso Oy",
+    "companyName": "Vire Oy",
     "businessIdLabel": "Y-tunnus",
     "businessIdValue": "—",
     "companyNote": "Arvonlisäverovelvollinen. Toimitamme Suomessa.",
     "addressTitle": "Käynti- ja postiosoite",
-    "addressLines": "Verso Oy\nEsimerkkikatu 1 A 2\n00100 Helsinki\nSuomi",
+    "addressLines": "Vire Oy\nEsimerkkikatu 1 A 2\n00100 Helsinki\nSuomi",
     "teamTitle": "Tiimi",
     "person1Name": "Tekijä 1",
     "person1Role": "Palvelu, laitearviot ja logistiikka",
@@ -75,7 +75,7 @@
     "phoneLabel": "Puhelin",
     "phoneValue": "+358 00 000 0000",
     "emailLabel": "Sähköposti",
-    "emailValue": "tuki@verso.fi",
+    "emailValue": "tuki@vire.fi",
     "hoursLabel": "Aukiolo",
     "hoursValue": "Arkisin 9–17",
     "supportPageLink": "Siirry tukisivulle"
@@ -135,7 +135,7 @@
     "backToHub": "Etsi toinen tilaus"
   },
   "footer": {
-    "brand": "Verso",
+    "brand": "Vire",
     "tagline": "Vanhoista tietokoneista nopeita ja kestäviä — SSD, RAM ja Linux.",
     "colService": "Palvelu",
     "colLearn": "Tietoa",
@@ -149,7 +149,7 @@
     "diy": "Tee itse",
     "community": "Yhteisö & Discord",
     "emailLabel": "Sähköposti",
-    "emailValue": "tuki@verso.fi",
+    "emailValue": "tuki@vire.fi",
     "support": "Asiakaspalvelu",
     "about": "Tietoa meistä",
     "privacy": "Tietosuoja",
@@ -165,7 +165,7 @@
     "support": "Tukeen"
   },
   "globalError": {
-    "title": "Verso — virhe",
+    "title": "Vire — virhe",
     "description": "Sovelluksessa tapahtui odottamaton virhe. Päivitä sivu tai yritä myöhemmin uudelleen.",
     "retry": "Yritä uudelleen",
     "homeFi": "Siirry suomenkieliselle etusivulle",
@@ -178,10 +178,10 @@
   },
   "privacy": {
     "title": "Tietosuoja",
-    "metaDescription": "Miten Verso käsittelee henkilötietoja verkkosivustolla ja tilauksissa.",
+    "metaDescription": "Miten Vire käsittelee henkilötietoja verkkosivustolla ja tilauksissa.",
     "intro": "Tämä on lyhyt yhteenveto asiakkaille. Täydennä yrityskohtaiset tiedot ja linkitä tarvittaessa erilliseen rekisteriselosteeseen.",
     "section1Title": "Rekisterinpitäjä",
-    "section1Body": "Verso Oy. Yhteystiedot: ks. sivu Meistä.",
+    "section1Body": "Vire Oy. Yhteystiedot: ks. sivu Meistä.",
     "section2Title": "Mitä tietoja keräämme",
     "section2Body": "Tilauslomakkeet: nimi, sähköposti, puhelin ja osoite toimitusta varten. Maksut käsittelee Stripe; emme tallenna korttitietoja palvelimillamme.",
     "section3Title": "Analytiikka",
@@ -323,8 +323,8 @@
       "backToService": "← Palvelu-sivulle",
       "sentOk": "Tarjouspyyntö lähetettiin. Otamme yhteyttä mahdollisimman pian.",
       "errorValidation": "Tarkista kentät ja yritä uudelleen.",
-      "errorConfig": "Tarjouspyyntöjen vastaanotto ei ole vielä käytössä tässä ympäristössä. Ota yhteyttä suoraan osoitteeseen tuki@verso.fi.",
-      "errorSend": "Lähetys epäonnistui. Yritä hetken kuluttua tai lähetä viesti osoitteeseen tuki@verso.fi.",
+      "errorConfig": "Tarjouspyyntöjen vastaanotto ei ole vielä käytössä tässä ympäristössä. Ota yhteyttä suoraan osoitteeseen tuki@vire.fi.",
+      "errorSend": "Lähetys epäonnistui. Yritä hetken kuluttua tai lähetä viesti osoitteeseen tuki@vire.fi.",
       "fieldCompany": "Yrityksen nimi",
       "fieldContact": "Yhteyshenkilö",
       "fieldEmail": "Sähköposti",
@@ -379,7 +379,7 @@
     "phone": "Puhelin",
     "phoneValue": "+358 00 000 0000",
     "email": "Sähköposti",
-    "emailValue": "tuki@verso.fi",
+    "emailValue": "tuki@vire.fi",
     "hours": "Arkisin 9–17",
     "bookingTitle": "Varaa aika",
     "bookingIntro": "Valitse sopiva aika kalenterista (kun Calendly on kytketty).",

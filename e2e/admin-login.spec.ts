@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("admin login reaches dashboard", async ({ page }) => {
-  const email = process.env.ADMIN_EMAIL ?? "admin@verso.fi";
+  const email = process.env.ADMIN_EMAIL ?? "admin@vire.fi";
   const password = process.env.ADMIN_PASSWORD ?? "changeme";
 
   await page.goto("/admin/login", { waitUntil: "networkidle" });

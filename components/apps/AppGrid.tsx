@@ -47,9 +47,9 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
         <button
           type="button"
           onClick={() => setCat("all")}
-          className={`min-h-tap rounded-full px-4 py-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
+          className={`min-h-tap rounded-full px-4 py-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
             cat === "all"
-              ? "bg-verso-green text-canvas"
+              ? "bg-vire-green text-canvas"
               : "bg-card text-ink ring-1 ring-em"
           }`}
         >
@@ -60,9 +60,9 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
             key={c}
             type="button"
             onClick={() => setCat(c)}
-            className={`min-h-tap rounded-full px-4 py-2 font-semibold capitalize focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
+            className={`min-h-tap rounded-full px-4 py-2 font-semibold capitalize focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
               cat === c
-                ? "bg-verso-green text-canvas"
+                ? "bg-vire-green text-canvas"
                 : "bg-card text-ink ring-1 ring-em"
             }`}
           >
@@ -76,10 +76,10 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
             <button
               type="button"
               onClick={() => setOpen(open === app.id ? null : app.id)}
-              className="flex w-full min-h-tap flex-col items-start gap-1 p-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
+              className="flex w-full min-h-tap flex-col items-start gap-1 p-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
               aria-expanded={open === app.id}
             >
-              <span className="text-xs font-bold uppercase text-verso-green">
+              <span className="text-xs font-bold uppercase text-vire-green">
                 {app.category}
               </span>
               <span className="text-xl font-bold text-ink">{app.name}</span>
@@ -91,7 +91,7 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-lg font-bold text-ink">{alt.name}</h3>
                       {alt.preinstalled ? (
-                        <span className="rounded-full bg-verso-amber px-2 py-0.5 text-sm font-semibold text-ink">
+                        <span className="rounded-full bg-vire-amber px-2 py-0.5 text-sm font-semibold text-ink">
                           {t("preinstalledBadge")}
                         </span>
                       ) : null}
@@ -101,7 +101,7 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
                     </p>
                     <a
                       href={alt.url}
-                      className="mt-3 inline-block min-h-tap font-semibold text-verso-green underline underline-offset-2"
+                      className="mt-3 inline-block min-h-tap font-semibold text-vire-green underline underline-offset-2"
                       rel="noopener noreferrer"
                       target="_blank"
                     >

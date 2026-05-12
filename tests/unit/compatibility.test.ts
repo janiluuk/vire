@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkCompatibility } from "@/lib/compatibility";
+import { checkCompatibility } from "@/lib/specs/compatibility";
 
 describe("checkCompatibility", () => {
   it("returns incompatible when DB says not compatible", () => {

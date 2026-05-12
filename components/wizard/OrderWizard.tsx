@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { DeliveryMethod, SupportTier } from "@prisma/client";
 import { LaptopSpecsCard } from "@/components/laptop-specs/LaptopSpecsCard";
-import type { LaptopSpecsInsight } from "@/lib/laptop-specs";
+import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
 import {
   DATA_MIGRATION_LARGE_CENTS,
   DATA_MIGRATION_STANDARD_CENTS,
   serviceOrderTotalWithMigrationCents,
-} from "@/lib/pricing";
+} from "@/lib/billing/pricing";
 
 type Tier = "SSD_BASIC" | "SSD_RAM" | "FULL_SERVICE";
 
@@ -207,7 +207,7 @@ export function OrderWizard({ locale }: { locale: string }) {
   return (
     <section
       data-testid="order-wizard"
-      className="verso-card mx-auto max-w-4xl p-6 md:p-10"
+      className="vire-card mx-auto max-w-4xl p-6 md:p-10"
       aria-labelledby="wizard-title"
     >
       <h2 id="wizard-title" className="text-3xl font-bold text-ink">
@@ -280,7 +280,7 @@ export function OrderWizard({ locale }: { locale: string }) {
           {!compat && !compatLoading ? (
             <button
               type="button"
-              className="min-h-tap rounded-xl bg-verso-green px-6 py-3 font-semibold text-canvas"
+              className="min-h-tap rounded-xl bg-vire-green px-6 py-3 font-semibold text-canvas"
               onClick={() => void loadCompatibility()}
             >
               {w("step2Run")}
@@ -296,7 +296,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                     ? w("step2Borderline")
                     : w("step2Incompatible")}
               </p>
-              <p className="mt-2 text-lg text-verso-green">
+              <p className="mt-2 text-lg text-vire-green">
                 {w("step2Speed")}: {compat.speedGainEstimate}
               </p>
               <ul className="mt-4 list-inside list-disc space-y-2 text-lg text-ink">
@@ -326,9 +326,9 @@ export function OrderWizard({ locale }: { locale: string }) {
                 onClick={() => {
                   setTier(value);
                 }}
-                className={`min-h-tap rounded-2xl border-2 p-6 text-left font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
+                className={`min-h-tap rounded-2xl border-2 p-6 text-left font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
                   tier === value
-                    ? "border-verso-green bg-verso-green/10"
+                    ? "border-vire-green bg-vire-green/10"
                     : "border-edge bg-card"
                 }`}
               >
@@ -351,7 +351,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                   }}
                   className={`min-h-tap rounded-xl border-2 px-4 py-2 font-semibold ${
                     !dataMigration
-                      ? "border-verso-green bg-verso-green/10"
+                      ? "border-vire-green bg-vire-green/10"
                       : "border-edge"
                   }`}
                 >
@@ -362,7 +362,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                   onClick={() => setDataMigration(true)}
                   className={`min-h-tap rounded-xl border-2 px-4 py-2 font-semibold ${
                     dataMigration
-                      ? "border-verso-green bg-verso-green/10"
+                      ? "border-vire-green bg-vire-green/10"
                       : "border-edge"
                   }`}
                 >
@@ -376,7 +376,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                     onClick={() => setDataMigrationSize("standard")}
                     className={`min-h-tap rounded-xl border-2 p-4 text-left font-semibold ${
                       dataMigrationSize === "standard"
-                        ? "border-verso-green bg-verso-green/10"
+                        ? "border-vire-green bg-vire-green/10"
                         : "border-edge"
                     }`}
                   >
@@ -392,7 +392,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                     onClick={() => setDataMigrationSize("large")}
                     className={`min-h-tap rounded-xl border-2 p-4 text-left font-semibold ${
                       dataMigrationSize === "large"
-                        ? "border-verso-green bg-verso-green/10"
+                        ? "border-vire-green bg-vire-green/10"
                         : "border-edge"
                     }`}
                   >
@@ -425,9 +425,9 @@ export function OrderWizard({ locale }: { locale: string }) {
                 key={value}
                 type="button"
                 onClick={() => setDelivery(value as DeliveryMethod)}
-                className={`min-h-tap rounded-2xl border-2 p-6 text-left font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green ${
+                className={`min-h-tap rounded-2xl border-2 p-6 text-left font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
                   delivery === value
-                    ? "border-verso-green bg-verso-green/10"
+                    ? "border-vire-green bg-vire-green/10"
                     : "border-edge bg-card"
                 }`}
               >
@@ -455,7 +455,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                 onClick={() => setSupport(value as SupportTier)}
                 className={`min-h-tap rounded-xl border-2 px-4 py-3 font-semibold ${
                   support === value
-                    ? "border-verso-green bg-verso-green/10"
+                    ? "border-vire-green bg-vire-green/10"
                     : "border-edge"
                 }`}
               >
@@ -579,7 +579,7 @@ export function OrderWizard({ locale }: { locale: string }) {
             <strong>{w("summaryContact")}:</strong> {customerName} / {customerEmail}
           </p>
           {pricePreview != null ? (
-            <p className="text-2xl font-bold text-verso-green">
+            <p className="text-2xl font-bold text-vire-green">
               {w("summaryPrice")}: {(pricePreview / 100).toFixed(2)} €
             </p>
           ) : null}
@@ -591,7 +591,7 @@ export function OrderWizard({ locale }: { locale: string }) {
           <button
             type="button"
             disabled={checkoutLoading}
-            className="min-h-tap w-full rounded-xl bg-verso-green py-4 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60 md:max-w-md"
+            className="min-h-tap w-full rounded-xl bg-vire-green py-4 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60 md:max-w-md"
             onClick={() => void startCheckout()}
           >
             {checkoutLoading ? "…" : w("payCta")}
@@ -610,7 +610,7 @@ export function OrderWizard({ locale }: { locale: string }) {
         </button>
         <button
           type="button"
-          className="min-h-tap rounded-lg bg-verso-green px-6 py-3 font-semibold text-canvas disabled:opacity-40"
+          className="min-h-tap rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas disabled:opacity-40"
           disabled={
             (step === 0 && !canNextFrom0) ||
             (step === 1 && !canNextFrom1) ||

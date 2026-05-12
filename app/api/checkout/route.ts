@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import type { ServiceTier } from "@prisma/client";
 import { DeliveryMethod, SupportTier } from "@prisma/client";
-import { getRequestId, logApiEvent } from "@/lib/log";
-import { prisma } from "@/lib/prisma";
-import { getStripe, stripeConfigured } from "@/lib/stripe";
-import { buildServiceLineItems } from "@/lib/stripe-line-items";
-import { serviceOrderTotalWithMigrationCents } from "@/lib/pricing";
-import { checkRateLimit, getClientIpFromHeaders } from "@/lib/rate-limit";
-import { getSiteUrl } from "@/lib/site-url";
+import { getRequestId, logApiEvent } from "@/lib/logging/log";
+import { prisma } from "@/lib/db/prisma";
+import { getStripe, stripeConfigured } from "@/lib/billing/stripe";
+import { buildServiceLineItems } from "@/lib/billing/stripe-line-items";
+import { serviceOrderTotalWithMigrationCents } from "@/lib/billing/pricing";
+import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
+import { getSiteUrl } from "@/lib/site/site-url";
 
 const checkoutSchema = z
   .object({

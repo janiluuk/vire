@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { ModelCheckStatus } from "@prisma/client";
-import { recordAdminAudit } from "@/lib/admin-audit";
-import { authOptions } from "@/lib/auth-options";
-import { prisma } from "@/lib/prisma";
+import { recordAdminAudit } from "@/lib/admin/admin-audit";
+import { authOptions } from "@/lib/auth/auth-options";
+import { prisma } from "@/lib/db/prisma";
 
 async function requireAdminSession() {
   const session = await getServerSession(authOptions);

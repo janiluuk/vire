@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getClientIpFromHeaders } from "@/lib/rate-limit";
+import { getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
 describe("getClientIpFromHeaders", () => {
   it("reads x-forwarded-for first hop", () => {

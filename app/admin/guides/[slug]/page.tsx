@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SaveGuideForm } from "@/components/admin/SaveGuideForm";
-import { readGuideMdxSource } from "@/lib/guide-content";
-import { parseGuideMdx } from "@/lib/guide-mdx";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/require-admin";
+import { readGuideMdxSource } from "@/lib/content/guide-content";
+import { parseGuideMdx } from "@/lib/content/guide-mdx";
+import { prisma } from "@/lib/db/prisma";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import fiMessages from "@/messages/fi.json";
 
 const a = fiMessages.admin;
@@ -45,7 +45,7 @@ export default async function AdminGuideEditPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/admin/guides" className="text-verso-green underline">
+      <Link href="/admin/guides" className="text-vire-green underline">
         ← {a.guides}
       </Link>
       <h1 className="mt-6 text-3xl font-bold text-ink">{a.guidesEditTitle}</h1>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { localePathAlternates } from "@/lib/seo";
+import { localePathAlternates } from "@/lib/site/seo";
 
 export async function generateMetadata({
   params: { locale },
@@ -37,7 +37,7 @@ export default async function AboutPage() {
         <p className="mt-4 text-xl leading-relaxed text-ink">{t("intro")}</p>
       </header>
 
-      <section aria-labelledby="company-heading" className="verso-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="company-heading" className="vire-card space-y-4 p-6 sm:p-8">
         <h2 id="company-heading" className="text-2xl font-bold text-ink">
           {t("companyTitle")}
         </h2>
@@ -49,7 +49,7 @@ export default async function AboutPage() {
         <p className="text-lg text-ink">{t("companyNote")}</p>
       </section>
 
-      <section aria-labelledby="address-heading" className="verso-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="address-heading" className="vire-card space-y-4 p-6 sm:p-8">
         <h2 id="address-heading" className="text-2xl font-bold text-ink">
           {t("addressTitle")}
         </h2>
@@ -63,16 +63,16 @@ export default async function AboutPage() {
           {t("teamTitle")}
         </h2>
         <ul className="grid gap-6 sm:grid-cols-2">
-          <li className="verso-card flex flex-col p-6 sm:p-8">
+          <li className="vire-card flex flex-col p-6 sm:p-8">
             <h3 className="text-xl font-bold text-ink">{t("person1Name")}</h3>
-            <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-verso-green">
+            <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
               {t("person1Role")}
             </p>
             <p className="mt-4 text-lg leading-relaxed text-ink">{t("person1Bio")}</p>
           </li>
-          <li className="verso-card flex flex-col p-6 sm:p-8">
+          <li className="vire-card flex flex-col p-6 sm:p-8">
             <h3 className="text-xl font-bold text-ink">{t("person2Name")}</h3>
-            <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-verso-green">
+            <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
               {t("person2Role")}
             </p>
             <p className="mt-4 text-lg leading-relaxed text-ink">{t("person2Bio")}</p>
@@ -80,7 +80,7 @@ export default async function AboutPage() {
         </ul>
       </section>
 
-      <section aria-labelledby="contact-heading" className="verso-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="contact-heading" className="vire-card space-y-4 p-6 sm:p-8">
         <h2 id="contact-heading" className="text-2xl font-bold text-ink">
           {t("contactTitle")}
         </h2>
@@ -89,7 +89,7 @@ export default async function AboutPage() {
             <span className="font-semibold text-ink">{t("phoneLabel")}: </span>
             <a
               href={`tel:${t("phoneValue").replace(/\s/g, "")}`}
-              className="text-verso-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
+              className="text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
             >
               {t("phoneValue")}
             </a>
@@ -98,7 +98,7 @@ export default async function AboutPage() {
             <span className="font-semibold text-ink">{t("emailLabel")}: </span>
             <a
               href={`mailto:${t("emailValue")}`}
-              className="text-verso-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
+              className="text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
             >
               {t("emailValue")}
             </a>
@@ -111,7 +111,7 @@ export default async function AboutPage() {
         <p className="pt-2 text-lg text-ink">
           <Link
             href="/tuki"
-            className="font-semibold text-verso-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
+            className="font-semibold text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
           >
             {t("supportPageLink")} →
           </Link>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { OrderStatus, Prisma } from "@prisma/client";
-import { requireAdmin } from "@/lib/require-admin";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { prisma } from "@/lib/db/prisma";
 import fiMessages from "@/messages/fi.json";
 
 const a = fiMessages.admin;
@@ -151,13 +151,13 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   }
 
   function thClass(active: boolean) {
-    return active ? "text-verso-green" : "text-ink";
+    return active ? "text-vire-green" : "text-ink";
   }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href="/admin" className="text-verso-green underline">
+        <Link href="/admin" className="text-vire-green underline">
           ← {a.dashboard}
         </Link>
         <Link
@@ -199,14 +199,14 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         </div>
         <button
           type="submit"
-          className="min-h-tap rounded-lg bg-verso-green px-5 py-2 font-semibold text-canvas"
+          className="min-h-tap rounded-lg bg-vire-green px-5 py-2 font-semibold text-canvas"
         >
           {a.ordersSearch}
         </button>
         {q ? (
           <Link
             href={makeHref({ q: "", page: 1 })}
-            className="min-h-tap text-lg font-semibold text-verso-green underline"
+            className="min-h-tap text-lg font-semibold text-vire-green underline"
           >
             ×
           </Link>
@@ -218,7 +218,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
           href={makeHref({ status: "", page: 1 })}
           className={`min-h-tap rounded-full px-4 py-2 font-semibold ${
             !searchParams.status
-              ? "bg-verso-green text-canvas"
+              ? "bg-vire-green text-canvas"
               : "bg-card ring-1 ring-em"
           }`}
         >
@@ -230,7 +230,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             href={makeHref({ status: s, page: 1 })}
             className={`min-h-tap rounded-full px-4 py-2 font-semibold ${
               searchParams.status === s
-                ? "bg-verso-green text-canvas"
+                ? "bg-vire-green text-canvas"
                 : "bg-card ring-1 ring-em"
             }`}
           >
@@ -309,7 +309,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/orders/${o.id}`}
-                      className="font-medium text-verso-green underline"
+                      className="font-medium text-vire-green underline"
                     >
                       {o.customerName}
                     </Link>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { DiscordWidgetEmbed } from "@/components/yhteiso/DiscordWidgetEmbed";
-import { localePathAlternates } from "@/lib/seo";
+import { localePathAlternates } from "@/lib/site/seo";
 
 export async function generateMetadata({
   params: { locale },

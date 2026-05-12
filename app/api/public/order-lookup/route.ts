@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db/prisma";
 import {
   toPublicServiceOrder,
   toPublicUsbOrder,
-} from "@/lib/public-order";
-import { resolveLaptopSpecs, withSpecsTimeout } from "@/lib/laptop-specs";
-import { checkRateLimit, getClientIpFromHeaders } from "@/lib/rate-limit";
+} from "@/lib/orders/public-order";
+import { resolveLaptopSpecs, withSpecsTimeout } from "@/lib/specs/laptop-specs";
+import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
 const bodySchema = z.object({
   orderId: z.string().min(8).max(40),

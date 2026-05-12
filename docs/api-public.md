@@ -1,6 +1,6 @@
-# Verso — public HTTP API
+# Vire — public HTTP API
 
-Base URL: `NEXT_PUBLIC_SITE_URL` (e.g. `https://verso.fi`). Locale-prefixed pages live under `/fi/...` and `/en/...`; JSON APIs below are **not** locale-prefixed unless noted.
+Base URL: `NEXT_PUBLIC_SITE_URL` (e.g. `https://vire.fi`). Locale-prefixed pages live under `/fi/...` and `/en/...`; JSON APIs below are **not** locale-prefixed unless noted.
 
 All public JSON routes respond with `Content-Type: application/json`. Prefer `POST` + JSON bodies unless stated otherwise.
 
@@ -13,7 +13,7 @@ All public JSON routes respond with `Content-Type: application/json`. Prefer `PO
 **Response 200**
 
 ```json
-{ "ok": true, "service": "verso" }
+{ "ok": true, "service": "vire" }
 ```
 
 Used by Docker Compose `web` healthcheck and synthetic monitors.
@@ -75,7 +75,7 @@ Creates a `UsbOrder` and Stripe Checkout Session.
 
 **Body:** `{ "make": string, "model": string, "ramGb"?: number, "diskType"?: "hdd"|"ssd"|"unknown" }`
 
-**Responses:** JSON verdict from `lib/compatibility.ts` (shape depends on client). `429` if rate limited.
+**Responses:** JSON verdict from `lib/specs/compatibility.ts` (shape depends on client). `429` if rate limited.
 
 ---
 
@@ -129,4 +129,4 @@ Requires `SUPPORT_NOTIFY_EMAIL` and Resend. **503** if not configured. **429** o
 
 ## Versioning
 
-No URL version prefix (`/v1`). Breaking changes should be coordinated with the Verso web app and any external clients (e.g. `apps/verso-checker`).
+No URL version prefix (`/v1`). Breaking changes should be coordinated with the Vire web app and any external clients (e.g. `apps/vire-checker`).

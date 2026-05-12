@@ -1,6 +1,6 @@
-# Verso
+# Vire
 
-Next.js site for Verso — refurbishment, DIY guides, orders, and admin tools.
+Next.js site for Vire — refurbishment, DIY guides, orders, and admin tools.
 
 ## Local development
 
@@ -42,11 +42,11 @@ Open **http://localhost:1337** (set `APP_PORT` / `NEXT_PUBLIC_SITE_URL` / `NEXTA
 
 ### Deploy to a lab host (e.g. 192.168.2.100)
 
-From your dev machine (SSH + rsync), after copying `.env` on the server under `/srv/verso/`:
+From your dev machine (SSH + rsync), after copying `.env` on the server under `/srv/vire/`:
 
 ```bash
 export DEPLOY_HOST=192.168.2.100
-export DEPLOY_PATH=/srv/verso
+export DEPLOY_PATH=/srv/vire
 # optional: export DEPLOY_USER=you
 ./scripts/deploy-lab.sh
 ```
@@ -57,16 +57,16 @@ See `scripts/deploy-lab.sh` for rsync excludes. On the server, set at least `NEX
 
 See [`.env.example`](./.env.example) for `DATABASE_URL`, auth, Stripe, email, and public URLs.
 
-### Verso Checker (Tauri desktop)
+### Vire Checker (Tauri desktop)
 
-Local compatibility tool using the same pure logic as the site (`lib/compatibility.ts`). Lives in `apps/verso-checker/`.
+Local compatibility tool using the same pure logic as the site (`lib/specs/compatibility.ts`). Lives in `apps/vire-checker/`.
 
-**LAN / SearXNG / local LLM:** spec hints run on the **Verso Next.js server** (`lib/laptop-specs.ts`), not inside the desktop app. See **`apps/verso-checker/README.md`** for which env vars to set on the server, Docker reachability to e.g. `192.168.2.101:8080`, and optional future Tauri + API wiring.
+**LAN / SearXNG / local LLM:** spec hints run on the **Vire Next.js server** (`lib/specs/laptop-specs.ts`), not inside the desktop app. See **`apps/vire-checker/README.md`** for which env vars to set on the server, Docker reachability to e.g. `192.168.2.101:8080`, and optional future Tauri + API wiring.
 
 Install [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) for your OS (on Linux: WebKitGTK, build essentials, etc.), then:
 
 ```bash
-cd apps/verso-checker
+cd apps/vire-checker
 npm install
 npm run tauri dev
 ```

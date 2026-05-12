@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { updateComputerModel } from "@/app/admin/models/actions";
-import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/require-admin";
+import { prisma } from "@/lib/db/prisma";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import fiMessages from "@/messages/fi.json";
 
 const a = fiMessages.admin;
@@ -42,7 +42,7 @@ export default async function AdminModelDetailPage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/admin/models" className="text-verso-green underline">
+      <Link href="/admin/models" className="text-vire-green underline">
         ← {a.models}
       </Link>
       <h1 className="mt-6 text-3xl font-bold text-ink">{a.modelDetailTitle}</h1>
@@ -68,7 +68,7 @@ export default async function AdminModelDetailPage({
         </p>
       ) : null}
 
-      <form action={updateComputerModel} className="verso-card mt-8 space-y-6 p-6 sm:p-8">
+      <form action={updateComputerModel} className="vire-card mt-8 space-y-6 p-6 sm:p-8">
         <input type="hidden" name="id" value={row.id} />
 
         <fieldset>
@@ -152,7 +152,7 @@ export default async function AdminModelDetailPage({
 
         <button
           type="submit"
-          className="min-h-tap rounded-xl bg-verso-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.85]"
+          className="min-h-tap rounded-xl bg-vire-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.85]"
         >
           {a.modelSave}
         </button>

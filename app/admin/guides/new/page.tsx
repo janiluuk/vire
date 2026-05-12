@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SaveGuideForm } from "@/components/admin/SaveGuideForm";
-import { requireAdmin } from "@/lib/require-admin";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import fiMessages from "@/messages/fi.json";
 
 const a = fiMessages.admin;
@@ -22,7 +22,7 @@ export default async function AdminGuideNewPage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/admin/guides" className="text-verso-green underline">
+      <Link href="/admin/guides" className="text-vire-green underline">
         ← {a.guides}
       </Link>
       <h1 className="mt-6 text-3xl font-bold text-ink">{a.guidesNewTitle}</h1>

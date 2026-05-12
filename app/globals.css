@@ -64,31 +64,31 @@ body {
 }
 
 @layer components {
-  .verso-card {
+  .vire-card {
     @apply rounded-2xl border bg-card p-7 transition-colors duration-200;
   }
 
-  .verso-card:hover {
+  .vire-card:hover {
     @apply border-em;
   }
 
-  .verso-card-hover {
-    @apply verso-card;
+  .vire-card-hover {
+    @apply vire-card;
   }
 
-  .verso-hero {
+  .vire-hero {
     @apply relative overflow-hidden rounded-3xl border bg-card px-6 py-12 text-center sm:px-10 sm:py-16;
   }
 
-  .verso-hero-inner {
+  .vire-hero-inner {
     @apply relative z-10;
   }
 
-  .verso-eyebrow {
+  .vire-eyebrow {
     @apply mb-5 flex items-center gap-2.5 font-mono text-[11px] font-normal uppercase tracking-[0.15em] text-g;
   }
 
-  .verso-eyebrow::before {
+  .vire-eyebrow::before {
     content: "";
     display: inline-block;
     width: 20px;
@@ -96,15 +96,15 @@ body {
     background: var(--g);
   }
 
-  .verso-btn-primary {
+  .vire-btn-primary {
     @apply inline-flex min-h-tap min-w-[200px] items-center justify-center rounded-[10px] bg-g px-7 py-3.5 text-[15px] font-bold tracking-tight text-canvas transition-opacity duration-150 hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g;
   }
 
-  .verso-btn-secondary {
+  .vire-btn-secondary {
     @apply inline-flex min-h-tap min-w-[200px] items-center justify-center rounded-[10px] border border-em bg-transparent px-7 py-3.5 text-[15px] font-normal text-fog transition-colors duration-150 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g;
   }
 
-  .verso-btn-secondary:hover {
+  .vire-btn-secondary:hover {
     background: rgba(29, 245, 160, 0.05);
   }
 
@@ -129,11 +129,11 @@ body {
     content: "# ";
   }
 
-  details.verso-nav-disclosure > summary {
+  details.vire-nav-disclosure > summary {
     list-style: none;
   }
 
-  details.verso-nav-disclosure > summary::-webkit-details-marker {
+  details.vire-nav-disclosure > summary::-webkit-details-marker {
     display: none;
   }
 

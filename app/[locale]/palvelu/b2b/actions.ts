@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { sendB2bQuoteRequestEmail } from "@/lib/email";
+import { sendB2bQuoteRequestEmail } from "@/lib/email/email";
 
 const formSchema = z.object({
   companyName: z.string().trim().min(1).max(200),

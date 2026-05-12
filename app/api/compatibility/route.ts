@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
-import { checkCompatibility } from "@/lib/compatibility";
-import { checkRateLimit, getClientIpFromHeaders } from "@/lib/rate-limit";
+import { prisma } from "@/lib/db/prisma";
+import { checkCompatibility } from "@/lib/specs/compatibility";
+import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
 const bodySchema = z.object({
   make: z.string(),

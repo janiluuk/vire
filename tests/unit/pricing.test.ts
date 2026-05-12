@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { serviceOrderTotalCents, USB_ORDER_CENTS } from "@/lib/pricing";
+import { serviceOrderTotalCents, USB_ORDER_CENTS } from "@/lib/billing/pricing";
 
 describe("serviceOrderTotalCents", () => {
   it("computes SSD_BASIC with FULL support", () => {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { localePathAlternates } from "@/lib/seo";
+import { localePathAlternates } from "@/lib/site/seo";
 import { OrderWizard } from "@/components/wizard/OrderWizard";
 
 export async function generateMetadata({
@@ -50,7 +50,7 @@ export default async function PalveluPage({
         <ol className="mt-6 space-y-4 text-lg text-ink">
           {(["how1", "how2", "how3", "how4", "how5"] as const).map((key, i) => (
             <li key={key} className="flex gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-verso-green text-xl font-bold text-canvas">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-vire-green text-xl font-bold text-canvas">
                 {i + 1}
               </span>
               <span className="pt-2">{t(key)}</span>
@@ -73,19 +73,19 @@ export default async function PalveluPage({
         <p className="text-lg text-ink">{t("migrationFaqIntro")}</p>
         <dl className="space-y-6 text-lg text-ink">
           <div>
-            <dt className="font-semibold text-verso-green">
+            <dt className="font-semibold text-vire-green">
               {t("migrationFaqQ1")}
             </dt>
             <dd className="mt-2 text-fog">{t("migrationFaqA1")}</dd>
           </div>
           <div>
-            <dt className="font-semibold text-verso-green">
+            <dt className="font-semibold text-vire-green">
               {t("migrationFaqQ2")}
             </dt>
             <dd className="mt-2 text-fog">{t("migrationFaqA2")}</dd>
           </div>
           <div>
-            <dt className="font-semibold text-verso-green">
+            <dt className="font-semibold text-vire-green">
               {t("migrationFaqQ3")}
             </dt>
             <dd className="mt-2 text-fog">{t("migrationFaqA3")}</dd>
@@ -95,7 +95,7 @@ export default async function PalveluPage({
 
       <section
         aria-labelledby="b2b-title"
-        className="verso-card border-verso-green/25 bg-verso-green/5 p-6 sm:p-8"
+        className="vire-card border-vire-green/25 bg-vire-green/5 p-6 sm:p-8"
       >
         <h2 id="b2b-title" className="text-2xl font-bold text-ink">
           {t("b2bBanner")}
@@ -103,7 +103,7 @@ export default async function PalveluPage({
         <p className="mt-4 text-lg text-ink">{t("b2b.intro")}</p>
         <Link
           href="/palvelu/b2b"
-          className="verso-btn-secondary mt-6 inline-flex min-h-tap items-center justify-center"
+          className="vire-btn-secondary mt-6 inline-flex min-h-tap items-center justify-center"
         >
           {t("b2bCta")}
         </Link>

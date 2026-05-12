@@ -1,6 +1,6 @@
 {
   "nav": {
-    "brand": "Verso",
+    "brand": "Vire",
     "skipToContent": "Skip to content",
     "mainNav": "Main navigation",
     "service": "Service",
@@ -42,7 +42,7 @@
   },
   "info": {
     "title": "About",
-    "intro": "A short overview of Verso and an optional in-browser Linux trial before you decide.",
+    "intro": "A short overview of Vire and an optional in-browser Linux trial before you decide.",
     "tryLinuxTitle": "Try Linux in your browser",
     "tryLinuxIntro": "Choose Linux Mint or Fedora. Opens in a new tab via noVNC to the lab server. This is a demo: do not enter sensitive data.",
     "mintTitle": "Linux Mint",
@@ -56,14 +56,14 @@
   },
   "about": {
     "title": "About us",
-    "intro": "Verso is a small Finnish company. We refurbish laptops and desktops with SSD upgrades, extra RAM, and Linux — for homes and businesses.",
+    "intro": "Vire is a small Finnish company. We refurbish laptops and desktops with SSD upgrades, extra RAM, and Linux — for homes and businesses.",
     "companyTitle": "Company",
-    "companyName": "Verso Oy",
+    "companyName": "Vire Oy",
     "businessIdLabel": "Business ID (Y-tunnus)",
     "businessIdValue": "—",
     "companyNote": "VAT liable. We operate in Finland.",
     "addressTitle": "Visiting & postal address",
-    "addressLines": "Verso Oy\nExample Street 1 A 2\nFI-00100 Helsinki\nFinland",
+    "addressLines": "Vire Oy\nExample Street 1 A 2\nFI-00100 Helsinki\nFinland",
     "teamTitle": "Team",
     "person1Name": "Team member 1",
     "person1Role": "Service, hardware assessments & logistics",
@@ -75,7 +75,7 @@
     "phoneLabel": "Phone",
     "phoneValue": "+358 00 000 0000",
     "emailLabel": "Email",
-    "emailValue": "support@verso.fi",
+    "emailValue": "support@vire.fi",
     "hoursLabel": "Hours",
     "hoursValue": "Weekdays 9–17",
     "supportPageLink": "Go to support page"
@@ -135,7 +135,7 @@
     "backToHub": "Look up another order"
   },
   "footer": {
-    "brand": "Verso",
+    "brand": "Vire",
     "tagline": "Turn older computers into fast, durable machines — SSD, RAM, and Linux.",
     "colService": "Service",
     "colLearn": "Learn",
@@ -149,7 +149,7 @@
     "diy": "DIY",
     "community": "Community & Discord",
     "emailLabel": "Email",
-    "emailValue": "tuki@verso.fi",
+    "emailValue": "tuki@vire.fi",
     "support": "Customer support",
     "about": "About us",
     "privacy": "Privacy",
@@ -165,7 +165,7 @@
     "support": "Support"
   },
   "globalError": {
-    "title": "Verso — error",
+    "title": "Vire — error",
     "description": "An unexpected error occurred. Refresh the page or try again later.",
     "retry": "Try again",
     "homeFi": "Finnish home",
@@ -178,10 +178,10 @@
   },
   "privacy": {
     "title": "Privacy",
-    "metaDescription": "How Verso handles personal data on the website and in orders.",
+    "metaDescription": "How Vire handles personal data on the website and in orders.",
     "intro": "This is a short customer-facing summary. Replace with your legal register description where required.",
     "section1Title": "Controller",
-    "section1Body": "Verso Oy. Contact details: see About us.",
+    "section1Body": "Vire Oy. Contact details: see About us.",
     "section2Title": "Data we collect",
     "section2Body": "Order forms: name, email, phone, and address for fulfilment. Payments are processed by Stripe; we do not store card numbers on our servers.",
     "section3Title": "Analytics",
@@ -323,8 +323,8 @@
       "backToService": "← Back to service page",
       "sentOk": "Your quote request was sent. We will get back to you as soon as we can.",
       "errorValidation": "Please check the fields and try again.",
-      "errorConfig": "Quote requests are not enabled in this environment yet. Email us at tuki@verso.fi.",
-      "errorSend": "Sending failed. Try again shortly or email tuki@verso.fi.",
+      "errorConfig": "Quote requests are not enabled in this environment yet. Email us at tuki@vire.fi.",
+      "errorSend": "Sending failed. Try again shortly or email tuki@vire.fi.",
       "fieldCompany": "Company name",
       "fieldContact": "Contact person",
       "fieldEmail": "Email",
@@ -379,7 +379,7 @@
     "phone": "Phone",
     "phoneValue": "+358 00 000 0000",
     "email": "Email",
-    "emailValue": "support@verso.fi",
+    "emailValue": "support@vire.fi",
     "hours": "Weekdays 9–17",
     "bookingTitle": "Book a time",
     "bookingIntro": "Pick a slot in the calendar (when Calendly is configured).",

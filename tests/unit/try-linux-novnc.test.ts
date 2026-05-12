@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { tryLinuxNovncUrls } from "@/lib/try-linux-novnc";
+import { tryLinuxNovncUrls } from "@/lib/site/try-linux-novnc";
 
 describe("tryLinuxNovncUrls", () => {
   afterEach(() => {

@@ -23,7 +23,7 @@ export function SaveGuideForm({ defaults }: { defaults: SaveGuideFormDefaults })
   const isEdit = Boolean(defaults.editorSlug);
 
   return (
-    <form action={saveGuide} className="verso-card space-y-8 p-6 sm:p-8">
+    <form action={saveGuide} className="vire-card space-y-8 p-6 sm:p-8">
       <input type="hidden" name="editorSlug" value={defaults.editorSlug ?? ""} />
       <div className="grid gap-6 md:grid-cols-2">
         <div className="md:col-span-2">
@@ -183,7 +183,7 @@ export function SaveGuideForm({ defaults }: { defaults: SaveGuideFormDefaults })
       </div>
       <button
         type="submit"
-        className="min-h-tap rounded-xl bg-verso-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.85]"
+        className="min-h-tap rounded-xl bg-vire-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.85]"
       >
         {a.guideSave}
       </button>

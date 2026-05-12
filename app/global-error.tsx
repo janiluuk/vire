@@ -18,7 +18,7 @@ export default function GlobalError({
     <html lang="fi">
       <body className="min-h-dvh bg-canvas px-4 py-16 font-sans text-lg text-ink antialiased">
         <div className="mx-auto max-w-lg text-center">
-          <h1 className="font-display text-3xl font-bold">Verso — virhe</h1>
+          <h1 className="font-display text-3xl font-bold">Vire — virhe</h1>
           <p className="mt-4 text-fog">
             Sovelluksessa tapahtui odottamaton virhe. Päivitä sivu tai yritä
             myöhemmin uudelleen.

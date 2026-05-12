@@ -5,11 +5,11 @@ import path from "node:path";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth-options";
-import { recordAdminAudit } from "@/lib/admin-audit";
-import { prisma } from "@/lib/prisma";
-import { guideMdxPath } from "@/lib/guide-content";
-import { stringifyGuideMdx } from "@/lib/guide-mdx";
+import { authOptions } from "@/lib/auth/auth-options";
+import { recordAdminAudit } from "@/lib/admin/admin-audit";
+import { prisma } from "@/lib/db/prisma";
+import { guideMdxPath } from "@/lib/content/guide-content";
+import { stringifyGuideMdx } from "@/lib/content/guide-mdx";
 
 async function requireAdminSession() {
   const session = await getServerSession(authOptions);

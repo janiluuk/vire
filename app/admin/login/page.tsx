@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="min-h-tap w-full rounded-lg border border-em px-4 text-lg focus:border-verso-green focus:outline-none focus:ring-2 focus:ring-verso-green"
+            className="min-h-tap w-full rounded-lg border border-em px-4 text-lg focus:border-vire-green focus:outline-none focus:ring-2 focus:ring-vire-green"
           />
         </div>
         <div>
@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="min-h-tap w-full rounded-lg border border-em px-4 text-lg focus:border-verso-green focus:outline-none focus:ring-2 focus:ring-verso-green"
+            className="min-h-tap w-full rounded-lg border border-em px-4 text-lg focus:border-vire-green focus:outline-none focus:ring-2 focus:ring-vire-green"
           />
         </div>
         {error ? (
@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="min-h-tap rounded-xl bg-verso-green px-6 py-3 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60"
+          className="min-h-tap rounded-xl bg-vire-green px-6 py-3 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60"
         >
           {loading ? "…" : t("signIn")}
         </button>

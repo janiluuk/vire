@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireAdmin } from "@/lib/require-admin";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { prisma } from "@/lib/db/prisma";
 import fiMessages from "@/messages/fi.json";
 
 const a = fiMessages.admin;
@@ -15,7 +15,7 @@ export default async function AdminUsbOrderDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/admin/usb-orders" className="text-verso-green underline">
+      <Link href="/admin/usb-orders" className="text-vire-green underline">
         {a.usbDetailBack}
       </Link>
       <h1 className="mt-6 text-3xl font-bold">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import appsData from "@/data/apps.json";
-import { localePathAlternates } from "@/lib/seo";
+import { localePathAlternates } from "@/lib/site/seo";
 import { AppGrid, type AppItem } from "@/components/apps/AppGrid";
 
 export async function generateMetadata({

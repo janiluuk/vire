@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   extractJsonObject,
   parseAiInsight,
-} from "@/lib/laptop-specs";
+} from "@/lib/specs/laptop-specs";
 
 describe("laptop-specs AI JSON parsing", () => {
   it("parses fenced JSON", () => {

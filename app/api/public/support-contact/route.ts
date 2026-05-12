@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { sendSupportContactEmail } from "@/lib/email";
-import { getRequestId, logApiEvent } from "@/lib/log";
-import { checkRateLimit, getClientIpFromHeaders } from "@/lib/rate-limit";
+import { sendSupportContactEmail } from "@/lib/email/email";
+import { getRequestId, logApiEvent } from "@/lib/logging/log";
+import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
 const bodySchema = z.object({
   name: z.string().trim().min(1).max(200),

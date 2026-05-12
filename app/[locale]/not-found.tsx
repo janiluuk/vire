@@ -10,7 +10,7 @@ export default async function NotFound() {
       <p className="mt-10">
         <Link
           href="/"
-          className="min-h-tap inline-flex rounded-lg bg-verso-green px-6 py-3 font-semibold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
+          className="min-h-tap inline-flex rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
         >
           {t("home")}
         </Link>

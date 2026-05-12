@@ -33,7 +33,7 @@ export default defineConfig({
       HOSTNAME: "127.0.0.1",
       DATABASE_URL: nonEmptyEnv(
         "DATABASE_URL",
-        "postgresql://postgres:password@127.0.0.1:5432/verso",
+        "postgresql://postgres:password@127.0.0.1:5432/vire",
       ),
       NEXTAUTH_SECRET: nonEmptyEnv(
         "NEXTAUTH_SECRET",

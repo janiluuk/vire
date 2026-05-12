@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { localePathAlternates } from "@/lib/seo";
+import { localePathAlternates } from "@/lib/site/seo";
 import { SpeedBar } from "@/components/home/SpeedBar";
 
 export async function generateMetadata({
@@ -35,9 +35,9 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto max-w-content space-y-20 px-6 py-12 sm:px-12 sm:py-16">
-      <section className="verso-hero">
-        <div className="verso-hero-inner">
-          <p className="verso-eyebrow">{t("eyebrow")}</p>
+      <section className="vire-hero">
+        <div className="vire-hero-inner">
+          <p className="vire-eyebrow">{t("eyebrow")}</p>
           <h1 className="font-display text-balance text-4xl font-extrabold tracking-hero text-ink sm:text-5xl md:text-[3.25rem]">
             {t("title")}
           </h1>
@@ -45,10 +45,10 @@ export default async function HomePage() {
             {t("subtitle")}
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link href="/palvelu" className="verso-btn-primary">
+            <Link href="/palvelu" className="vire-btn-primary">
               {t("ctaService")}
             </Link>
-            <Link href="/itse" className="verso-btn-secondary">
+            <Link href="/itse" className="vire-btn-secondary">
               {t("ctaDiy")}
             </Link>
           </div>
@@ -124,7 +124,7 @@ export default async function HomePage() {
           ).map(({ tierKey, noteKey, featured }) => (
             <div
               key={tierKey}
-              className={`verso-card-hover relative flex flex-col p-7 text-center ${
+              className={`vire-card-hover relative flex flex-col p-7 text-center ${
                 featured ? "pricing-card-featured" : ""
               }`}
             >
@@ -133,7 +133,7 @@ export default async function HomePage() {
                   {t("pricingBadgeFeatured")}
                 </span>
               ) : null}
-              <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-verso-green/40" />
+              <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-vire-green/40" />
               <h3 className="font-display text-xl font-bold tracking-tight text-ink">
                 {t(tierKey)}
               </h3>
@@ -164,8 +164,8 @@ export default async function HomePage() {
               "benefitSupport",
             ] as const
           ).map((key) => (
-            <div key={key} className="verso-card p-6 sm:p-7">
-              <span className="text-lg text-verso-green/90" aria-hidden>
+            <div key={key} className="vire-card p-6 sm:p-7">
+              <span className="text-lg text-vire-green/90" aria-hidden>
                 ◆
               </span>
               <p className="mt-3 text-lg font-semibold leading-snug text-ink">
@@ -177,7 +177,7 @@ export default async function HomePage() {
       </section>
 
       <section
-        className="verso-card border-g bg-g/[0.04] p-8 sm:p-10"
+        className="vire-card border-g bg-g/[0.04] p-8 sm:p-10"
         aria-labelledby="trust-title"
       >
         <h2
@@ -188,19 +188,19 @@ export default async function HomePage() {
         </h2>
         <ul className="mt-5 space-y-3 text-lg leading-relaxed text-ink">
           <li className="flex gap-3">
-            <span className="text-verso-green" aria-hidden>
+            <span className="text-vire-green" aria-hidden>
               ✓
             </span>
             <span>{t("trustSupport")}</span>
           </li>
           <li className="flex gap-3">
-            <span className="text-verso-green" aria-hidden>
+            <span className="text-vire-green" aria-hidden>
               ✓
             </span>
             <span>{t("trustParts")}</span>
           </li>
           <li className="flex gap-3">
-            <span className="text-verso-green" aria-hidden>
+            <span className="text-vire-green" aria-hidden>
               ✓
             </span>
             <span>{t("trustDelivery")}</span>

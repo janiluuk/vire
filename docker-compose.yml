@@ -1,4 +1,4 @@
-# Verso stack
+# Vire stack
 #
 # Postgres + Prisma migrations (default — no app image):
 #   docker compose up -d
@@ -14,16 +14,16 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB:-verso}
+      POSTGRES_DB: ${POSTGRES_DB:-vire}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - verso_pgdata:/var/lib/postgresql/data
+      - vire_pgdata:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-verso}",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-vire}",
         ]
       interval: 5s
       timeout: 5s
@@ -34,7 +34,7 @@ services:
     image: node:20-bookworm-slim
     restart: "no"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-verso}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-vire}
     volumes:
       - ./prisma:/app/prisma:ro
     working_dir: /app
@@ -57,11 +57,11 @@ services:
     ports:
       - "${APP_PORT:-1337}:3000"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-verso}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-vire}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-dev-secret-change-in-production-min-32-chars}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:1337}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:1337}
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@verso.fi}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@vire.fi}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme}
     depends_on:
       db:
@@ -82,4 +82,4 @@ services:
       start_period: 40s
 
 volumes:
-  verso_pgdata:
+  vire_pgdata:

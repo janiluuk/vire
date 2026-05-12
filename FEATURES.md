@@ -1,4 +1,4 @@
-# Verso — Feature Expansion Spec
+# Vire — Feature Expansion Spec
 
 > For coding agents. Cross-reference **`ROADMAP.md`** for stack decisions and **`DESIGN_SYSTEM.md`** for all UI rules.  
 > Each feature is self-contained. Build them in priority order unless instructed otherwise.
@@ -10,12 +10,12 @@
 | # | Feature | Effort | Impact | Build after |
 |---|---|---|---|---|
 | 1 | Data migration add-on | Low | High | Phase 1 order wizard |
-| 2 | Verso Care subscription | Medium | Very high | Phase 2 payments |
+| 2 | Vire Care subscription | Medium | Very high | Phase 2 payments |
 | 3 | Verified compatibility database | Medium | High | Phase 3 checker |
 | 4 | Spec checker app (PDF report) | Medium | High | Phase 3 checker |
 | 5 | Component sourcing transparency | Low | Medium | Phase 1 service page |
 | 6 | Starter kit product | Low | Medium | Phase 2 USB order |
-| 7 | Verso for Good social tier | Low | Medium | Phase 2 pricing |
+| 7 | Vire for Good social tier | Low | Medium | Phase 2 pricing |
 | 8 | Group / neighbourhood upgrade day | Medium | Medium | Phase 4 post-launch |
 | 9 | Corporate device donation pipeline | High | Very high | Phase 5 |
 | 10 | Workshop programme | Medium | Medium | Phase 5 |
@@ -27,7 +27,7 @@
 
 ### What it is
 
-An optional €35–50 service add-on in the order wizard. Verso migrates the customer's files, bookmarks, email settings, and photos from their old Windows installation to Linux Mint before the original drive is wiped. Removes the single biggest emotional barrier to conversion: fear of losing everything.
+An optional €35–50 service add-on in the order wizard. Vire migrates the customer's files, bookmarks, email settings, and photos from their old Windows installation to Linux Mint before the original drive is wiped. Removes the single biggest emotional barrier to conversion: fear of losing everything.
 
 ### Why it matters
 
@@ -75,35 +75,35 @@ model Order {
 
 ---
 
-## Feature 2 — Verso Care subscription
+## Feature 2 — Vire Care subscription
 
 ### What it is
 
-An optional recurring support subscription that activates after the included 90-day support period expires. Customers pay €7.90/month and receive: ongoing remote help, priority Discord, OS update notifications, and an annual health check call. Transforms Verso from a one-time transaction business into a recurring revenue model.
+An optional recurring support subscription that activates after the included 90-day support period expires. Customers pay €7.90/month and receive: ongoing remote help, priority Discord, OS update notifications, and an annual health check call. Transforms Vire from a one-time transaction business into a recurring revenue model.
 
 ### Why it matters
 
-A customer who subscribes to Verso Care has a lifetime value of €94.80/year on top of the original order. At 50 subscribers this is €4,740/year in predictable recurring revenue — enough to fund a part-time support role. Churn will be low because the alternative (paying for ad-hoc tech support) costs €50–80/hour.
+A customer who subscribes to Vire Care has a lifetime value of €94.80/year on top of the original order. At 50 subscribers this is €4,740/year in predictable recurring revenue — enough to fund a part-time support role. Churn will be low because the alternative (paying for ad-hoc tech support) costs €50–80/hour.
 
 ### User flow
 
 **Onboarding:**
 
-1. 75 days after order completion (15 days before support expires), Verso sends an automated email: "Tukesi päättyy 15 päivän kuluttua. Jatka Verso Care -tilauksella."
+1. 75 days after order completion (15 days before support expires), Vire sends an automated email: "Tukesi päättyy 15 päivän kuluttua. Jatka Vire Care -tilauksella."
 2. Email links to `/care` — a dedicated landing page explaining the subscription.
-3. Customer clicks "Tilaa Verso Care" → Stripe subscription checkout (monthly, cancel anytime).
-4. On successful subscription: customer record updated, care dashboard unlocked at `/oma-verso`.
+3. Customer clicks "Tilaa Vire Care" → Stripe subscription checkout (monthly, cancel anytime).
+4. On successful subscription: customer record updated, care dashboard unlocked at `/oma-vire`.
 
 **Ongoing:**
 
 - Monthly: customer receives a newsletter with one Linux Mint tip and a reminder of their subscription benefits.
 - Quarterly: automated "koneesi terveys" (computer health) email with a simple self-assessment checklist.
 - Annually: a 30-min scheduled call offered via Calendly booking link.
-- Anytime: priority #verso-care channel in Discord (invite sent on subscription).
+- Anytime: priority #vire-care channel in Discord (invite sent on subscription).
 
 **Cancellation:**
 
-- Cancel anytime via `/oma-verso` dashboard or by emailing tuki@verso.fi.
+- Cancel anytime via `/oma-vire` dashboard or by emailing tuki@vire.fi.
 - On cancellation: subscription ends at period end, customer notified, downgraded to Discord-only.
 
 ### Database changes
@@ -132,7 +132,7 @@ enum CareStatus {
 
 ### Stripe setup
 
-- Create a Stripe Product: "Verso Care"
+- Create a Stripe Product: "Vire Care"
 - Create a Stripe Price: €7.90/month, recurring
 - Store price ID in env: `STRIPE_PRICE_CARE_MONTHLY`
 - Webhook events to handle:
@@ -144,7 +144,7 @@ enum CareStatus {
 ### New pages
 
 - `/care` — landing page: benefits, price, "cancel anytime" reassurance, CTA to subscribe
-- `/oma-verso` — customer dashboard (no login required — access via magic link sent to email):
+- `/oma-vire` — customer dashboard (no login required — access via magic link sent to email):
   - Subscription status + next billing date
   - Cancel button (confirms with "Are you sure?" modal)
   - Link to priority Discord channel
@@ -182,7 +182,7 @@ enum CareStatus {
 
 ### What it is
 
-A public searchable database at `/koneet` listing every computer model Verso has physically verified. Each entry shows: compatibility status, SSD slot type, max RAM, estimated boot time after upgrade, and recommended components. Every model page is a unique SEO landing page.
+A public searchable database at `/koneet` listing every computer model Vire has physically verified. Each entry shows: compatibility status, SSD slot type, max RAM, estimated boot time after upgrade, and recommended components. Every model page is a unique SEO landing page.
 
 ### Why it matters
 
@@ -230,14 +230,14 @@ Statically generated at build time for all APPROVED/REJECTED models. ISR (Increm
 2. Specs summary: SSD slot, max RAM, estimated boot time after upgrade
 3. Recommended component: SSD name + Verkkokauppa link (opens in new tab)
 4. Step-by-step mini-guide (3 steps: check, upgrade, install) with links to full `/itse` guides
-5. Order CTA: "Haluatko että Verso tekee tämän puolestasi?" → pre-fills order wizard with this model
+5. Order CTA: "Haluatko että Vire tekee tämän puolestasi?" → pre-fills order wizard with this model
 6. Related models: other Lenovo ThinkPads, or same-era Dell equivalents
 
 **SEO:**
 
-- `generateMetadata()` per model: title = "[Make] [Model] — SSD-päivitys, Linux Mint, yhteensopivuus | Verso"
-- description = "Verso on tarkistanut [Make] [Model]:n yhteensopivuuden. [Compatibility verdict]. SSD-paikka: [slot]. Päivitys maksaa [price] €."
-- og:image: dynamic image via `next/og` showing model name + compatibility badge + Verso logo
+- `generateMetadata()` per model: title = "[Make] [Model] — SSD-päivitys, Linux Mint, yhteensopivuus | Vire"
+- description = "Vire on tarkistanut [Make] [Model]:n yhteensopivuuden. [Compatibility verdict]. SSD-paikka: [slot]. Päivitys maksaa [price] €."
+- og:image: dynamic image via `next/og` showing model name + compatibility badge + Vire logo
 
 ### Admin changes — `/admin/models/[id]`
 
@@ -265,7 +265,7 @@ PATCH /api/models/[id]/view          → increment view count (fire and forget)
 
 ### What it is
 
-A downloadable Windows/Mac application (built with Tauri) that automatically reads the computer's specs and generates a "Verso Compatibility Report" PDF. The report is shareable, includes a QR code linking to a pre-filled order, and gives Verso aggregate data on Finland's hardware landscape.
+A downloadable Windows/Mac application (built with Tauri) that automatically reads the computer's specs and generates a "Vire Compatibility Report" PDF. The report is shareable, includes a QR code linking to a pre-filled order, and gives Vire aggregate data on Finland's hardware landscape.
 
 ### Why it matters
 
@@ -276,11 +276,11 @@ Removes the friction of manual spec entry entirely. The PDF report is a shareabl
 ```
 Tauri app (Rust + web frontend)
   └── reads: CPU, RAM, disk type/size, OS version, screen size
-  └── calls: verso.fi/api/check (POST with specs JSON)
+  └── calls: vire.fi/api/check (POST with specs JSON)
   └── receives: compatibility verdict + recommended upgrade
   └── generates: PDF report via html-to-pdf
   └── opens: report in default PDF viewer
-  └── optionally: opens verso.fi/tilaa?model=[...]&ram=[...]&disk=[...] in browser
+  └── optionally: opens vire.fi/tilaa?model=[...]&ram=[...]&disk=[...] in browser
 ```
 
 ### Spec collection (per OS)
@@ -301,7 +301,7 @@ Get-PhysicalDisk | Select MediaType, Size
 
 The report is generated as HTML then converted to PDF. Include:
 
-1. **Header:** Verso logo + "Yhteensopivuusraportti" + date generated
+1. **Header:** Vire logo + "Yhteensopivuusraportti" + date generated
 2. **Machine summary box:** CPU, RAM, disk type, OS
 3. **Verdict block (large, colour-coded):**
    - 🟢 Yhteensopiva — "Koneesi soveltuu erinomaisesti päivitykseen"
@@ -309,8 +309,8 @@ The report is generated as HTML then converted to PDF. Include:
    - 🔴 Ei suositeltu — "Koneesi laitteisto ei tue päivitystä täysipainoisesti"
 4. **Estimated improvements table:** Boot time before → after, app launch time, battery impact
 5. **Recommended upgrade:** SSD model, RAM recommendation, estimated total cost
-6. **QR code:** links to `verso.fi/tilaa?ref=report&model=[slug]` — tracked conversion
-7. **Footer:** verso.fi | hei@verso.fi | "Raportti on voimassa 90 päivää"
+6. **QR code:** links to `vire.fi/tilaa?ref=report&model=[slug]` — tracked conversion
+7. **Footer:** vire.fi | hei@vire.fi | "Raportti on voimassa 90 päivää"
 
 ### API route — `/api/check` (POST)
 
@@ -359,7 +359,7 @@ model CompatibilityCheck {
 ### Tauri app distribution
 
 - Build for Windows (x64, arm64) and macOS (x64, Apple Silicon)
-- Host installers at `verso.fi/checker/download`
+- Host installers at `vire.fi/checker/download`
 - Auto-update via Tauri updater pointing to GitHub releases
 - App is unsigned initially (show install instructions for bypassing Gatekeeper/SmartScreen)
 - Future: code signing certificate (~€200/year) once volume justifies
@@ -377,11 +377,11 @@ model CompatibilityCheck {
 
 ### What it is
 
-On the service detail page and each order confirmation, Verso shows exactly which SSD (and RAM if applicable) will be installed: brand, model, capacity, read/write speeds, warranty, and a direct link to the product on Verkkokauppa. No other refurb service does this.
+On the service detail page and each order confirmation, Vire shows exactly which SSD (and RAM if applicable) will be installed: brand, model, capacity, read/write speeds, warranty, and a direct link to the product on Verkkokauppa. No other refurb service does this.
 
 ### Why it matters
 
-Costs nothing to implement. Builds exceptional trust with both B2C customers ("I can see exactly what I'm getting") and B2B customers ("no cheap no-name components"). Differentiates Verso from every competitor.
+Costs nothing to implement. Builds exceptional trust with both B2C customers ("I can see exactly what I'm getting") and B2B customers ("no cheap no-name components"). Differentiates Vire from every competitor.
 
 ### Implementation
 
@@ -460,13 +460,13 @@ A physical product bundle sold at `/itse` for €19.90: a bootable Linux Mint US
 
 ### Kit contents
 
-1. **USB stick (16GB+):** Linux Mint latest LTS, pre-flashed, bootable, labelled "Verso — Linux Mint [version]"
+1. **USB stick (16GB+):** Linux Mint latest LTS, pre-flashed, bootable, labelled "Vire — Linux Mint [version]"
 2. **Quick-start card (A5, laminated):** Front — "5 ensimmäistä asiaa Linux Mintissä" (5 first things). Back — WiFi setup, browser setup, software installer location, how to get help (Discord QR code)
 3. **Keyboard sticker set (A6 sheet):** Common shortcuts in Finnish: Ctrl+C = Kopioi, Ctrl+V = Liitä, Win key = Sovellusvalikko etc. Translucent, removable.
 
 ### New Stripe product
 
-- Product: "Verso Starter Kit"
+- Product: "Vire Starter Kit"
 - Price: €19.90 (includes Finnish postage)
 - Env var: `STRIPE_PRICE_STARTER_KIT`
 
@@ -500,7 +500,7 @@ model StarterKitOrder {
 
 ---
 
-## Feature 7 — Verso for Good (social pricing tier)
+## Feature 7 — Vire for Good (social pricing tier)
 
 ### What it is
 
@@ -509,7 +509,7 @@ A formally named discounted service tier for verified recipients: pensioners on 
 ### Why it matters
 
 - Unlocks press coverage and editorial features (Yle loves this angle)
-- Makes Verso eligible for additional EU social inclusion grants
+- Makes Vire eligible for additional EU social inclusion grants
 - Gives NGO partners (SPR, Pelastusarmeija) a concrete reason to refer clients
 - Builds genuine community goodwill — customers talk about brands that treat them fairly
 - The margin hit (~€50 per order) is likely offset within 6 months by PR and partnership value
@@ -518,13 +518,13 @@ A formally named discounted service tier for verified recipients: pensioners on 
 
 1. **NGO referral code:** Partner NGOs get a unique discount code (e.g. `SPR2026`). They give it to clients. Code applied at checkout = €50 discount automatically.
 2. **Self-declared + document upload:** Customer checks "Olen eläkeläinen / työtön" in order form and uploads a photo of relevant card. Admin reviews before confirming order.
-3. **Trust-based for now:** At low volume, simply add a checkbox "Haen Verso for Good -alennusta" and ask admin to verify manually. Automate later.
+3. **Trust-based for now:** At low volume, simply add a checkbox "Haen Vire for Good -alennusta" and ask admin to verify manually. Automate later.
 
 ### Implementation
 
 **Order wizard — Step 3 (tier selection):**
 
-- Add a subtle "Verso for Good" link below the pricing cards: "Oletko eläkeläinen, työtön tai NGO:n asiakas? Katso alennetut hinnat ↓"
+- Add a subtle "Vire for Good" link below the pricing cards: "Oletko eläkeläinen, työtön tai NGO:n asiakas? Katso alennetut hinnat ↓"
 - Expands to show the discounted pricing with verification instruction
 
 **Discount codes in Stripe:**
@@ -541,7 +541,7 @@ VERGOOD-TYO       → -€50 (self-declared unemployed)
 ```prisma
 model Order {
   // ... existing fields ...
-  versoForGood      Boolean @default(false)
+  vireForGood      Boolean @default(false)
   goodTierReason    String? // "spr_referral" | "pensioner" | "unemployed" | "refugee"
   goodTierVerified  Boolean @default(false)
   goodTierDocUrl    String? // uploaded verification document (R2/S3 URL)
@@ -550,12 +550,12 @@ model Order {
 
 **Admin changes:**
 
-- Orders flagged as Verso for Good show an amber badge in the order list
+- Orders flagged as Vire for Good show an amber badge in the order list
 - Order detail shows verification reason + document upload (if applicable)
 - "Verify" / "Reject" buttons — sends email to customer either way
-- Monthly report: X Verso for Good orders, total discount given, NGO source breakdown
+- Monthly report: X Vire for Good orders, total discount given, NGO source breakdown
 
-**Dedicated page `/verso-for-good`:**
+**Dedicated page `/vire-for-good`:**
 
 - Who qualifies
 - How to apply
@@ -568,7 +568,7 @@ model Order {
 
 ### What it is
 
-A batch discount booking for 3+ people from the same area who book together. The group organiser gets their upgrade free if they bring 4+ others. Verso batches the work into one pickup/delivery run. Targets apartment buildings, sports clubs, village associations, and parish groups.
+A batch discount booking for 3+ people from the same area who book together. The group organiser gets their upgrade free if they bring 4+ others. Vire batches the work into one pickup/delivery run. Targets apartment buildings, sports clubs, village associations, and parish groups.
 
 ### Why it matters
 
@@ -581,12 +581,12 @@ A batch discount booking for 3+ people from the same area who book together. The
 
 1. Customer lands on `/ryhmätilaus` (group booking page)
 2. They enter: their postcode, their email, "I want to organise a group booking"
-3. Verso sends them a unique group code + a shareable link: `verso.fi/ryhma/ABC123`
+3. Vire sends them a unique group code + a shareable link: `vire.fi/ryhma/ABC123`
 4. Organiser shares the link with neighbours/friends
 5. Each participant fills in their machine details at the group link
 6. When 3+ participants have joined: group is confirmed, organiser notified
 7. When 4+ participants: organiser's upgrade is free (automatically applied at checkout)
-8. Verso schedules one pickup run for the whole group
+8. Vire schedules one pickup run for the whole group
 
 ### DB changes
 
@@ -605,7 +605,7 @@ model GroupBooking {
 
 enum GroupStatus {
   OPEN        // accepting participants
-  CONFIRMED   // 3+ joined, Verso confirmed
+  CONFIRMED   // 3+ joined, Vire confirmed
   SCHEDULED   // date agreed
   COMPLETED
   CANCELLED
@@ -647,18 +647,18 @@ function applyGroupDiscount(order: Order, group: GroupBooking): number {
 
 ### What it is
 
-A formal programme where Finnish companies donate their decommissioned laptops to Verso. Verso refurbishes them, donates a portion to NGOs and schools at cost, and sells the rest commercially. The donating company receives a sustainability report for ESG documentation.
+A formal programme where Finnish companies donate their decommissioned laptops to Vire. Vire refurbishes them, donates a portion to NGOs and schools at cost, and sells the rest commercially. The donating company receives a sustainability report for ESG documentation.
 
 ### Why it matters
 
-Solves Verso's most critical scaling constraint: hardware sourcing. At high volume, buying SSDs and finding used hardware limits throughput. The donation pipeline provides free incoming hardware — the raw material of the business — while generating PR, NGO goodwill, and B2B relationships simultaneously.
+Solves Vire's most critical scaling constraint: hardware sourcing. At high volume, buying SSDs and finding used hardware limits throughput. The donation pipeline provides free incoming hardware — the raw material of the business — while generating PR, NGO goodwill, and B2B relationships simultaneously.
 
 ### Programme flow
 
-1. Company contacts Verso via `/yritysyhteistyö` (corporate partnership page)
-2. Verso assesses the fleet: Verso visits or company sends a hardware inventory spreadsheet
-3. Agreement signed: company donates X devices, Verso provides sustainability report within 30 days of processing
-4. Pickup arranged (Verso handles logistics for 10+ devices)
+1. Company contacts Vire via `/yritysyhteistyö` (corporate partnership page)
+2. Vire assesses the fleet: Vire visits or company sends a hardware inventory spreadsheet
+3. Agreement signed: company donates X devices, Vire provides sustainability report within 30 days of processing
+4. Pickup arranged (Vire handles logistics for 10+ devices)
 5. Devices assessed: graded A (excellent) / B (good) / C (marginal)
 6. Grade A and B devices: refurbished and sold or donated
 7. Grade C devices: components harvested, remainder sent to certified e-waste recycler
@@ -667,7 +667,7 @@ Solves Verso's most critical scaling constraint: hardware sourcing. At high volu
 ### Sustainability report (auto-generated PDF)
 
 ```
-[Company logo + Verso logo]
+[Company logo + Vire logo]
 
 Vastuullisuusraportti — [Company name] — [Date]
 
@@ -684,7 +684,7 @@ Lahjoitettu seuraaville organisaatioille:
   [School name]: X laitetta
 
 Tämä raportti on tarkoitettu yrityksenne ESG-dokumentaatioon.
-Lisätietoja: verso.fi/yritysyhteistyö
+Lisätietoja: vire.fi/yritysyhteistyö
 ```
 
 ### DB changes
@@ -738,7 +738,7 @@ enum DonationStatus {
 
 ### What it is
 
-Free 90-minute "Päivitä koneesi" (Upgrade your computer) workshops at libraries and community centres. Participants bring their own laptop. Verso walks them through the process live. At the end, those who don't want to DIY can hand their machine to Verso on the spot.
+Free 90-minute "Päivitä koneesi" (Upgrade your computer) workshops at libraries and community centres. Participants bring their own laptop. Vire walks them through the process live. At the end, those who don't want to DIY can hand their machine to Vire on the spot.
 
 ### Why it matters
 
@@ -751,15 +751,15 @@ Free 90-minute "Päivitä koneesi" (Upgrade your computer) workshops at librarie
 ### Workshop format
 
 ```
-0–10 min:   Introduction. What is Verso? Why do computers get slow?
+0–10 min:   Introduction. What is Vire? Why do computers get slow?
 10–20 min:  Live demo. Boot a before-upgrade laptop (2 min). Install SSD live or use pre-done.
             Boot the after-upgrade laptop (15 sec). Audience reaction does the selling.
-20–40 min:  Participants check their own machines (using the Verso web checker on their phone
+20–40 min:  Participants check their own machines (using the Vire web checker on their phone
             or a provided tablet). Anyone who needs help checking specs gets 1:1 attention.
 40–60 min:  Show Linux Mint. Click through the app alternatives. Address "but I use Word" live.
-60–80 min:  Q&A. Verso answers questions about the service, pricing, and process.
+60–80 min:  Q&A. Vire answers questions about the service, pricing, and process.
 80–90 min:  On-the-spot orders. Participants who want to hand over their machine fill in a
-            paper order form. Machine is logged, receipt given, collected by Verso same day.
+            paper order form. Machine is logged, receipt given, collected by Vire same day.
 ```
 
 ### Booking system
@@ -814,7 +814,7 @@ A published annual report: "Suomen Konekatsaus [year]" (Finland Computer Survey)
 
 ### Why it matters
 
-- Positions Verso as the authority on hardware aging in Finland
+- Positions Vire as the authority on hardware aging in Finland
 - Generates press coverage when published
 - Strengthens grant applications with hard data
 - Reinforces the sustainability narrative with real numbers
@@ -833,7 +833,7 @@ A published annual report: "Suomen Konekatsaus [year]" (Finland Computer Survey)
 3. Fleet composition: most common makes/models checked
 4. Age distribution: device age histogram
 5. Upgrade potential: % compatible vs borderline vs incompatible
-6. Environmental impact: total CO₂ saved by Verso's completed upgrades vs if devices had been replaced
+6. Environmental impact: total CO₂ saved by Vire's completed upgrades vs if devices had been replaced
 7. Geographic distribution: orders by region
 8. App alternatives usage: most-viewed alternatives on `/sovellukset` (from Plausible)
 9. Outlook: Windows 10 EOL impact projection
@@ -878,7 +878,7 @@ export async function uploadFile(
 Buckets needed:
 
 - `reports` — compatibility report PDFs (Feature 4)
-- `documents` — Verso for Good verification uploads (Feature 7)
+- `documents` — Vire for Good verification uploads (Feature 7)
 - `donation-reports` — corporate sustainability reports (Feature 9)
 - `hardware-reports` — annual hardware report PDFs (Feature 11)
 
@@ -926,5 +926,5 @@ CHECKER_API_SECRET=   # shared secret between Tauri app and /api/check
 6. PDF generation (Features 4, 9, 11) uses `puppeteer` running a server action. Never block the request thread — use a background job pattern (queue the generation, return immediately, send email when done).
 7. File uploads (Feature 7 verification docs) must validate file type (jpg/png/pdf only) and size (max 5MB) on the server before storing.
 8. The `CompatibilityCheck` table records every check for aggregate reporting — never delete records from this table.
-9. Verso for Good discount codes are Stripe coupon codes — do not implement a custom discount system.
+9. Vire for Good discount codes are Stripe coupon codes — do not implement a custom discount system.
 10. Group booking codes are 6-character alphanumeric, uppercase, generated with `nanoid(6).toUpperCase()`. Collision-check against DB before issuing.

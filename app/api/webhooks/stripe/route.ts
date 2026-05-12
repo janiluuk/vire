@@ -1,8 +1,8 @@
 import Stripe from "stripe";
-import { getRequestId, logApiEvent } from "@/lib/log";
-import { prisma } from "@/lib/prisma";
-import { getStripe } from "@/lib/stripe";
-import { sendOrderConfirmedEmail, sendUsbConfirmedEmail } from "@/lib/email";
+import { getRequestId, logApiEvent } from "@/lib/logging/log";
+import { prisma } from "@/lib/db/prisma";
+import { getStripe } from "@/lib/billing/stripe";
+import { sendOrderConfirmedEmail, sendUsbConfirmedEmail } from "@/lib/email/email";
 
 function isPrismaUniqueViolation(e: unknown): boolean {
   return (

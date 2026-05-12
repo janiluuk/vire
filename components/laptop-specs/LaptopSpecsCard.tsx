@@ -1,4 +1,4 @@
-import type { LaptopSpecsInsight } from "@/lib/laptop-specs";
+import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
 
 type Labels = {
   title: string;
@@ -42,7 +42,7 @@ export function LaptopSpecsCard(props: {
 
   return (
     <section
-      className={`rounded-xl border border-g/25 bg-verso-green/5 p-4 sm:p-5 ${className}`}
+      className={`rounded-xl border border-g/25 bg-vire-green/5 p-4 sm:p-5 ${className}`}
       aria-labelledby="laptop-specs-heading"
     >
       <h3 id="laptop-specs-heading" className="text-lg font-semibold text-ink">
@@ -59,7 +59,7 @@ export function LaptopSpecsCard(props: {
             href={insight.specUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-tap items-center text-lg font-semibold text-verso-green underline underline-offset-2 hover:opacity-90"
+            className="inline-flex min-h-tap items-center text-lg font-semibold text-vire-green underline underline-offset-2 hover:opacity-90"
           >
             {labels.link}
           </a>

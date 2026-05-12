@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getRequestId, logApiEvent } from "@/lib/log";
-import { prisma } from "@/lib/prisma";
-import { getStripe, stripeConfigured } from "@/lib/stripe";
-import { buildUsbLineItems } from "@/lib/stripe-line-items";
-import { USB_ORDER_CENTS, getUsbStripePriceId } from "@/lib/pricing";
-import { checkRateLimit, getClientIpFromHeaders } from "@/lib/rate-limit";
-import { getSiteUrl } from "@/lib/site-url";
+import { getRequestId, logApiEvent } from "@/lib/logging/log";
+import { prisma } from "@/lib/db/prisma";
+import { getStripe, stripeConfigured } from "@/lib/billing/stripe";
+import { buildUsbLineItems } from "@/lib/billing/stripe-line-items";
+import { USB_ORDER_CENTS, getUsbStripePriceId } from "@/lib/billing/pricing";
+import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
+import { getSiteUrl } from "@/lib/site/site-url";
 
 const usbSchema = z.object({
   customerName: z.string().min(1).max(200),

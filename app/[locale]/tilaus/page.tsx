@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { localePathAlternates } from "@/lib/seo";
+import { localePathAlternates } from "@/lib/site/seo";
 import { OrderTrackingForm } from "@/components/tilaus/OrderTrackingForm";
 
 export async function generateMetadata({
@@ -32,7 +32,7 @@ export default async function TilausHubPage() {
       <p className="text-center text-lg text-fog">
         <Link
           href="/tuki"
-          className="font-semibold text-verso-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-verso-green"
+          className="font-semibold text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
         >
           ← {tuki("title")}
         </Link>

@@ -24,7 +24,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-          POSTGRES_DB: verso
+          POSTGRES_DB: vire
         ports:
           - 5432:5432
         options: >-
@@ -34,11 +34,11 @@ jobs:
           --health-retries 10
 
     env:
-      DATABASE_URL: postgresql://postgres:password@localhost:5432/verso
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/vire
       NEXTAUTH_SECRET: ci-secret-ci-secret-ci-secret-ci-secret
       NEXTAUTH_URL: http://127.0.0.1:1337
       NEXT_PUBLIC_SITE_URL: http://127.0.0.1:1337
-      ADMIN_EMAIL: admin@verso.fi
+      ADMIN_EMAIL: admin@vire.fi
       ADMIN_PASSWORD: testpassword123
 
     steps:

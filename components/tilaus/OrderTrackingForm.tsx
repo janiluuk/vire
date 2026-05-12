@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { LaptopSpecsCard } from "@/components/laptop-specs/LaptopSpecsCard";
-import type { LaptopSpecsInsight } from "@/lib/laptop-specs";
-import type { PublicServiceOrder, PublicUsbOrder } from "@/lib/public-order";
+import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
+import type { PublicServiceOrder, PublicUsbOrder } from "@/lib/orders/public-order";
 
 type Props =
   | { variant: "hub" }
@@ -71,7 +71,7 @@ export function OrderTrackingForm(props: Props) {
 
   return (
     <div className="space-y-8">
-      <form onSubmit={onSubmit} className="verso-card space-y-6 p-6 sm:p-8">
+      <form onSubmit={onSubmit} className="vire-card space-y-6 p-6 sm:p-8">
         <div>
           <label htmlFor="track-order-id" className="mb-2 block font-semibold text-ink">
             {t("fieldOrderId")}
@@ -106,7 +106,7 @@ export function OrderTrackingForm(props: Props) {
         <button
           type="submit"
           disabled={!canSubmit || loading}
-          className="min-h-tap rounded-xl bg-verso-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.85] disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-tap rounded-xl bg-vire-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.85] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? t("submitLoading") : t("submit")}
         </button>
@@ -147,7 +147,7 @@ function OrderSummary({
     return (
       <section
         aria-labelledby="order-summary-usb"
-        className="verso-card space-y-4 p-6 sm:p-8"
+        className="vire-card space-y-4 p-6 sm:p-8"
       >
         <h2 id="order-summary-usb" className="text-2xl font-bold text-ink">
           {t("summaryTitleUsb")}
@@ -173,7 +173,7 @@ function OrderSummary({
   return (
     <section
       aria-labelledby="order-summary-service"
-      className="verso-card space-y-4 p-6 sm:p-8"
+      className="vire-card space-y-4 p-6 sm:p-8"
     >
       <h2 id="order-summary-service" className="text-2xl font-bold text-ink">
         {t("summaryTitleService")}

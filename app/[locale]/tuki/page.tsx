@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { CalendlyEmbed } from "@/components/tuki/CalendlyEmbed";
 import { SupportContactForm } from "@/components/tuki/SupportContactForm";
-import { localePathAlternates } from "@/lib/seo";
+import { localePathAlternates } from "@/lib/site/seo";
 
 export async function generateMetadata({
   params: { locale },
@@ -41,7 +41,7 @@ export default async function TukiPage() {
           {t("contactTitle")}
         </h2>
         <p className="mt-2 text-lg font-medium text-ink">{t("phone")}</p>
-        <p className="mt-1 text-2xl font-semibold text-verso-green">
+        <p className="mt-1 text-2xl font-semibold text-vire-green">
           {t("phoneValue")}
         </p>
         <p className="mt-4 text-lg font-medium text-ink">{t("email")}</p>
@@ -49,7 +49,7 @@ export default async function TukiPage() {
         <p className="mt-2 text-lg text-ink">{t("hours")}</p>
       </section>
 
-      <section aria-labelledby="booking-title" className="verso-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="booking-title" className="vire-card space-y-4 p-6 sm:p-8">
         <h2 id="booking-title" className="text-2xl font-bold text-ink">
           {t("bookingTitle")}
         </h2>
@@ -63,7 +63,7 @@ export default async function TukiPage() {
         )}
       </section>
 
-      <section aria-labelledby="form-title" className="verso-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="form-title" className="vire-card space-y-4 p-6 sm:p-8">
         <h2 id="form-title" className="text-2xl font-bold text-ink">
           {t("formTitle")}
         </h2>
