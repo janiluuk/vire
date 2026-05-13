@@ -27,6 +27,20 @@
     "serviceTabCare": "Sparkki Care",
     "serviceTabTrack": "Seuranta"
   },
+  "commandPalette": {
+    "title": "Pikanavigointi",
+    "searchPlaceholder": "Suodata sivuja…",
+    "closeHint": "Esc sulkee · ⌘K tai Ctrl+K vaihtaa",
+    "noResults": "Ei osumia.",
+    "home": "Etusivu",
+    "privacy": "Tietosuoja",
+    "forGood": "Sparkki for Good",
+    "shortcutHint": "⌘K · Ctrl K",
+    "openMobileMenu": "Avaa valikko",
+    "mobileMenuTitle": "Valikko",
+    "closeMobileMenu": "Sulje valikko",
+    "language": "Kieli"
+  },
   "deliveryStrip": {
     "ariaLabel": "Toimitus ja tuki",
     "pickup": {

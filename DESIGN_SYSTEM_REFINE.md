@@ -294,13 +294,13 @@ Reduce cognitive overload.
 
 ## Tasks
 
-- [ ] Add command palette (CMD+K)
-- [ ] Add keyboard shortcuts
+- [x] Add command palette (CMD+K) — `CommandPalette` (`⌘K` / `Ctrl+K`, filterable jump list, focus trap)
+- [x] Add keyboard shortcuts — palette toggle + Esc; hint in palette footer and `shortcutHint` on `xl+` header
 - [ ] Add smart sidebar
 - [ ] Add recent actions
 - [ ] Add route memory
 - [ ] Add breadcrumb navigation
-- [ ] Add mobile drawer navigation
+- [x] Add mobile drawer navigation — hamburger (`md:hidden`) + slide-over with main links, order CTA, locale
 
 ---
 

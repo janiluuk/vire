@@ -27,6 +27,20 @@
     "serviceTabCare": "Sparkki Care",
     "serviceTabTrack": "Track order"
   },
+  "commandPalette": {
+    "title": "Quick navigation",
+    "searchPlaceholder": "Filter pages…",
+    "closeHint": "Esc to close · ⌘K or Ctrl+K to toggle",
+    "noResults": "No matching pages.",
+    "home": "Home",
+    "privacy": "Privacy",
+    "forGood": "Sparkki for Good",
+    "shortcutHint": "⌘K · Ctrl K",
+    "openMobileMenu": "Open menu",
+    "mobileMenuTitle": "Menu",
+    "closeMobileMenu": "Close menu",
+    "language": "Language"
+  },
   "deliveryStrip": {
     "ariaLabel": "Delivery and support",
     "pickup": {

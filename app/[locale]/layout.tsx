@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import { BackgroundCanvas } from "@/components/layout/BackgroundCanvas";
 import { DeliveryStripGate } from "@/components/layout/DeliveryStripGate";
 import { LocaleMainMotion } from "@/components/layout/LocaleMainMotion";
+import { CommandPalette } from "@/components/layout/CommandPalette";
 import { NavBar } from "@/components/layout/NavBar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -61,6 +62,7 @@ export default async function LocaleLayout({
           <LocaleMainMotion>{children}</LocaleMainMotion>
         </main>
         <Footer />
+        <CommandPalette />
       </div>
     </NextIntlClientProvider>
   );

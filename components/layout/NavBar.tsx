@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
@@ -30,10 +31,54 @@ function topTabClass(active: boolean) {
   }`;
 }
 
+function MobileNavLink({
+  href,
+  active,
+  children,
+  onPick,
+}: {
+  href: string;
+  active: boolean;
+  children: ReactNode;
+  onPick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={() => {
+        onPick();
+        dispatchBackgroundNavInteraction();
+      }}
+      className={`min-h-tap rounded-lg px-4 py-3 text-base font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+        active ? "bg-g text-canvas" : "text-ink hover:bg-sunken"
+      }`}
+      aria-current={active ? "page" : undefined}
+    >
+      {children}
+    </Link>
+  );
+}
+
 export function NavBar({ locale }: { locale: string }) {
   const t = useTranslations("nav");
+  const tPal = useTranslations("commandPalette");
   const pathname = usePathname();
   const onNavClick = () => dispatchBackgroundNavInteraction();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    function onEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") setMobileOpen(false);
+    }
+    document.addEventListener("keydown", onEsc);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onEsc);
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
 
   const palveluClusterActive =
     pathname.startsWith("/palvelu") ||
@@ -69,9 +114,13 @@ export function NavBar({ locale }: { locale: string }) {
         </Link>
 
         <div className="flex flex-1 flex-wrap items-center justify-end gap-2 sm:gap-3">
+          <p className="hidden xl:block text-[10px] font-medium uppercase tracking-wider text-fog">
+            {tPal("shortcutHint")}
+          </p>
+
           <nav
             aria-label={t("mainNav")}
-            className="flex flex-wrap items-center gap-1 rounded-lg border border-em bg-sunken/80 p-1"
+            className="hidden flex-wrap items-center gap-1 rounded-lg border border-em bg-sunken/80 p-1 md:flex"
           >
             <Link
               href="/palvelu"
@@ -119,6 +168,21 @@ export function NavBar({ locale }: { locale: string }) {
             </Link>
           </nav>
 
+          <button
+            type="button"
+            className="inline-flex min-h-tap min-w-12 items-center justify-center rounded-lg border border-em bg-sunken/80 px-3 py-2 text-ink md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+            aria-expanded={mobileOpen}
+            aria-controls="site-mobile-nav"
+            onClick={() => setMobileOpen(true)}
+          >
+            <span className="sr-only">{tPal("openMobileMenu")}</span>
+            <span className="flex flex-col gap-1.5" aria-hidden>
+              <span className="block h-0.5 w-5 rounded-full bg-ink" />
+              <span className="block h-0.5 w-5 rounded-full bg-ink" />
+              <span className="block h-0.5 w-5 rounded-full bg-ink" />
+            </span>
+          </button>
+
           <Link
             href="/palvelu#palvelu-tilaa"
             onClick={onNavClick}
@@ -157,6 +221,123 @@ export function NavBar({ locale }: { locale: string }) {
           </div>
         </div>
       </div>
+
+      {mobileOpen ? (
+        <>
+          <button
+            type="button"
+            className="sparkki-modal-backdrop fixed inset-0 z-[45] md:hidden"
+            aria-hidden
+            onClick={() => setMobileOpen(false)}
+          />
+          <div
+            id="site-mobile-nav"
+            role="dialog"
+            aria-modal="true"
+            aria-label={tPal("mobileMenuTitle")}
+            className="sparkki-wizard-full fixed inset-y-0 right-0 z-[46] flex w-[min(100vw,20rem)] flex-col border-l border-edge bg-canvas shadow-elevation-md md:hidden"
+          >
+            <div className="flex items-center justify-between border-b border-edge px-4 py-3">
+              <span className="text-sm font-semibold uppercase tracking-wide text-fog">
+                {tPal("mobileMenuTitle")}
+              </span>
+              <button
+                type="button"
+                className="min-h-tap min-w-12 rounded-lg border border-em px-3 text-lg text-ink hover:bg-sunken focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+                onClick={() => setMobileOpen(false)}
+              >
+                <span className="sr-only">{tPal("closeMobileMenu")}</span>
+                <span aria-hidden>×</span>
+              </button>
+            </div>
+            <nav
+              className="flex flex-1 flex-col gap-1 overflow-y-auto p-3"
+              aria-label={t("mainNav")}
+            >
+              <MobileNavLink
+                href="/palvelu"
+                active={palveluClusterActive}
+                onPick={() => setMobileOpen(false)}
+              >
+                {t("service")}
+              </MobileNavLink>
+              <MobileNavLink
+                href="/tietoa"
+                active={infoHubActive}
+                onPick={() => setMobileOpen(false)}
+              >
+                {t("infoHub")}
+              </MobileNavLink>
+              <MobileNavLink
+                href="/itse"
+                active={itseActive}
+                onPick={() => setMobileOpen(false)}
+              >
+                {t("diy")}
+              </MobileNavLink>
+              <MobileNavLink
+                href="/meista"
+                active={aboutHubActive}
+                onPick={() => setMobileOpen(false)}
+              >
+                {t("aboutHub")}
+              </MobileNavLink>
+              <MobileNavLink
+                href="/tuki"
+                active={tukiActive}
+                onPick={() => setMobileOpen(false)}
+              >
+                {t("support")}
+              </MobileNavLink>
+              <Link
+                href="/palvelu#palvelu-tilaa"
+                onClick={() => {
+                  setMobileOpen(false);
+                  onNavClick();
+                }}
+                className="mt-2 inline-flex min-h-tap items-center justify-center rounded-lg bg-g px-4 py-3 text-sm font-bold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+              >
+                {t("ctaOrder")}
+              </Link>
+            </nav>
+            <div className="border-t border-edge p-3">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fog">
+                {tPal("language")}
+              </p>
+              <div className="flex gap-1 rounded-lg border border-em bg-sunken/80 p-1">
+                <Link
+                  href={pathname}
+                  locale="fi"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    onNavClick();
+                  }}
+                  className={`min-h-tap flex-1 rounded-md py-2 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                    locale === "fi" ? "bg-g text-canvas" : "text-fog hover:text-ink"
+                  }`}
+                  hrefLang="fi"
+                >
+                  FI
+                </Link>
+                <Link
+                  href={pathname}
+                  locale="en"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    onNavClick();
+                  }}
+                  className={`min-h-tap flex-1 rounded-md py-2 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                    locale === "en" ? "bg-g text-canvas" : "text-fog hover:text-ink"
+                  }`}
+                  hrefLang="en"
+                >
+                  EN
+                </Link>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
     </header>
   );
 }
