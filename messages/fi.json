@@ -11,6 +11,7 @@
     "infoHubOverview": "Yleiskatsaus",
     "infoBenefits": "Hyödyt",
     "aboutHub": "Meistä",
+    "aboutSubNav": "Meistä — välilehdet",
     "ctaOrder": "Tilaa →",
     "infoLinux": "Päivitysprosessi",
     "infoStability": "Vakaus & mukavuus",
@@ -19,7 +20,12 @@
     "infoAppsMac": "Sovellukset — Mac",
     "aboutCompany": "Yritys",
     "aboutCommunity": "Yhteisö & Discord",
-    "koneet": "Koneet"
+    "koneet": "Yhteensopivuus",
+    "serviceSubNav": "Palvelu — välilehdet",
+    "serviceTabOverview": "Yleiskatsaus",
+    "serviceTabB2b": "Yritykset",
+    "serviceTabCare": "Vire Care",
+    "serviceTabTrack": "Seuranta"
   },
   "deliveryStrip": {
     "ariaLabel": "Toimitus ja tuki",
@@ -59,7 +65,7 @@
     "notConfigured": "Selaindemoa ei ole kytketty. Ylläpito: aseta NEXT_PUBLIC_TRY_LINUX_PROXY_BASE (esim. http://127.0.0.1:8080) ja infra/try-linux -proxy."
   },
   "tietoa": {
-    "sidebarAria": "Tietoa-osio",
+    "sidebarAria": "Tietoa — välilehdet",
     "navHub": "Yleiskatsaus",
     "navBenefits": "Hyödyt",
     "navLinux": "Päivitysprosessi",

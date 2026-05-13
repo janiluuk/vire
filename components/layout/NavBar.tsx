@@ -21,16 +21,11 @@ function BrandMark({ name }: { name: string }) {
   );
 }
 
-function navLinkClass(active: boolean) {
-  return `min-h-tap rounded-lg px-3 py-2 text-sm font-normal transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
-    active
-      ? "text-g"
-      : "text-fog hover:bg-g/[0.06] hover:text-ink"
+/** Segmented top nav — same affordance as locale switcher; not used for the order CTA. */
+function topTabClass(active: boolean) {
+  return `min-h-tap rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
+    active ? "bg-g text-canvas" : "text-fog hover:text-ink"
   }`;
-}
-
-function subMenuLinkClass() {
-  return "vire-sub-menu-link block rounded-md px-3 py-[7px] text-[13px] text-fog transition-colors duration-150 hover:bg-g/[0.08] hover:text-g focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g";
 }
 
 export function NavBar({ locale }: { locale: string }) {
@@ -38,8 +33,11 @@ export function NavBar({ locale }: { locale: string }) {
   const pathname = usePathname();
   const onNavClick = () => dispatchBackgroundNavInteraction();
 
-  const palveluActive =
-    pathname === "/palvelu" || pathname.startsWith("/palvelu/");
+  const palveluClusterActive =
+    pathname.startsWith("/palvelu") ||
+    pathname.startsWith("/care") ||
+    pathname.startsWith("/koneet") ||
+    pathname.startsWith("/tilaus");
   const itseActive = pathname === "/itse" || pathname.startsWith("/itse/");
   const tukiActive = pathname === "/tuki" || pathname.startsWith("/tuki/");
   const infoHubActive =
@@ -57,19 +55,6 @@ export function NavBar({ locale }: { locale: string }) {
     pathname === "/yhteiso" ||
     pathname.startsWith("/yhteiso/");
 
-  const infoLinks = [
-    { href: "/tietoa/linux", key: "infoLinux" as const },
-    { href: "/tietoa/vakaus", key: "infoStability" as const },
-    { href: "/tietoa/huolia", key: "infoFaq" as const },
-    { href: "/tietoa/sovellukset/windows", key: "infoAppsWin" as const },
-    { href: "/tietoa/sovellukset/mac", key: "infoAppsMac" as const },
-  ];
-
-  const aboutLinks = [
-    { href: "/meista", key: "aboutCompany" as const },
-    { href: "/meista/yhteiso", key: "aboutCommunity" as const },
-  ];
-
   return (
     <header className="sticky top-0 z-30 border-b border-edge bg-[rgba(8,12,10,0.92)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-4 px-6 py-4 sm:px-12 sm:py-5">
@@ -84,88 +69,49 @@ export function NavBar({ locale }: { locale: string }) {
         <div className="flex flex-1 flex-wrap items-center justify-end gap-2 sm:gap-3">
           <nav
             aria-label={t("mainNav")}
-            className="flex flex-wrap items-center gap-1 sm:gap-2"
+            className="flex flex-wrap items-center gap-1 rounded-lg border border-em bg-sunken/80 p-1"
           >
             <Link
               href="/palvelu"
               onClick={onNavClick}
-              className={navLinkClass(palveluActive)}
+              className={topTabClass(palveluClusterActive)}
+              aria-current={palveluClusterActive ? "page" : undefined}
             >
               {t("service")}
             </Link>
 
-            <div className="flex items-stretch">
-              <details className="vire-nav-disclosure group relative">
-                <summary
-                  className={`${navLinkClass(infoHubActive)} flex cursor-pointer list-none items-center gap-1 [&::-webkit-details-marker]:hidden`}
-                >
-                  <span>{t("infoHub")}</span>
-                  <span className="text-[10px] opacity-70" aria-hidden>
-                    ▾
-                  </span>
-                </summary>
-                <ul
-                  className="vire-sub-menu flex flex-col absolute left-0 top-full z-50 mt-1 min-w-[200px] rounded-[10px] border border-em bg-card p-2 shadow-none"
-                  role="menu"
-                >
-                  {infoLinks.map(({ href, key }) => (
-                    <li key={key} role="none">
-                      <Link
-                        role="menuitem"
-                        href={href}
-                        onClick={onNavClick}
-                        className={subMenuLinkClass()}
-                      >
-                        {t(key)}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            </div>
+            <Link
+              href="/tietoa"
+              onClick={onNavClick}
+              className={topTabClass(infoHubActive)}
+              aria-current={infoHubActive ? "page" : undefined}
+            >
+              {t("infoHub")}
+            </Link>
 
             <Link
               href="/itse"
               onClick={onNavClick}
-              className={navLinkClass(itseActive)}
+              className={topTabClass(itseActive)}
+              aria-current={itseActive ? "page" : undefined}
             >
               {t("diy")}
             </Link>
 
-            <details className="vire-nav-disclosure group relative">
-              <summary
-                className={`${navLinkClass(aboutHubActive)} cursor-pointer`}
-              >
-                <span className="inline-flex items-center gap-1">
-                  {t("aboutHub")}
-                  <span className="text-[10px] opacity-70" aria-hidden>
-                    ▾
-                  </span>
-                </span>
-              </summary>
-              <ul
-                className="vire-sub-menu flex flex-col absolute left-0 top-full z-50 mt-1 min-w-[200px] rounded-[10px] border border-em bg-card p-2 shadow-none"
-                role="menu"
-              >
-                {aboutLinks.map(({ href, key }) => (
-                  <li key={key} role="none">
-                    <Link
-                      role="menuitem"
-                      href={href}
-                      onClick={onNavClick}
-                      className={subMenuLinkClass()}
-                    >
-                      {t(key)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </details>
+            <Link
+              href="/meista"
+              onClick={onNavClick}
+              className={topTabClass(aboutHubActive)}
+              aria-current={aboutHubActive ? "page" : undefined}
+            >
+              {t("aboutHub")}
+            </Link>
 
             <Link
               href="/tuki"
               onClick={onNavClick}
-              className={navLinkClass(tukiActive)}
+              className={topTabClass(tukiActive)}
+              aria-current={tukiActive ? "page" : undefined}
             >
               {t("support")}
             </Link>

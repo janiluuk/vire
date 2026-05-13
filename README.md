@@ -2,6 +2,8 @@
 
 Next.js site for Vire — refurbishment, DIY guides, orders, and admin tools.
 
+**Repository layout** (where to add routes, components, and docs): [`docs/repository-layout.md`](docs/repository-layout.md).
+
 ## Local development
 
 ### Database with Docker
@@ -30,7 +32,7 @@ npx prisma generate
 npm run dev
 ```
 
-Seed admin + guides (optional):
+Seed admin + guides (optional). Set **`ADMIN_EMAIL`**, **`ADMIN_PASSWORD`**, and optionally **`ADMIN_USERNAME`** in **`.env`** (see **`.env.example`**) so `/admin` login matches your machine and e2e:
 
 ```bash
 npx prisma db seed
@@ -51,20 +53,32 @@ If the browser cannot connect but `web` is running, confirm nothing else is boun
 
 ### Deploy to a lab host (e.g. 192.168.2.100)
 
-From your dev machine (SSH + rsync), after copying `.env` on the server under `/srv/vire/`:
+From your dev machine (SSH + rsync): **`scripts/lab-stack-up.sh`** copies the repo to the server — including **`.env`** when it exists in your project root (`.env.local` / `.env.*.local` stay local-only), runs **`docker compose down`**, **`docker compose build --pull`**, then **`docker compose up -d`**.
 
 ```bash
 export DEPLOY_HOST=192.168.2.100
 export DEPLOY_PATH=/srv/vire
-# optional: export DEPLOY_USER=you
+# optional: export DEPLOY_USER=root
 ./scripts/deploy-lab.sh
 ```
 
-See `scripts/deploy-lab.sh` for rsync excludes. On the server, set at least `NEXTAUTH_URL` and `NEXT_PUBLIC_SITE_URL` to `http://192.168.2.100:1337` (or your DNS) so auth and redirects work.
+Ensure **`.env`** has **`NEXTAUTH_URL`** and **`NEXT_PUBLIC_SITE_URL`** set to how you reach the host (e.g. `http://192.168.2.100:1337`, not `localhost`) before syncing. For a clean rebuild: `./scripts/deploy-lab.sh --no-cache`.
 
 ### Environment variables
 
-See [`.env.example`](./.env.example) for `DATABASE_URL`, auth, Stripe, email, and public URLs.
+See [`.env.example`](./.env.example) for `DATABASE_URL`, auth, Stripe, email, public URLs, try-Linux proxy, and admin seed fields (**`ADMIN_EMAIL`**, **`ADMIN_PASSWORD`**, optional **`ADMIN_USERNAME`**, etc.).
+
+**Design system:** [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) is the UI contract (colours, type, components); **`app/globals.css`** and **`tailwind.config.ts`** implement its tokens. **`ROADMAP.md`** instructs agents to read it before any UI work.
+
+**UI reference:** full-page captures of public + admin routes live in [`docs/screenshots/`](docs/screenshots/README.md); regenerate with **`npm run docs:screenshots`** (requires a running app and seeded admin). Use with **`docs/site-pages.md`** to see what each route is for.
+
+### Tests and CI
+
+- **`npm run test`** — Vitest unit tests plus functional tests (`vitest.functional.config.ts`).
+- **`npm run test:e2e`** — Ensures **`.next/standalone/server.js`** exists (runs **`npm run build`** if not), then **Playwright** runs **`prisma migrate deploy`** and starts **`node server.js`** on **`http://127.0.0.1:1337`**. Free **port 1337** first, or stop **`docker compose` `web`** / **`npm run dev`**. To attach to a server you already started on that port, set **`PLAYWRIGHT_REUSE_SERVER=1`**.
+- **`npm run lh:ci`** — Lighthouse budgets via **`lighthouserc.json`**; the standalone app must already be listening on **1337** (same assumption as the CI Lighthouse step).
+
+**GitHub Actions** (`.github/workflows/ci.yml`) runs **E2E before Lighthouse** so Playwright and Lighthouse never compete for **:1337** in the same job. In CI, Playwright also enables **`reuseExistingServer`** when **`CI=true`** so a stray listener on **1337** does not hard-fail the run.
 
 ### Vire Checker (Tauri desktop)
 

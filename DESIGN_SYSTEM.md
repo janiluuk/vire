@@ -3,6 +3,8 @@
 > For coding agents. Drop this in your repo as `DESIGN_SYSTEM.md`.
 > These rules override any generic defaults. Read before writing a single line of UI code.
 
+**Governance:** **`ROADMAP.md`** points here for all visual work (design principles + agent rules). **`FEATURES.md`** defers here for UI on every shipped feature. Implementation lives in **`app/globals.css`** (`:root` + component layers) and **`tailwind.config.ts`** (semantic utilities). If product needs a new pattern, extend this document and the token layer first, then build the screen.
+
 ---
 
 ## Philosophy

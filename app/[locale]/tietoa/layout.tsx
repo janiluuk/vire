@@ -1,4 +1,4 @@
-import { InfoHubLayout } from "@/components/tietoa/InfoHubLayout";
+import { InfoHubLayout } from "@/components/navigation/InfoHubLayout";
 
 export default function TietoaLayout({
   children,

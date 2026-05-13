@@ -130,15 +130,6 @@ body {
     content: "# ";
   }
 
-  details.vire-nav-disclosure > summary {
-    list-style: none;
-  }
-
-  details.vire-nav-disclosure > summary::-webkit-details-marker {
-    display: none;
-  }
-
-  /* Design system: guide cards (itse), pricing footnote */
   .guide-card {
     position: relative;
     overflow: hidden;
@@ -264,16 +255,6 @@ body {
     color: var(--text);
   }
 
-  /* Nav dropdown: gap 2px between items (DESIGN_SYSTEM.md) */
-  .vire-sub-menu {
-    gap: 2px;
-  }
-
-  .vire-sub-menu-link {
-    width: 100%;
-  }
-
-  /* Featured pricing tier + badge (i18n adds visible badge element) */
   .pricing-card-featured {
     position: relative;
     border-color: var(--g);

@@ -12,6 +12,7 @@
     "test:functional": "vitest run --config vitest.functional.config.ts",
     "test:e2e": "sh -c 'test -f .next/standalone/server.js || npm run build' && playwright test",
     "lh:ci": "lhci autorun --config=./lighthouserc.json",
+    "docs:screenshots": "tsx scripts/docs-screenshots.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {

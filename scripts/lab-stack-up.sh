@@ -6,11 +6,16 @@
 #   ./scripts/lab-stack-up.sh --no-cache
 #   RSYNC_DELETE=1 ./scripts/lab-stack-up.sh
 #
+# Remote: always runs `docker compose down` first so old containers are removed,
+# then `docker compose build` and `docker compose up -d`.
 # Env (defaults suit 192.168.2.100 lab):
 #   LAB_HOST / DEPLOY_HOST     — default 192.168.2.100
 #   LAB_PATH / DEPLOY_PATH     — default /srv/vire
 #   LAB_USER / DEPLOY_USER     — default $USER, fallback root
 #   RSYNC_DELETE=1             — rsync --delete (careful)
+#
+# `.env` is synced from this repo root when it exists locally (override secrets per
+# machine as needed). `.env.local` / `.env.*.local` stay excluded.
 #
 set -euo pipefail
 
@@ -44,7 +49,6 @@ rsync "${RSYNC_FLAGS[@]}" \
   --exclude node_modules \
   --exclude .git \
   --exclude .next \
-  --exclude .env \
   --exclude .env.local \
   --exclude '.env.*.local' \
   --exclude apps/vire-checker/node_modules \
@@ -54,14 +58,14 @@ rsync "${RSYNC_FLAGS[@]}" \
 # Published port: host APP_PORT in docker-compose (default 1337). Override locally: APP_PORT=8080 ./scripts/lab-stack-up.sh
 REMOTE_PORT="${APP_PORT:-1337}"
 
-BUILD_CMD="docker compose build"
+BUILD_CMD="docker compose build --pull"
 if [[ -n "$NO_CACHE" ]]; then
   BUILD_CMD+=" --no-cache"
 fi
 
-echo "==> Remote: ${BUILD_CMD} && docker compose up -d"
+echo "==> Remote: docker compose down && ${BUILD_CMD} && docker compose up -d"
 # shellcheck disable=SC2029
-ssh "${REMOTE_USER}@${HOST}" "cd '${REMOTE_PATH}' && ${BUILD_CMD} && docker compose up -d"
+ssh "${REMOTE_USER}@${HOST}" "cd '${REMOTE_PATH}' && docker compose down --remove-orphans || true && ${BUILD_CMD} && docker compose up -d"
 
 BASE_URL="http://${HOST}:${REMOTE_PORT}"
 echo ""
@@ -72,7 +76,7 @@ echo "  Health:    ${BASE_URL}/api/health"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "If the host publishes another port, set APP_PORT when running this script (must match ${REMOTE_PATH}/.env APP_PORT for the printed URL)."
-echo "Set on the server in ${REMOTE_PATH}/.env (not rsynced):"
+echo "Ensure ${REMOTE_PATH}/.env (synced if present locally) includes at least:"
 echo "  NEXTAUTH_URL=${BASE_URL}"
 echo "  NEXT_PUBLIC_SITE_URL=${BASE_URL}"
 echo "  NEXTAUTH_SECRET=… (32+ chars)"

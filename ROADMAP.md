@@ -1,5 +1,11 @@
 # Vire — Implementation Roadmap
-> Drop this file in the root of your repo. It is the single source of truth for build order, tech decisions, and agent instructions.
+> Drop this file in the root of your repo. It is the single source of truth for **build order, stack, and phase checklists**. Use it together with:
+>
+> | Doc | Role |
+> |-----|------|
+> | **`FEATURES.md`** | Prioritised product backlog after launch (default order: its priority table). |
+> | **`DESIGN_SYSTEM.md`** | **Authoritative UI reference** — colours, typography, motion, component recipes. **`app/globals.css`** (`:root` tokens) and **`tailwind.config.ts`** (semantic classes like `text-ink`, `bg-card`) implement it; new UI must match this, not ad-hoc Tailwind grays or legacy light-theme notes found elsewhere in this file. |
+> | **`docs/`** | Operations (`docs/operations.md`), public API (`docs/api-public.md`), **site catalog** (`docs/site-pages.md` + `docs/screenshots/`), sitemap notes (`docs/sitemap-routes.md`), **repo layout** (`docs/repository-layout.md`). |
 
 ---
 
@@ -9,7 +15,7 @@
 |---|---|---|
 | Framework | Next.js 14 (App Router) | SSG + SSR hybrid. Use server components by default. |
 | Language | TypeScript | Strict mode on. |
-| Styling | Tailwind CSS v3 | High contrast tokens. Large base font (18px). |
+| Styling | Tailwind CSS v3 | Semantic tokens per **`DESIGN_SYSTEM.md`** / **`app/globals.css`**. Base body **18px** (`globals.css` `body`). |
 | Database ORM | Prisma | Schema-first. PostgreSQL (local dev via Docker, prod via Supabase or Railway). |
 | Auth (admin) | NextAuth.js | Email/password for admin only. No public user accounts at launch. |
 | Payments | Stripe Checkout | Separate products: service tiers, USB stick. |
@@ -30,33 +36,39 @@ Prioritised product specs (11 features: data migration add-on, Vire Care, `/kone
 
 ## Design principles
 
-These are non-negotiable and apply to every page and component. **Canonical tokens, typography, motion, and component recipes** live in **`DESIGN_SYSTEM.md`** — read that file before building or restyling UI.
+**Visual design:** **`DESIGN_SYSTEM.md`** is the contract for every screen — read it before building or restyling UI. Prefer existing patterns (`vire-*` classes, semantic Tailwind from **`tailwind.config.ts`**, tokens from **`app/globals.css`**).
 
-- **Font size minimum 18px body.** Never go below 16px anywhere. Elder users are a primary audience.
-- **High contrast.** WCAG AA minimum, aim for AAA on body text. Use Tailwind `text-gray-900` on white, never gray-on-gray.
-- **Bright, clear palette.** Primary: Vire green `#1D9E75`. Accent: amber `#F59E0B`. Background: white or very light gray `#F9FAFB`. Never pastels or muted tones for important UI.
-- **Large tap targets.** Buttons minimum 48px tall. Touch-friendly on mobile.
-- **One action per screen.** Wizard steps never have two choices visible at once. Guide steps are numbered and one at a time.
-- **Three.js ambient only.** The canvas is decorative — it never overlaps text, never animates aggressively, respects `prefers-reduced-motion`. Use `pointer-events: none` and `z-index: -1`.
+**UX and accessibility (non-negotiable):**
+
+- **Typography:** Follow the design system type scale; the app ships **18px** base body text in **`globals.css`**. Elder-facing surfaces use the **body elder** guidance in **`DESIGN_SYSTEM.md`** (never shrink critical copy below what that table allows).
+- **Contrast:** Meet **WCAG AA** on real surfaces (`--text` / `--muted` on `--bg` / `--bg3`, etc.). Validate changed routes with axe / Lighthouse — use semantic colours from the design system, not arbitrary gray ramps.
+- **Large tap targets.** Primary actions ~**48px** tall minimum; touch-friendly on mobile (see button recipes in **`DESIGN_SYSTEM.md`**).
+- **One action per screen.** Wizard steps never show two competing choices; guide steps stay numbered and one at a time.
+- **Three.js ambient only.** Decorative canvas only — never obscures text, respects **`prefers-reduced-motion`**, **`pointer-events: none`**, stacked behind content. **Shipped implementation:** **`components/layout/BackgroundCanvas.tsx`** (mesh colours should track brand greens **`--g` / `--g2`** and **`--amber`** at low opacity, per design system).
+
+**Legacy:** Older light-theme colour examples elsewhere in this file (e.g. white backgrounds, `#1D9E75`) are **not** the current product direction — ignore them for new work.
 
 ---
 
 ## Three.js ambient background — spec
 
-**What it should feel like:** Calm. Slow-floating soft shapes. Subtle color that matches the Vire green/white palette. The page reads perfectly with it disabled.
+**Authority:** Behaviour, performance, and colours must match **`DESIGN_SYSTEM.md`** and the checked-in **`components/layout/BackgroundCanvas.tsx`**. The JSX block below is a **legacy reference sketch** only; do not paste it over the real component.
+
+**What it should feel like:** Calm. Slow-floating soft shapes. Subtle wireframe colour that matches **brand greens and amber** on **dark** surfaces. The page must read perfectly with the canvas disabled.
 
 **Implementation:**
-- Single `<canvas>` element rendered via a `<BackgroundCanvas />` React component.
+- Single `<canvas>` element rendered via **`<BackgroundCanvas />`** (`components/layout/BackgroundCanvas.tsx`).
 - Mounted in the root layout behind all content: `position: fixed; inset: 0; z-index: -1; pointer-events: none`.
-- Scene: 80–120 small icosahedron or sphere meshes, random sizes (0.1–0.5 units), drifting slowly in 3D space. Color: `#1D9E75` at 15–25% opacity, occasional amber `#F59E0B` at 10% opacity.
-- Camera: `PerspectiveCamera`, slow auto-rotate or no rotation. No user interaction.
+- Scene: many small icosahedron meshes, drifting slowly. **Colours:** align with **`DESIGN_SYSTEM.md`** brand tokens (e.g. `--g` / `--amber` as mesh tints at low opacity), consistent with the shipped component — not the hex literals in the sketch below.
+- Camera: `PerspectiveCamera`, slow drift or near-static. No user interaction.
 - Lighting: `AmbientLight` only — no shadows.
-- Performance: use `requestAnimationFrame` delta capping at 30fps. Pause when tab is not visible (`document.visibilityState`). Destroy on unmount.
-- Reduced motion: wrap entire animation in `if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches)`. If reduced motion is on, render static canvas with one centered soft shape.
-- File location: `components/layout/BackgroundCanvas.tsx`. Import in `app/layout.tsx`.
+- Performance: `requestAnimationFrame` with delta capping (~30fps). Pause when tab is not visible (`document.visibilityState`). Dispose on unmount.
+- Reduced motion: respect **`(prefers-reduced-motion: reduce)`** — static or minimal motion when the user requests it.
+- **Import:** root layout (see current **`app/`** tree).
 
 ```tsx
-// components/layout/BackgroundCanvas.tsx — skeleton
+// LEGACY SKETCH — do not replace BackgroundCanvas.tsx with this verbatim.
+// components/layout/BackgroundCanvas.tsx — historical skeleton
 'use client'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
@@ -791,11 +803,17 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 *Short working queue. Reconcile with checkboxes below; edit this list when items ship.*
 
+- [x] **Site catalog & sitemap** — **`docs/site-pages.md`** (screenshots + page purposes), **`docs/sitemap-routes.md`**, expanded **`app/sitemap.ts`** static paths, **`docs/phases-implementation-notes.md`**, **`docs/screenshots/`** + **`npm run docs:screenshots`**.
+
+**Design guardrails (ongoing):** Ship UI against **`DESIGN_SYSTEM.md`**; treat **`docs/site-pages.md`** and **`npm run docs:screenshots`** as regression references when navigation or layout changes. When **`FEATURES.md`** items add screens, extend the design system first if new patterns are needed, then implement.
+
 1. **Content-Security-Policy** — **`ENABLE_CSP_REPORT_ONLY=true`** emits report-only CSP from **`next.config.mjs`**; tighten policy using violation reports (**`docs/operations.md`**). Enforcing CSP with nonces still open.
 2. **E2E + a11y** — **shipped:** smoke, locale, wizard (mocked checkout), admin login + orders, public routes + **`/meista`**, support + order lookup + experience pages, **axe-core** (**`e2e/a11y-axe.spec.ts`**), **Lighthouse CI** (informational) — see **`e2e/*.spec.ts`**, **`lighthouserc.json`**. Playwright **`webServer`** runs **`prisma migrate deploy`** before **`node server.js`** so the e2e DB matches the Prisma client.
 3. **Synthetic monitoring** — **shipped in repo:** optional scheduled workflow **`synthetic-monitoring.yml`** when **`SYNTHETIC_MONITORING_BASE_URL`** is set — see **`docs/operations.md`**. External Uptime Kuma / Grafana still recommended.
 4. **Admin audit trail** — **shipped:** `AdminAuditLog` + order detail log; guides/models mutations logged; extend UI as needed.
 5. **Structured logging** — **shipped:** JSON + request id on checkout, support-contact, Stripe webhook (`lib/logging/log.ts`, **`docs/operations.md`**).
+6. **Production image build + Prisma** — `next build` may invoke Prisma on static routes; Docker `docker compose build` logs connection errors when no DB is reachable at `DATABASE_URL`. Mitigations: pass a build-time DB URL, use `docker compose` build with `db` profile, or move DB-bound SSG to **`dynamic = 'force-dynamic'`** / client fetch. Documented in **`docs/repository-layout.md`** § Known sharp edges.
+7. **Dependency patch cadence** — Keep **Next.js** on a patched minor per security releases; triage **`npm audit`** critical/high on production dependencies (CI already runs audit in informational mode).
 
 #### Product / UX (still open from earlier phases)
 
@@ -842,6 +860,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 - [x] **`apps/vire-checker` LAN + spec/AI docs** — see `apps/vire-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
 - [x] **`apps/vire-checker` optional “fetch specs” UI** — **`VITE_VIRE_API_BASE`** enables **Hae speksit verkosta** → `POST /api/public/laptop-specs` (see **`apps/vire-checker/README.md`**).
 - [x] **Dependency / secret hygiene** — **`npm audit`** in CI (informational / non-blocking); pre-commit secret scan (gitleaks) optional.
+- [x] **`docs/repository-layout.md`** — Folder conventions; hub tabs under **`components/navigation/`**; Prisma-at-build caveat for Docker images.
 
 ---
 
@@ -850,19 +869,20 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 These apply to every coding session on this project.
 
 1. **Read this file first.** Before writing any code, confirm you know which phase you're working on. For post-launch product expansion, also read **`FEATURES.md`** and follow its priority table unless instructed otherwise.
-2. **Prisma is the DB layer.** Never write raw SQL. Always use `prisma.model.findMany()` etc.
-3. **Server components by default.** Only add `'use client'` when the component needs browser APIs or event handlers.
-4. **All text goes through next-intl.** No hardcoded Finnish or English strings in JSX. Use `const t = useTranslations('namespace')`.
-5. **Font size floor: 18px body, 16px minimum anywhere.** Use `text-lg` as the base in Tailwind (18px).
-6. **Three.js canvas is `z-index: -1`, `pointer-events: none`.** It must never intercept clicks or cover text.
-7. **Stripe webhook must verify signature** before touching the DB. Non-negotiable.
-8. **`lib/specs/compatibility.ts` is a pure function.** No DB calls inside it. Accept specs as arguments, return verdict.
-9. **Admin routes must check session** at the top of every page and API route. Use a shared `requireAdmin()` helper.
-10. **MDX files are source of truth for guide content.** DB stores metadata and publish state only.
-11. **No `any` in TypeScript** except in the Three.js mesh velocity hack (documented inline).
-12. **Tailwind only for styling.** No inline `style={{}}` except for Three.js canvas positioning.
-13. **Test Stripe with test keys** (`sk_test_`, `pk_test_`) in development. Never commit real keys.
-14. **Seed script** must be idempotent: running it twice should not create duplicate records.
+2. **Read `DESIGN_SYSTEM.md` for all UI/CSS.** Before adding or changing layouts, colours, typography, or components, align with that file and existing primitives (`vire-card`, semantic Tailwind). Do not introduce light-theme or generic gray-scale layouts unless **`DESIGN_SYSTEM.md`** is updated first.
+3. **Prisma is the DB layer.** Never write raw SQL. Always use `prisma.model.findMany()` etc.
+4. **Server components by default.** Only add `'use client'` when the component needs browser APIs or event handlers.
+5. **All text goes through next-intl.** No hardcoded Finnish or English strings in JSX. Use `const t = useTranslations('namespace')`.
+6. **Font size floor: 18px body, 16px minimum anywhere** for critical UI (see **`DESIGN_SYSTEM.md`** and **`globals.css`** `body`).
+7. **Three.js canvas is `z-index: -1`, `pointer-events: none`.** It must never intercept clicks or cover text.
+8. **Stripe webhook must verify signature** before touching the DB. Non-negotiable.
+9. **`lib/specs/compatibility.ts` is a pure function.** No DB calls inside it. Accept specs as arguments, return verdict.
+10. **Admin routes must check session** at the top of every page and API route. Use a shared `requireAdmin()` helper.
+11. **MDX files are source of truth for guide content.** DB stores metadata and publish state only.
+12. **No `any` in TypeScript** except in the Three.js mesh velocity hack (documented inline).
+13. **Tailwind only for styling.** No inline `style={{}}` except for Three.js canvas positioning.
+14. **Test Stripe with test keys** (`sk_test_`, `pk_test_`) in development. Never commit real keys.
+15. **Seed script** must be idempotent: running it twice should not create duplicate records.
 
 ---
 
@@ -952,21 +972,23 @@ Add to `package.json`:
 # 1. Clone repo and install
 npm install
 
-# 2. Start local Postgres
+# 2. Skim DESIGN_SYSTEM.md if you will touch UI (tokens, typography, components)
+
+# 3. Start local Postgres
 docker compose up -d
 
-# 3. Copy env
+# 4. Copy env
 cp .env.example .env.local
 # Fill in DATABASE_URL and other vars
 
-# 4. Run migrations + seed
+# 5. Run migrations + seed
 npx prisma migrate dev --name init
 npx prisma db seed
 
-# 5. Start dev server
+# 6. Start dev server
 npm run dev
 
-# 6. Open admin
+# 7. Open admin
 # http://localhost:3000/admin/login
 # Email: value of ADMIN_EMAIL in .env.local
 ```

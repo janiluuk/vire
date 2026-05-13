@@ -4,18 +4,20 @@ import { prisma } from "@/lib/db/prisma";
 import { getSiteUrl } from "@/lib/site/site-url";
 import { computerModelSlug } from "@/lib/site/computer-model-slug";
 
+/**
+ * Public HTML routes per locale (no `/admin`, no API, no redirect-only stubs).
+ * See `docs/sitemap-routes.md` for full inventory vs robots rules.
+ */
 const STATIC_PATHS = [
   "",
   "/palvelu",
   "/palvelu/b2b",
+  "/palvelu/kiitos",
   "/itse",
-  "/sovellukset",
+  "/itse/kiitos",
   "/tuki",
-  "/info",
-  "/about",
   "/tietosuoja",
   "/tilaus",
-  "/yhteiso",
   "/tietoa",
   "/tietoa/hyodyt",
   "/tietoa/linux",
@@ -27,7 +29,23 @@ const STATIC_PATHS = [
   "/care/kiitos",
   "/koneet",
   "/vire-for-good",
+  "/meista",
+  "/meista/yhteiso",
 ] as const;
+
+function priorityFor(path: string): number {
+  if (path === "") return 1;
+  if (
+    path === "/palvelu" ||
+    path === "/tietoa" ||
+    path === "/itse" ||
+    path === "/koneet"
+  ) {
+    return 0.9;
+  }
+  if (path.endsWith("/kiitos")) return 0.45;
+  return 0.75;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
@@ -39,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${base}/${locale}${p}`,
         lastModified: new Date(),
         changeFrequency: p === "" ? "weekly" : "monthly",
-        priority: p === "" ? 1 : 0.8,
+        priority: priorityFor(p),
       });
     }
   }
