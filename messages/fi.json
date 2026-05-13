@@ -724,7 +724,10 @@
       "payCta": "Siirry maksamaan",
       "payCtaLoading": "Siirretään maksuun…",
       "stripeMissing": "Maksu ei ole käytössä: aseta STRIPE_SECRET_KEY ympäristöön.",
-      "errorGeneric": "Tilaus epäonnistui. Yritä uudelleen tai ota yhteyttä."
+      "errorGeneric": "Tilaus epäonnistui. Yritä uudelleen tai ota yhteyttä.",
+      "validationComputerShort": "Kuvaus on liian lyhyt — kirjoita vähintään kolme merkkiä (malli tai vapaa kuvaus).",
+      "validationContactEmpty": "Anna puhelin tai sähköposti ennen maksua.",
+      "validationContactInvalid": "Tarkista muoto: käytä sähköpostia tai puhelinnumeroa (esim. +358…)."
     },
     "b2b": {
       "title": "Yritys- ja määrätilaukset",
@@ -817,7 +820,10 @@
     "formSent": "Kiitos! Viesti lähetettiin. Palaamme mahdollisimman pian.",
     "formError": "Lähetys epäonnistui. Yritä hetken kuluttua tai lähetä sähköpostia suoraan.",
     "formNotConfigured": "Lomaketta ei ole vielä kytketty: aseta SUPPORT_NOTIFY_EMAIL ja RESEND_API_KEY.",
-    "formRateLimit": "Liian monta lähetystä. Odota hetki ja yritä uudelleen."
+    "formRateLimit": "Liian monta lähetystä. Odota hetki ja yritä uudelleen.",
+    "formValidationMessageShort": "Kirjoita vähintään muutama sana (vähintään 4 merkkiä).",
+    "formValidationContactEmpty": "Anna sähköposti tai puhelin, jotta voimme vastata.",
+    "formValidationContactInvalid": "Anna kelvollinen sähköposti tai puhelinnumero (esim. +358…)."
   },
   "yhteiso": {
     "title": "Yhteisö",

@@ -1709,9 +1709,9 @@ Create a coherent premium interface language.
 
 #### Inputs
 - [x] Add animated focus rings (`.sparkki-input`; wizard computer + contact fields)
-- [ ] Add inline validation
-- [ ] Improve readability
-- [ ] Improve mobile touch UX
+- [x] Add inline validation (**Phase 14** — `SupportContactForm` + `OrderWizard`; `lib/contact/contact-field-validation.ts`; `aria-invalid` / `aria-describedby`)
+- [x] Improve readability (**Phase 14** — shared validation copy in `messages`; field-level errors under inputs)
+- [x] Improve mobile touch UX (**Phase 14** — `.sparkki-input` / `textarea.sparkki-input` use ≥16px on narrow viewports to reduce iOS focus zoom; support form uses `sparkki-input`)
 
 #### Modals
 - [x] Add backdrop blur (fullscreen wizard: `.sparkki-modal-backdrop`)
@@ -1730,6 +1730,7 @@ Make the product feel alive and premium.
 
 - [x] Add page transitions (`LocaleMainMotion` + `.sparkki-page-enter` on locale routes)
 - [x] Add stagger animations (Phase 13 — **`.sparkki-stagger-children`** on home step / pricing / benefits)
+- [x] **Phase 14 — Inputs:** inline validation + readable error copy + mobile input sizing (see Phase 3 → Inputs)
 - [x] Add skeleton loaders (utility `.sparkki-skeleton` in `globals.css`; wire where needed)
 - [x] Add smooth hover interpolation (token durations/easing on buttons, cards, nav tabs)
 - [x] Add animated navigation indicators (nav tab transitions)

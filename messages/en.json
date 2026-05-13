@@ -725,7 +725,10 @@
       "payCta": "Continue to payment",
       "payCtaLoading": "Redirecting to payment…",
       "stripeMissing": "Payments disabled: set STRIPE_SECRET_KEY in the environment.",
-      "errorGeneric": "Checkout failed. Try again or contact us."
+      "errorGeneric": "Checkout failed. Try again or contact us.",
+      "validationComputerShort": "Description is too short — enter at least three characters (model or a short note).",
+      "validationContactEmpty": "Enter a phone number or email before payment.",
+      "validationContactInvalid": "Check the format: use an email or phone number (e.g. +358…)."
     },
     "b2b": {
       "title": "Business and volume orders",
@@ -818,7 +821,10 @@
     "formSent": "Thanks! Your message was sent. We will get back to you as soon as we can.",
     "formError": "Send failed. Try again in a moment or email us directly.",
     "formNotConfigured": "Form not enabled: set SUPPORT_NOTIFY_EMAIL and RESEND_API_KEY.",
-    "formRateLimit": "Too many submissions. Wait a moment and try again."
+    "formRateLimit": "Too many submissions. Wait a moment and try again.",
+    "formValidationMessageShort": "Please write a bit more (at least 4 characters).",
+    "formValidationContactEmpty": "Enter an email or phone number so we can reply.",
+    "formValidationContactInvalid": "Use a valid email or phone number (e.g. +358…)."
   },
   "yhteiso": {
     "title": "Community",

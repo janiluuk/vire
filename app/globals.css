@@ -519,8 +519,18 @@ body {
   .sparkki-input,
   textarea.sparkki-input {
     border-radius: var(--radius-md);
+    /* Phase 14 — ≥16px on narrow viewports reduces iOS Safari focus zoom */
+    font-size: max(16px, var(--text-md));
+    line-height: var(--leading-normal);
     transition: border-color var(--duration-base) var(--ease-standard),
       box-shadow var(--duration-hover) var(--ease-out-soft);
+  }
+
+  @media (min-width: 640px) {
+    .sparkki-input,
+    textarea.sparkki-input {
+      font-size: var(--text-lg);
+    }
   }
 
   .sparkki-input:focus,

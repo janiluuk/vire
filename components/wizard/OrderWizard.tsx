@@ -20,9 +20,9 @@ import {
   serviceCheckoutTotalCents,
 } from "@/lib/billing/pricing";
 import {
-  hasUsableCustomerContact,
-  parseCustomerContact,
-} from "@/lib/contact/parse-customer-contact";
+  getComputerDescriptionIssue,
+  getContactFieldIssue,
+} from "@/lib/contact/contact-field-validation";
 
 const WIZARD_ANCHOR = "palvelu-tilaa";
 
@@ -131,6 +131,8 @@ export function OrderWizard({ locale }: { locale: string }) {
   const [portableVmHandoff, setPortableVmHandoff] =
     useState<PortableVmHandoff | null>(null);
   const [customerContact, setCustomerContact] = useState("");
+  const [computerFieldBlurred, setComputerFieldBlurred] = useState(false);
+  const [contactFieldBlurred, setContactFieldBlurred] = useState(false);
 
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -204,8 +206,26 @@ export function OrderWizard({ locale }: { locale: string }) {
     hadAddonsSelectionRef.current = on;
   }, [appBundles.length, portableVmOn]);
 
+  useEffect(() => {
+    if (step === 0) setComputerFieldBlurred(false);
+  }, [step]);
+
+  useEffect(() => {
+    if (step === 3) setContactFieldBlurred(false);
+  }, [step]);
+
   async function startCheckout() {
     if (!tier || !delivery) return;
+    const contactIssue = getContactFieldIssue(customerContact);
+    if (contactIssue != null) {
+      setContactFieldBlurred(true);
+      setCheckoutError(
+        contactIssue === "empty"
+          ? w("validationContactEmpty")
+          : w("validationContactInvalid"),
+      );
+      return;
+    }
     setCheckoutError(null);
     setCheckoutLoading(true);
     try {
@@ -251,9 +271,11 @@ export function OrderWizard({ locale }: { locale: string }) {
     delivery != null &&
     (!portableVmOn || portableVmHandoff != null);
   const canNextFrom2 = true;
-  const contactOk = hasUsableCustomerContact(
-    parseCustomerContact(customerContact),
-  );
+  const contactIssue = getContactFieldIssue(customerContact);
+  const contactOk = contactIssue === null;
+  const computerIssue = getComputerDescriptionIssue(computerDescription, 3);
+  const showComputerErr = computerFieldBlurred && computerIssue === "short";
+  const showContactErr = contactFieldBlurred && contactIssue != null;
 
   const stepContentId = `wizard-step-${step}-region`;
   const stepHint = w(STEP_HINT_KEYS[step]);
@@ -442,15 +464,40 @@ export function OrderWizard({ locale }: { locale: string }) {
                 <textarea
                   id="wiz-computer"
                   rows={4}
-                  className="sparkki-input w-full resize-y rounded-lg border border-em bg-sunken px-4 py-3 text-lg text-ink placeholder:text-dust"
+                  aria-required="true"
+                  aria-invalid={showComputerErr}
+                  aria-describedby={
+                    [
+                      "wiz-computer-hint",
+                      showComputerErr ? "wiz-computer-err" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || undefined
+                  }
+                  className={`sparkki-input w-full resize-y rounded-lg border bg-sunken px-4 py-3 text-ink placeholder:text-dust ${
+                    showComputerErr ? "border-danger" : "border-em"
+                  }`}
                   value={computerDescription}
                   onChange={(e) => setComputerDescription(e.target.value)}
+                  onBlur={() => setComputerFieldBlurred(true)}
                   placeholder={w("computerPlaceholder")}
                   maxLength={2000}
                 />
-                <p className="mt-2 text-base font-light leading-relaxed text-fog">
+                <p
+                  id="wiz-computer-hint"
+                  className="mt-2 text-base font-light leading-relaxed text-fog"
+                >
                   {w("computerHint")}
                 </p>
+                {showComputerErr ? (
+                  <p
+                    id="wiz-computer-err"
+                    role="alert"
+                    className="mt-2 text-base text-danger"
+                  >
+                    {w("validationComputerShort")}
+                  </p>
+                ) : null}
               </div>
             </div>
           ) : null}
@@ -779,15 +826,48 @@ export function OrderWizard({ locale }: { locale: string }) {
                   </label>
                   <input
                     id="wiz-contact"
-                    className="sparkki-input min-h-tap w-full rounded-lg border border-em bg-sunken px-4 text-lg text-ink placeholder:text-dust"
+                    aria-required="true"
+                    aria-invalid={showContactErr}
+                    aria-describedby={
+                      [
+                        "wiz-contact-hint",
+                        showContactErr ? "wiz-contact-err" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || undefined
+                    }
+                    className={`sparkki-input min-h-tap w-full rounded-lg border bg-sunken px-4 text-ink placeholder:text-dust ${
+                      showContactErr ? "border-danger" : "border-em"
+                    }`}
                     value={customerContact}
                     onChange={(e) => setCustomerContact(e.target.value)}
+                    onBlur={() => setContactFieldBlurred(true)}
                     autoComplete="email"
                     placeholder={w("contactPlaceholder")}
                   />
-                  <p className="mt-2 text-base font-light text-fog">
+                  <p
+                    id="wiz-contact-hint"
+                    className="mt-2 text-base font-light text-fog"
+                  >
                     {w("contactHint")}
                   </p>
+                  {showContactErr && contactIssue === "empty" ? (
+                    <p
+                      id="wiz-contact-err"
+                      role="alert"
+                      className="mt-2 text-base text-danger"
+                    >
+                      {w("validationContactEmpty")}
+                    </p>
+                  ) : showContactErr && contactIssue === "invalid" ? (
+                    <p
+                      id="wiz-contact-err"
+                      role="alert"
+                      className="mt-2 text-base text-danger"
+                    >
+                      {w("validationContactInvalid")}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
@@ -844,7 +924,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                   ) : null}
                   <button
                     type="button"
-                    disabled={checkoutLoading}
+                    disabled={checkoutLoading || !contactOk}
                     aria-busy={checkoutLoading}
                     className={`sparkki-btn-primary min-h-tap w-full min-w-0 justify-center py-4 pr-12 text-lg md:max-w-md ${
                       checkoutLoading ? "sparkki-btn-loading" : ""
