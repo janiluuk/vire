@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { localePathAlternates } from "@/lib/site/seo";
 import { ComponentSourcingSection } from "@/components/palvelu/ComponentSourcingSection";
-import { OrderWizard } from "@/components/wizard/OrderWizard";
+import { OrderWizardLazy } from "@/components/wizard/OrderWizardLazy";
 
 export async function generateMetadata({
   params: { locale },
@@ -72,26 +72,27 @@ export default async function PalveluPage({
           {t("migrationFaqTitle")}
         </h2>
         <p className="text-lg text-ink">{t("migrationFaqIntro")}</p>
-        <dl className="space-y-6 text-lg text-ink">
-          <div>
-            <dt className="font-semibold text-vire-green">
-              {t("migrationFaqQ1")}
-            </dt>
-            <dd className="mt-2 text-fog">{t("migrationFaqA1")}</dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-vire-green">
-              {t("migrationFaqQ2")}
-            </dt>
-            <dd className="mt-2 text-fog">{t("migrationFaqA2")}</dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-vire-green">
-              {t("migrationFaqQ3")}
-            </dt>
-            <dd className="mt-2 text-fog">{t("migrationFaqA3")}</dd>
-          </div>
-        </dl>
+        <div className="space-y-3 text-lg text-ink">
+          {(
+            [
+              ["migrationFaqQ1", "migrationFaqA1"],
+              ["migrationFaqQ2", "migrationFaqA2"],
+              ["migrationFaqQ3", "migrationFaqA3"],
+            ] as const
+          ).map(([qKey, aKey]) => (
+            <details
+              key={qKey}
+              className="rounded-xl border border-edge bg-card/40 open:border-g/30 open:bg-g/[0.05]"
+            >
+              <summary className="cursor-pointer select-none list-none px-4 py-4 font-semibold text-vire-green marker:hidden [&::-webkit-details-marker]:hidden">
+                {t(qKey)}
+              </summary>
+              <p className="border-t border-edge/80 px-4 pb-4 pt-3 text-base font-normal leading-relaxed text-fog">
+                {t(aKey)}
+              </p>
+            </details>
+          ))}
+        </div>
       </section>
 
       <section aria-labelledby="backups-title" className="space-y-4">
@@ -120,7 +121,7 @@ export default async function PalveluPage({
         </Link>
       </section>
 
-      <OrderWizard locale={locale} />
+      <OrderWizardLazy locale={locale} />
     </div>
   );
 }

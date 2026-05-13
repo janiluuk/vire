@@ -36,7 +36,13 @@ test("privacy page loads", async ({ page }) => {
 
 test("locale switch EN shows English home hero", async ({ page }) => {
   await page.goto("/fi");
-  await page.getByRole("link", { name: "EN", exact: true }).click();
+  // Locale links expose aria-label (Phase 9), which overrides the visible "EN" text.
+  await page
+    .getByRole("link", {
+      name: /Vaihda sivusto englanniksi|Switch site to English/i,
+    })
+    .first()
+    .click();
   await expect(page).toHaveURL(/\/en$/);
   await expect(
     page.getByRole("heading", {

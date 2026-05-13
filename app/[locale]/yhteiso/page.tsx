@@ -42,7 +42,7 @@ export default async function YhteisoPage() {
         <div className="discord-block">
           <div className="min-w-0 flex-1 space-y-2">
             <p className="discord-channel">yhteiso</p>
-            <p className="text-lg leading-relaxed text-[#c9cdee]">{t("discordBlockLead")}</p>
+            <p className="discord-block-lead text-lg leading-relaxed">{t("discordBlockLead")}</p>
           </div>
           <a
             href={invite}

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { usePathname } from "@/i18n/navigation";
-import { VIRE_BG_NAV_EVENT } from "@/lib/site/background-nav";
+import { SPARKKI_BG_NAV_EVENT } from "@/lib/site/background-nav";
 
 type FloatMesh = THREE.Mesh & {
   _vel: THREE.Vector3;
@@ -49,7 +49,7 @@ export function BackgroundCanvas() {
       );
     };
 
-    window.addEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+    window.addEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
     window.addEventListener("hashchange", bumpNavEnergy);
 
     const renderer = new THREE.WebGLRenderer({
@@ -58,7 +58,15 @@ export function BackgroundCanvas() {
       antialias: true,
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const narrowViewport = () => window.innerWidth < 640;
+    const applyRendererQuality = () => {
+      const narrow = narrowViewport();
+      renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio, narrow ? 1.25 : 2),
+      );
+    };
+    applyRendererQuality();
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -77,13 +85,14 @@ export function BackgroundCanvas() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      applyRendererQuality();
       renderer.render(scene, camera);
     };
 
     if (reducedMotion) {
       const geo = new THREE.IcosahedronGeometry(0.3, 0);
       const mat = new THREE.MeshBasicMaterial({
-        color: 0x1df5a0,
+        color: 0xffd54a,
         wireframe: true,
         transparent: true,
         opacity: 0.12,
@@ -100,20 +109,22 @@ export function BackgroundCanvas() {
 
       return () => {
         window.removeEventListener("resize", onResize);
-        window.removeEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+        window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
         window.removeEventListener("hashchange", bumpNavEnergy);
         meshes.forEach(disposeMesh);
         renderer.dispose();
       };
     }
 
-    const count = Math.floor(80 + Math.random() * 41);
+    const count = narrowViewport()
+      ? 28
+      : Math.floor(80 + Math.random() * 41);
     const geometry = new THREE.IcosahedronGeometry(0.3, 0);
 
     for (let i = 0; i < count; i++) {
       const amber = Math.random() < 0.15;
       const mat = new THREE.MeshBasicMaterial({
-        color: amber ? 0xf5a623 : 0x1df5a0,
+        color: amber ? 0xffb800 : 0xffd54a,
         wireframe: true,
         transparent: true,
         opacity: amber
@@ -186,7 +197,7 @@ export function BackgroundCanvas() {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+      window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
       window.removeEventListener("hashchange", bumpNavEnergy);
       meshes.forEach(disposeMesh);
       geometry.dispose();
@@ -198,7 +209,7 @@ export function BackgroundCanvas() {
     <canvas
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 h-full min-h-dvh w-full"
+      className="pointer-events-none fixed inset-0 -z-10 h-full min-h-dvh w-full touch-none"
     />
   );
 }

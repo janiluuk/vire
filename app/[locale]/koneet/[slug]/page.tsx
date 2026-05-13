@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { KoneetDetailBreadcrumbs } from "@/components/layout/HubBreadcrumbs";
 import { prisma } from "@/lib/db/prisma";
 import { computerModelSlug } from "@/lib/site/computer-model-slug";
 import { localePathAlternates } from "@/lib/site/seo";
@@ -43,6 +44,7 @@ export default async function KoneetDetailPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-2xl space-y-8 px-4 py-12">
+      <KoneetDetailBreadcrumbs make={m.make} model={m.model} />
       <p>
         <Link href="/koneet" className="text-g hover:underline">
           {t("backToList")}

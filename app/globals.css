@@ -2,45 +2,229 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================================================
+   Sparkki design tokens (see DESIGN_SYSTEM.md — refine programme)
+   Semantic aliases point at primitives so themes / daytime can evolve safely.
+   ============================================================================= */
 :root {
-  /* Brand greens */
-  --g: #1df5a0;
-  --g2: #0bbf78;
-  --g3: #085041;
-
-  --amber: #f5a623;
-
-  /* Backgrounds */
-  --bg: #080c0a;
-  --bg2: #0e1410;
-  --bg3: #141c18;
-  --bg4: #1a2420;
-
-  /* Borders */
-  --border: rgba(29, 245, 160, 0.12);
-  --border2: rgba(29, 245, 160, 0.25);
-
-  /* Text */
-  --text: #e8f2ee;
-  --muted: #7a9a8e;
-  --dim: #3d5248;
-
+  /* —— Primitives (palette) —— */
+  --g: #ffd54a;
+  --g2: #ffb800;
+  --g3: #5c4a12;
+  --amber: #ffb800;
+  --bg: #101214;
+  --bg2: #171a1f;
+  --bg3: #20242b;
+  --bg4: #2a3039;
+  --border: rgba(255, 213, 74, 0.14);
+  --border2: rgba(255, 213, 74, 0.28);
+  --text: #f3f4f6;
+  --muted: #c9ced6;
+  /* Slightly lifted vs legacy #8a93a2 for WCAG contrast on charcoal (Phase 9) */
+  --dim: #9aa4b3;
   --danger: #ff6b6b;
-
-  --status-pending: #f5a623;
+  --status-pending: #ffb800;
   --status-progress: #6495ed;
-  --status-done: #1df5a0;
+  --status-done: #78e08f;
   --status-cancel: #ff6b6b;
+
+  /* —— Semantic color —— */
+  --color-accent: var(--g);
+  --color-accent-strong: var(--g2);
+  --color-accent-deep: var(--g3);
+  --color-surface-canvas: var(--bg);
+  --color-surface-raised: var(--bg2);
+  --color-surface-card: var(--bg3);
+  --color-surface-elevated: var(--bg4);
+  --color-text-primary: var(--text);
+  --color-text-secondary: var(--muted);
+  --color-text-tertiary: var(--dim);
+  --color-border-subtle: var(--border);
+  --color-border-emphasis: var(--border2);
+  --color-danger: var(--danger);
+  --color-success: var(--status-done);
+
+  /* Third-party (Discord) — isolated from product accent */
+  --discord-blurple: #5865f2;
+  --discord-gradient-from: #2c2f5b;
+  --discord-gradient-to: #1e1f3a;
+  --discord-border: rgba(88, 101, 242, 0.3);
+  --discord-text-muted: #c9cdee;
+
+  /* —— Spacing (4px grid, rem) —— */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-section-y: var(--space-12);
+  --space-card-padding: var(--space-7);
+
+  /* —— Typography scale —— */
+  --text-2xs: 0.625rem;
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-body: 1.125rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --leading-tight: 1.25;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  /* —— Motion —— */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-hover: 160ms;
+  --duration-base: 200ms;
+  --duration-panel: 280ms;
+  --duration-route: 420ms;
+  --duration-theme-bg: 1.4s;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Phase 4 — subtle “spring” for panels (DESIGN_SYSTEM.md) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* —— Elevation —— */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.22);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.38);
+  --shadow-glow-accent: 0 0 28px color-mix(in srgb, var(--color-accent) 22%, transparent);
+
+  /* —— Blur / glass —— */
+  --blur-sm: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+
+  /* —— Radius —— */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+
+  /* —— Overlays —— */
+  --overlay-accent-hover: color-mix(in srgb, var(--color-accent) 6%, transparent);
+  --overlay-step-num: color-mix(in srgb, var(--color-accent) 55%, transparent);
 
   /* Bridge for tooling / legacy */
   --background: var(--bg);
   --foreground: var(--text);
+
+  /* Phase 10 — nav-linked header glow (0–1, set by EmotionalUxLayer) */
+  --spark-nav-glow: 0;
+}
+
+@keyframes spark-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spark-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spark-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spark-sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spark-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spark-skeleton-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes spark-ambient-sheen {
+  0% {
+    opacity: 0.032;
+    transform: translate3d(-1.5%, 0, 0) scale(1.01);
+  }
+
+  100% {
+    opacity: 0.052;
+    transform: translate3d(1.5%, 0, 0) scale(1.03);
+  }
+}
+
+@keyframes spark-empty-bar {
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0.92;
+  }
+}
+
+@keyframes spark-stagger-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {
   :focus-visible {
-    outline: 2px solid var(--g);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 25%, transparent);
+  }
+
+  summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
   }
 
   h1,
@@ -56,76 +240,398 @@
 }
 
 body {
-  color: var(--text);
-  background-color: var(--bg);
-  transition: background-color 1.4s ease;
-  font-size: 1.125rem;
-  line-height: 1.65;
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-canvas);
+  transition: background-color var(--duration-theme-bg) var(--ease-out-soft);
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
   font-weight: 300;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition-duration: 0.01ms;
+  }
+}
+
 @layer components {
-  .vire-card {
-    @apply rounded-2xl border border-edge p-7 backdrop-blur-md transition-colors duration-200;
-    background: color-mix(in srgb, var(--bg3) 78%, transparent);
+  .surface-header-scrim {
+    background-color: color-mix(
+      in srgb,
+      var(--color-surface-canvas) 92%,
+      transparent
+    );
   }
 
-  .vire-card:hover {
+  /* Phase 10 — subtle gold wash under nav on route / in-app navigation */
+  .sparkki-header-reactive {
+    transition: box-shadow 0.55s var(--ease-out-soft);
+    box-shadow: 0 0 calc(28px * var(--spark-nav-glow, 0))
+      color-mix(
+        in srgb,
+        var(--color-accent) calc(42% * var(--spark-nav-glow, 0)),
+        transparent
+      );
+  }
+
+  /* Phase 10 — soft radial sheen (marketing shell only; sits above WebGL canvas) */
+  .sparkki-ambient-sheen {
+    background: radial-gradient(
+      ellipse 110% 58% at 50% -12%,
+      color-mix(in srgb, var(--color-accent) 58%, transparent),
+      transparent 74%
+    );
+    mix-blend-mode: screen;
+    opacity: 0.038;
+    animation: spark-ambient-sheen 18s var(--ease-standard) infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-ambient-sheen {
+      animation: none;
+      opacity: 0.028;
+    }
+  }
+
+  /* Phase 10 — empty states: top accent + gentle border life */
+  .sparkki-empty-state {
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-hover) var(--ease-out-soft);
+  }
+
+  .sparkki-empty-state::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent 8%,
+      var(--color-accent) 50%,
+      transparent 92%
+    );
+    animation: spark-empty-bar 3.8s var(--ease-standard) infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-empty-state::before {
+      animation: none;
+      opacity: 0.78;
+    }
+  }
+
+  .sparkki-empty-state:hover {
+    border-color: var(--color-border-emphasis);
+    box-shadow: 0 0 0 1px
+        color-mix(in srgb, var(--color-accent) 12%, transparent),
+      var(--shadow-xs);
+  }
+
+  /* Phase 11 — hub breadcrumbs (Locale layout) */
+  .sparkki-breadcrumb {
+    padding-bottom: var(--space-2);
+  }
+
+  .vire-card,
+  .sparkki-card {
+    border-radius: var(--radius-lg);
+    padding: var(--space-card-padding);
+    box-shadow: var(--shadow-xs);
+    @apply border border-edge backdrop-blur-md transition-shadow transition-colors;
+    transition-property: box-shadow, border-color, background-color, transform;
+    transition-duration: var(--duration-base);
+    transition-timing-function: var(--ease-standard);
+    background: color-mix(in srgb, var(--color-surface-card) 78%, transparent);
+    backdrop-filter: blur(var(--blur-md));
+  }
+
+  .vire-card:hover,
+  .sparkki-card:hover {
     @apply border-em;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vire-card:hover,
+    .sparkki-card:hover {
+      transform: none;
+    }
   }
 
   .vire-card-hover {
     @apply vire-card;
   }
 
-  .vire-hero {
-    @apply relative overflow-hidden rounded-3xl border border-edge px-6 py-12 text-center backdrop-blur-lg sm:px-10 sm:py-16;
-    background: color-mix(in srgb, var(--bg3) 72%, transparent);
+  .vire-hero,
+  .sparkki-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border-subtle);
+    padding: var(--space-12) var(--space-6);
+    text-align: center;
+    backdrop-filter: blur(var(--blur-lg));
+    background: color-mix(in srgb, var(--color-surface-card) 72%, transparent);
   }
 
-  .vire-hero-inner {
+  @media (min-width: 640px) {
+    .vire-hero,
+    .sparkki-hero {
+      padding: var(--space-16) var(--space-10);
+    }
+  }
+
+  .vire-hero-inner,
+  .sparkki-hero-inner {
     @apply relative z-10;
   }
 
-  .vire-eyebrow {
-    @apply mb-5 flex items-center gap-2.5 font-mono text-[11px] font-normal uppercase tracking-[0.15em] text-g;
+  .vire-eyebrow,
+  .sparkki-eyebrow {
+    margin-bottom: var(--space-5);
+    @apply flex items-center gap-2.5 font-mono font-normal uppercase tracking-[0.15em] text-g;
+    font-size: var(--text-xs);
   }
 
-  .vire-eyebrow::before {
+  .vire-eyebrow::before,
+  .sparkki-eyebrow::before {
     content: "";
     display: inline-block;
     width: 20px;
     height: 1px;
-    background: var(--g);
+    background: var(--color-accent);
   }
 
-  .vire-btn-primary {
-    @apply inline-flex min-h-tap min-w-[200px] items-center justify-center rounded-[10px] bg-g px-7 py-3.5 text-[15px] font-bold tracking-tight text-canvas transition-opacity duration-150 hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g;
+  .vire-btn-primary,
+  .sparkki-btn-primary {
+    border-radius: var(--radius-md);
+    @apply relative inline-flex min-h-tap min-w-[200px] items-center justify-center bg-g px-7 py-3.5 font-bold tracking-tight text-canvas;
+    font-size: var(--text-md);
+    transition: opacity var(--duration-fast) var(--ease-standard),
+      transform var(--duration-hover) var(--ease-out-soft),
+      box-shadow var(--duration-hover) var(--ease-out-soft);
   }
 
-  .vire-btn-secondary {
-    @apply inline-flex min-h-tap min-w-[200px] items-center justify-center rounded-[10px] border border-em bg-transparent px-7 py-3.5 text-[15px] font-normal text-fog transition-colors duration-150 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g;
+  .vire-btn-primary:hover,
+  .sparkki-btn-primary:hover {
+    opacity: 0.95;
+    box-shadow: var(--shadow-glow-accent);
+    transform: translateY(-2px);
   }
 
-  .vire-btn-secondary:hover {
-    background: rgba(29, 245, 160, 0.05);
+  .vire-btn-primary:active,
+  .sparkki-btn-primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-xs);
+    transition-duration: var(--duration-instant);
+  }
+
+  .vire-btn-primary:disabled,
+  .sparkki-btn-primary:disabled {
+    transform: none;
+    opacity: 0.55;
+    box-shadow: none;
+  }
+
+  .sparkki-btn-loading {
+    pointer-events: none;
+    opacity: 0.88;
+  }
+
+  .sparkki-btn-loading::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    margin-top: -9px;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 2px solid color-mix(in srgb, var(--color-surface-canvas) 35%, transparent);
+    border-top-color: var(--color-surface-canvas);
+    animation: spark-spin 0.65s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vire-btn-primary:hover,
+    .sparkki-btn-primary:hover,
+    .vire-btn-primary:active,
+    .sparkki-btn-primary:active {
+      transform: none;
+    }
+
+    .sparkki-btn-loading::after {
+      animation: none;
+      border-color: var(--color-surface-canvas);
+    }
+  }
+
+  .vire-btn-primary:focus-visible,
+  .sparkki-btn-primary:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-g;
+  }
+
+  .vire-btn-secondary,
+  .sparkki-btn-secondary {
+    border-radius: var(--radius-md);
+    @apply inline-flex min-h-tap min-w-[200px] items-center justify-center border border-em bg-transparent px-7 py-3.5 font-normal text-fog;
+    font-size: var(--text-md);
+    transition: color var(--duration-fast) var(--ease-standard),
+      background-color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard);
+  }
+
+  .vire-btn-secondary:hover,
+  .sparkki-btn-secondary:hover {
+    background: var(--overlay-accent-hover);
+    @apply text-ink;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .vire-btn-secondary:active,
+  .sparkki-btn-secondary:active {
+    transform: translateY(0) scale(0.99);
+    transition-duration: var(--duration-instant);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vire-btn-secondary:hover,
+    .sparkki-btn-secondary:hover,
+    .vire-btn-secondary:active,
+    .sparkki-btn-secondary:active {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  .vire-btn-secondary:focus-visible,
+  .sparkki-btn-secondary:focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-g;
+  }
+
+  /* Phase 3 — form controls */
+  .sparkki-input,
+  textarea.sparkki-input {
+    border-radius: var(--radius-md);
+    /* Phase 14 — ≥16px on narrow viewports reduces iOS Safari focus zoom */
+    font-size: max(16px, var(--text-md));
+    line-height: var(--leading-normal);
+    transition: border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-hover) var(--ease-out-soft);
+  }
+
+  @media (min-width: 640px) {
+    .sparkki-input,
+    textarea.sparkki-input {
+      font-size: var(--text-lg);
+    }
+  }
+
+  .sparkki-input:focus,
+  textarea.sparkki-input:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+
+  /* Phase 3 — fullscreen wizard / modal shell */
+  .sparkki-modal-backdrop {
+    cursor: pointer;
+    background: color-mix(in srgb, var(--color-surface-canvas) 72%, transparent);
+    backdrop-filter: blur(var(--blur-lg));
+    animation: spark-backdrop-in var(--duration-panel) var(--ease-out-soft) both;
+  }
+
+  .sparkki-wizard-full {
+    animation: spark-modal-in var(--duration-panel) var(--ease-spring) both;
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-modal-backdrop,
+    .sparkki-wizard-full {
+      animation: none;
+    }
+  }
+
+  /* Phase 7 — mobile nav bottom sheet */
+  .sparkki-mobile-sheet {
+    animation: spark-sheet-up var(--duration-panel) var(--ease-out-soft) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-mobile-sheet {
+      animation: none;
+    }
+  }
+
+  /* Phase 4 — route content enter (see LocaleMainMotion) */
+  .sparkki-page-enter {
+    animation: spark-page-enter var(--duration-route) var(--ease-out-soft) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-page-enter {
+      animation: none;
+    }
+  }
+
+  /* Phase 4 — skeleton / loading blocks */
+  .sparkki-skeleton {
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-surface-card) 55%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface-elevated) 75%, transparent) 50%,
+      color-mix(in srgb, var(--color-surface-card) 55%, transparent) 100%
+    );
+    background-size: 200% 100%;
+    animation: spark-skeleton-pulse 1.4s var(--ease-standard) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-skeleton {
+      animation: none;
+      opacity: 0.5;
+    }
   }
 
   .discord-block {
-    background: linear-gradient(135deg, #2c2f5b 0%, #1e1f3a 100%);
-    border: 1px solid rgba(88, 101, 242, 0.3);
-    @apply flex flex-col gap-6 rounded-2xl p-8 sm:flex-row sm:items-center sm:justify-between sm:gap-8;
+    background: linear-gradient(
+      135deg,
+      var(--discord-gradient-from) 0%,
+      var(--discord-gradient-to) 100%
+    );
+    border: 1px solid var(--discord-border);
+    border-radius: var(--radius-lg);
+    @apply flex flex-col gap-6 p-8 sm:flex-row sm:items-center sm:justify-between sm:gap-8;
   }
 
   .discord-btn {
-    @apply inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[10px] px-6 py-3 text-sm font-semibold text-white transition-opacity duration-150 hover:opacity-90;
-    background: #5865f2;
+    border-radius: var(--radius-md);
+    @apply inline-flex shrink-0 items-center justify-center whitespace-nowrap px-6 py-3 text-sm font-semibold text-white transition-opacity;
+    transition-duration: var(--duration-fast);
+    background: var(--discord-blurple);
+  }
+
+  .discord-btn:hover {
+    @apply opacity-90;
   }
 
   .discord-channel {
     font-family: var(--font-dm-mono), ui-monospace, monospace;
-    font-size: 12px;
-    color: #5865f2;
+    font-size: var(--text-sm);
+    color: var(--discord-blurple);
+  }
+
+  .discord-block-lead {
+    color: var(--discord-text-muted);
   }
 
   .discord-channel::before {
@@ -135,12 +641,12 @@ body {
   .guide-card {
     position: relative;
     overflow: hidden;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    background: color-mix(in srgb, var(--bg3) 78%, transparent);
-    backdrop-filter: blur(12px);
-    padding: 28px;
-    transition: border-color 0.2s;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-subtle);
+    background: color-mix(in srgb, var(--color-surface-card) 78%, transparent);
+    backdrop-filter: blur(var(--blur-md));
+    padding: var(--space-7);
+    transition: border-color var(--duration-base) var(--ease-standard);
   }
 
   .guide-card::after {
@@ -150,10 +656,10 @@ body {
     left: 0;
     right: 0;
     height: 3px;
-    background: var(--g);
+    background: var(--color-accent);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.2s;
+    transition: transform var(--duration-base) var(--ease-out-soft);
   }
 
   .guide-card:hover::after {
@@ -161,59 +667,57 @@ body {
   }
 
   .guide-card:hover {
-    border-color: var(--border2);
+    border-color: var(--color-border-emphasis);
   }
 
   .guide-num {
     font-family: var(--font-dm-mono), ui-monospace, monospace;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--dim);
+    color: var(--color-text-tertiary);
   }
 
   .guide-title {
     font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
-    font-size: 17px;
+    font-size: var(--text-md);
     font-weight: 700;
-    line-height: 1.3;
-    color: var(--text);
+    line-height: var(--leading-snug);
+    color: var(--color-text-primary);
   }
 
-  /* DESIGN_SYSTEM.md — pricing HDD footnotes */
   .pf-note {
     display: flex;
     align-items: flex-start;
     gap: 7px;
-    padding: 4px 0;
-    font-size: 11px;
-    line-height: 1.5;
+    padding: var(--space-1) 0;
+    font-size: var(--text-xs);
+    line-height: var(--leading-normal);
     font-style: italic;
-    color: var(--muted);
+    color: var(--color-text-secondary);
     font-weight: 300;
   }
 
   .pf-note--included {
     font-style: normal;
-    color: var(--g);
+    color: var(--color-accent);
     font-weight: 500;
   }
 
-  /* Homepage step strip (DESIGN_SYSTEM.md) */
   .step-strip {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     overflow: hidden;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    background: color-mix(in srgb, var(--bg3) 55%, transparent);
-    backdrop-filter: blur(14px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-subtle);
+    background: color-mix(in srgb, var(--color-surface-card) 55%, transparent);
+    backdrop-filter: blur(var(--blur-lg));
   }
 
   .step-item {
     position: relative;
-    border-right: 1px solid var(--border);
-    padding: 36px 28px 36px 32px;
+    border-right: 1px solid var(--color-border-subtle);
+    padding: var(--space-9) var(--space-7) var(--space-9) var(--space-8);
   }
 
   @media (max-width: 639px) {
@@ -223,7 +727,7 @@ body {
 
     .step-item {
       border-right: none;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--color-border-subtle);
     }
 
     .step-item:last-child {
@@ -241,44 +745,43 @@ body {
     font-weight: 800;
     line-height: 1;
     letter-spacing: -2px;
-    /* Large text (≥24px): meet ≥3:1 vs canvas for decorative numerals */
-    color: rgba(29, 245, 160, 0.58);
-    margin-bottom: 12px;
+    color: var(--overlay-step-num);
+    margin-bottom: var(--space-3);
   }
 
   .step-icon {
     position: absolute;
-    top: 36px;
-    right: 28px;
-    font-size: 20px;
+    top: var(--space-9);
+    right: var(--space-7);
+    font-size: var(--text-xl);
     line-height: 1;
     opacity: 0.3;
   }
 
   .step-body {
-    font-size: 1.125rem;
+    font-size: var(--text-body);
     font-weight: 400;
-    line-height: 1.5;
-    color: var(--text);
+    line-height: var(--leading-normal);
+    color: var(--color-text-primary);
   }
 
   .pricing-card-featured {
     position: relative;
-    border-color: var(--g);
-    background: color-mix(in srgb, var(--g) 8%, transparent);
-    backdrop-filter: blur(10px);
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    backdrop-filter: blur(var(--blur-md));
   }
 
   .pricing-badge-featured {
     position: absolute;
     top: -12px;
-    left: 24px;
-    border-radius: 999px;
-    background: var(--g);
-    color: var(--bg);
+    left: var(--space-6);
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    color: var(--color-surface-canvas);
     padding: 3px 10px;
     font-family: var(--font-dm-mono), ui-monospace, monospace;
-    font-size: 11px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0.05em;
   }
@@ -287,5 +790,105 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Phase 7 — iOS / notched safe areas (requires viewport-fit=cover) */
+  .pb-safe {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .pt-safe {
+    padding-top: max(0.25rem, env(safe-area-inset-top, 0px));
+  }
+
+  /* Phase 8 — skip off-screen layout work while scrolling long footers */
+  .sparkki-cv-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 220px;
+  }
+
+  /* Phase 9 — override Tailwind scroll-smooth when user prefers reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Phase 10 — tactile primary taps */
+  .sparkki-pressable {
+    transition: transform var(--duration-hover) var(--ease-out-soft),
+      opacity var(--duration-fast) var(--ease-standard);
+  }
+
+  .sparkki-pressable:active {
+    transform: scale(0.98);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-pressable:active {
+      transform: none;
+    }
+  }
+
+  /* Phase 13 — stagger direct children (home lists / cards; respects reduced motion) */
+  .sparkki-stagger-children > * {
+    opacity: 0;
+    animation: spark-stagger-rise 0.42s var(--ease-out-soft) both;
+  }
+
+  .sparkki-stagger-children > *:nth-child(1) {
+    animation-delay: 0.04s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(3) {
+    animation-delay: 0.16s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(4) {
+    animation-delay: 0.22s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(5) {
+    animation-delay: 0.28s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(6) {
+    animation-delay: 0.34s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(7) {
+    animation-delay: 0.4s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(8) {
+    animation-delay: 0.46s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(9) {
+    animation-delay: 0.52s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(10) {
+    animation-delay: 0.58s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(11) {
+    animation-delay: 0.64s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(12) {
+    animation-delay: 0.7s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-stagger-children > * {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 }

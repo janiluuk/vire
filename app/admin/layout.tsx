@@ -1,6 +1,6 @@
 import { NextIntlClientProvider } from "next-intl";
 import { AdminLocaleSwitcher } from "@/components/admin/AdminLocaleSwitcher";
-import { BackgroundCanvas } from "@/components/layout/BackgroundCanvas";
+import { BackgroundCanvasDynamic } from "@/components/layout/BackgroundCanvasDynamic";
 import { AuthSessionProvider } from "@/components/providers/SessionProvider";
 import { getAdminLocale } from "@/lib/admin/get-admin-locale";
 import { getAdminMessages } from "@/lib/admin/get-admin-messages";
@@ -15,7 +15,7 @@ export default async function AdminRootLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <BackgroundCanvas />
+      <BackgroundCanvasDynamic />
       <AuthSessionProvider>
         <div className="relative z-10 min-h-dvh text-lg text-ink">
           <AdminLocaleSwitcher current={locale} />

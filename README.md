@@ -1,6 +1,6 @@
-# Vire
+# Sparkki
 
-Next.js site for Vire — refurbishment, DIY guides, orders, and admin tools.
+Next.js site for Sparkki — refurbishment, DIY guides, orders, and admin tools.
 
 **Repository layout** (where to add routes, components, and docs): [`docs/repository-layout.md`](docs/repository-layout.md).
 

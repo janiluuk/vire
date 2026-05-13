@@ -3,6 +3,7 @@ import { OrderStatus, Prisma } from "@prisma/client";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { prisma } from "@/lib/db/prisma";
 import { getAdminMessages } from "@/lib/admin/get-admin-messages";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 const PAGE_SIZE = 25;
 
@@ -113,6 +114,8 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   const currentStatus = isOrderStatus(searchParams.status)
     ? searchParams.status
     : "";
+
+  const filtersActive = Boolean((q && q.length > 0) || currentStatus);
 
   function makeHref(
     patch: Partial<{
@@ -247,7 +250,26 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       </p>
 
       {orders.length === 0 ? (
-        <p className="mt-10 text-lg text-fog">{a.ordersEmpty}</p>
+        <EmptyState
+          className="mt-10"
+          title={
+            filtersActive ? a.ordersEmptyFilteredTitle : a.ordersEmptyTitle
+          }
+          description={
+            filtersActive
+              ? a.ordersEmptyFilteredDescription
+              : a.ordersEmptyDescription
+          }
+        >
+          {filtersActive ? (
+            <Link
+              href="/admin/orders"
+              className="min-h-tap rounded-lg border border-em bg-card px-5 py-2.5 font-semibold text-ink hover:bg-sunken"
+            >
+              {a.ordersEmptyClearFilters}
+            </Link>
+          ) : null}
+        </EmptyState>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-edge bg-card">
           <table className="min-w-full text-left text-lg">

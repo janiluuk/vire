@@ -29,7 +29,7 @@ function getLimiter(max: number, windowMs: number): Ratelimit | null {
     lim = new Ratelimit({
       redis,
       limiter: Ratelimit.slidingWindow(max, `${windowSec} s`),
-      prefix: `@vire/rl/${cacheKey}`,
+      prefix: `@sparkki/rl/${cacheKey}`,
     });
     limiterCache.set(cacheKey, lim);
   }

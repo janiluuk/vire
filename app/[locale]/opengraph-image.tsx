@@ -1,9 +1,10 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Vire";
+export const alt = "Sparkki";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+/** Brand-aligned OG image — dark matte + electric yellow (DESIGN_SYSTEM.md). */
 export default function OpenGraphImage({ params }: { params: { locale: string } }) {
   const isEn = params.locale === "en";
   const headline = isEn
@@ -24,8 +25,8 @@ export default function OpenGraphImage({ params }: { params: { locale: string } 
           alignItems: "flex-start",
           justifyContent: "center",
           padding: 72,
-          background: "linear-gradient(135deg, #f9fafb 0%, #ffffff 50%, #ecfdf5 100%)",
-          color: "#111827",
+          background: "linear-gradient(145deg, #101214 0%, #171a1f 45%, #20242b 100%)",
+          color: "#f3f4f6",
           fontFamily:
             "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial",
         }}
@@ -33,16 +34,18 @@ export default function OpenGraphImage({ params }: { params: { locale: string } 
         <div
           style={{
             fontSize: 42,
-            fontWeight: 700,
+            fontWeight: 800,
             letterSpacing: "-0.02em",
-            color: "#1D9E75",
+            color: "#ffd54a",
             marginBottom: 16,
           }}
         >
-          Vire
+          Sparkki
         </div>
-        <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1.1, maxWidth: 960 }}>{headline}</div>
-        <div style={{ marginTop: 28, fontSize: 26, color: "#374151", maxWidth: 960 }}>{sub}</div>
+        <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1.1, maxWidth: 960 }}>
+          {headline}
+        </div>
+        <div style={{ marginTop: 28, fontSize: 26, color: "#c9ced6", maxWidth: 960 }}>{sub}</div>
       </div>
     ),
     { ...size },

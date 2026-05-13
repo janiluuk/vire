@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { prisma } from "@/lib/db/prisma";
 import { getAdminMessages } from "@/lib/admin/get-admin-messages";
@@ -28,7 +29,11 @@ export default async function AdminCareSubscriptionsPage() {
       <p className="mt-2 text-lg text-fog">{a.careSubscriptionsIntro}</p>
 
       {rows.length === 0 ? (
-        <p className="mt-10 text-lg text-fog">{a.careSubscriptionsEmpty}</p>
+        <EmptyState
+          className="mt-10"
+          title={a.careSubscriptionsEmptyTitle}
+          description={a.careSubscriptionsEmptyDescription}
+        />
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-edge bg-card">
           <table className="min-w-full text-left text-lg">

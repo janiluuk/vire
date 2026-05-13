@@ -15,6 +15,9 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ARG DATABASE_URL=postgresql://postgres:password@localhost:5432/vire
 ENV DATABASE_URL=$DATABASE_URL
+# Public Calendly URL for /tuki (inlined at build; see docs/calendly-booking.md)
+ARG NEXT_PUBLIC_CALENDLY_EMBED_URL=
+ENV NEXT_PUBLIC_CALENDLY_EMBED_URL=$NEXT_PUBLIC_CALENDLY_EMBED_URL
 RUN npx prisma generate
 RUN npm run build
 

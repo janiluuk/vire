@@ -1,0 +1,96 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+declare global {
+  interface Window {
+    Calendly?: {
+      initInlineWidget: (opts: {
+        url: string;
+        parentElement: HTMLElement;
+      }) => void;
+    };
+  }
+}
+
+const WIDGET_SCRIPT_SRC =
+  "https://assets.calendly.com/assets/external/widget.js";
+const SCRIPT_MARKER = "data-sparkki-calendly";
+
+type Props = {
+  /** Normalised `https://calendly.com/...` scheduling URL */
+  embedUrl: string;
+  /** Accessible name for the embedded scheduling region */
+  title: string;
+};
+
+/**
+ * Calendly inline “applet” — loads official widget.js and calls `initInlineWidget`.
+ * Configure with **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** (public scheduling link only; no API keys).
+ */
+export function BookingCalendarApplet({ embedUrl, title }: Props) {
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const parent = parentRef.current;
+    if (!parent) return;
+
+    let cancelled = false;
+
+    function mount() {
+      if (cancelled || !parent || !window.Calendly?.initInlineWidget) return;
+      parent.replaceChildren();
+      window.Calendly.initInlineWidget({
+        url: embedUrl,
+        parentElement: parent,
+      });
+    }
+
+    if (window.Calendly) {
+      mount();
+      return () => {
+        cancelled = true;
+        parent.replaceChildren();
+      };
+    }
+
+    const existing = document.querySelector<HTMLScriptElement>(
+      `script[${SCRIPT_MARKER}]`,
+    );
+    if (existing) {
+      const onLoad = () => mount();
+      existing.addEventListener("load", onLoad);
+      if (window.Calendly) onLoad();
+      return () => {
+        cancelled = true;
+        existing.removeEventListener("load", onLoad);
+        parent.replaceChildren();
+      };
+    }
+
+    const script = document.createElement("script");
+    script.src = WIDGET_SCRIPT_SRC;
+    script.async = true;
+    script.setAttribute(SCRIPT_MARKER, "1");
+    script.onload = () => mount();
+    document.body.appendChild(script);
+
+    return () => {
+      cancelled = true;
+      parent.replaceChildren();
+    };
+  }, [embedUrl]);
+
+  return (
+    <div
+      className="mt-4 overflow-hidden rounded-xl border border-edge bg-card"
+      role="region"
+      aria-label={title}
+    >
+      <div
+        ref={parentRef}
+        className="min-h-[min(700px,80svh)] w-full min-w-[280px] bg-sunken/20"
+      />
+    </div>
+  );
+}

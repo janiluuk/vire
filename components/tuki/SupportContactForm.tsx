@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  hasUsableCustomerContact,
-  parseCustomerContact,
-} from "@/lib/contact/parse-customer-contact";
+  getContactFieldIssue,
+  getSupportMessageIssue,
+} from "@/lib/contact/contact-field-validation";
 
 type Channel = "write" | "discord" | "call";
 
@@ -18,16 +18,26 @@ export function SupportContactForm() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [messageBlurred, setMessageBlurred] = useState(false);
+  const [contactBlurred, setContactBlurred] = useState(false);
 
   const discordUrl = process.env.NEXT_PUBLIC_DISCORD_INVITE?.trim() || "/meista/yhteiso";
 
+  const messageIssue = getSupportMessageIssue(message);
+  const contactIssue = getContactFieldIssue(contact);
   const canSubmitWrite =
-    message.trim().length >= 4 &&
-    hasUsableCustomerContact(parseCustomerContact(contact));
+    messageIssue === null && contactIssue === null;
+  const showMessageErr =
+    (messageBlurred || submitAttempted) && messageIssue === "short";
+  const showContactErr =
+    (contactBlurred || submitAttempted) && contactIssue != null;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (channel !== "write") return;
+    setSubmitAttempted(true);
+    if (!canSubmitWrite) return;
     setError(null);
     setLoading(true);
     try {
@@ -56,6 +66,9 @@ export function SupportContactForm() {
       setDone(true);
       setContact("");
       setMessage("");
+      setSubmitAttempted(false);
+      setMessageBlurred(false);
+      setContactBlurred(false);
     } catch {
       setError(t("formError"));
     } finally {
@@ -130,7 +143,7 @@ export function SupportContactForm() {
       ) : null}
 
       {channel === "write" ? (
-        <form onSubmit={(e) => void onSubmit(e)} className="space-y-4">
+        <form onSubmit={(e) => void onSubmit(e)} className="space-y-4" noValidate>
           <div>
             <label htmlFor="sup-msg" className="mb-2 block font-semibold text-ink">
               {t("formWhatHappened")}
@@ -138,13 +151,23 @@ export function SupportContactForm() {
             <textarea
               id="sup-msg"
               name="message"
-              required
+              aria-required="true"
+              aria-invalid={showMessageErr}
+              aria-describedby={showMessageErr ? "sup-msg-err" : undefined}
               rows={3}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onBlur={() => setMessageBlurred(true)}
               placeholder={t("formWhatPlaceholder")}
-              className="w-full resize-none rounded-lg border border-em px-4 py-3 text-lg"
+              className={`sparkki-input w-full resize-none rounded-lg border bg-sunken px-4 py-3 text-ink placeholder:text-dust ${
+                showMessageErr ? "border-danger" : "border-em"
+              }`}
             />
+            {showMessageErr ? (
+              <p id="sup-msg-err" role="alert" className="mt-2 text-base text-danger">
+                {t("formValidationMessageShort")}
+              </p>
+            ) : null}
           </div>
           <div>
             <label htmlFor="sup-contact" className="mb-2 block font-semibold text-ink">
@@ -154,13 +177,33 @@ export function SupportContactForm() {
               id="sup-contact"
               name="contact"
               type="text"
-              required
+              aria-required="true"
+              aria-invalid={showContactErr}
+              aria-describedby={
+                [showContactErr ? "sup-contact-err" : "", "sup-contact-hint"]
+                  .filter(Boolean)
+                  .join(" ") || undefined
+              }
               value={contact}
               onChange={(e) => setContact(e.target.value)}
+              onBlur={() => setContactBlurred(true)}
               placeholder={t("formContactPlaceholder")}
-              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
+              className={`sparkki-input min-h-tap w-full rounded-lg border bg-sunken px-4 text-ink placeholder:text-dust ${
+                showContactErr ? "border-danger" : "border-em"
+              }`}
             />
-            <p className="mt-2 text-base font-light text-fog">{t("formContactHint")}</p>
+            <p id="sup-contact-hint" className="mt-2 text-base font-light text-fog">
+              {t("formContactHint")}
+            </p>
+            {showContactErr && contactIssue === "empty" ? (
+              <p id="sup-contact-err" role="alert" className="mt-1 text-base text-danger">
+                {t("formValidationContactEmpty")}
+              </p>
+            ) : showContactErr && contactIssue === "invalid" ? (
+              <p id="sup-contact-err" role="alert" className="mt-1 text-base text-danger">
+                {t("formValidationContactInvalid")}
+              </p>
+            ) : null}
           </div>
           {error ? (
             <p role="alert" className="text-lg font-medium text-danger">
@@ -169,7 +212,7 @@ export function SupportContactForm() {
           ) : null}
           <button
             type="submit"
-            disabled={!canSubmitWrite || loading}
+            disabled={loading}
             className="min-h-tap rounded-xl bg-vire-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.9] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? t("formSending") : t("formSubmit")}

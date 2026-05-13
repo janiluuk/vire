@@ -61,18 +61,18 @@ test.describe("key public journeys", () => {
     await expect(page.getByRole("heading", { name: /Oppaat/i })).toBeVisible();
   });
 
-  test("Vire for Good application page", async ({ page }) => {
+  test("Sparkki for Good application page", async ({ page }) => {
     await page.goto("/fi/vire-for-good", { waitUntil: "domcontentloaded" });
     await expect(
-      page.getByRole("heading", { level: 1, name: /Vire for Good/i }),
+      page.getByRole("heading", { level: 1, name: /Sparkki for Good/i }),
     ).toBeVisible();
     await expect(page.getByLabel(/Miksi haet alennusta/i)).toBeVisible();
   });
 
-  test("Vire Care landing", async ({ page }) => {
+  test("Sparkki Care landing", async ({ page }) => {
     await page.goto("/fi/care", { waitUntil: "domcontentloaded" });
     await expect(
-      page.getByRole("heading", { level: 1, name: /Vire Care/i }),
+      page.getByRole("heading", { level: 1, name: /Sparkki Care/i }),
     ).toBeVisible();
   });
 });

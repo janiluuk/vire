@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import {
@@ -20,9 +20,9 @@ import {
   serviceCheckoutTotalCents,
 } from "@/lib/billing/pricing";
 import {
-  hasUsableCustomerContact,
-  parseCustomerContact,
-} from "@/lib/contact/parse-customer-contact";
+  getComputerDescriptionIssue,
+  getContactFieldIssue,
+} from "@/lib/contact/contact-field-validation";
 
 const WIZARD_ANCHOR = "palvelu-tilaa";
 
@@ -116,6 +116,7 @@ export function OrderWizard({ locale }: { locale: string }) {
   const t = useTranslations("palvelu");
   const w = useTranslations("palvelu.wizard");
   const fullMode = useWizardFullscreen();
+  const wizardRef = useRef<HTMLElement>(null);
 
   const [step, setStep] = useState(0);
 
@@ -130,9 +131,14 @@ export function OrderWizard({ locale }: { locale: string }) {
   const [portableVmHandoff, setPortableVmHandoff] =
     useState<PortableVmHandoff | null>(null);
   const [customerContact, setCustomerContact] = useState("");
+  const [computerFieldBlurred, setComputerFieldBlurred] = useState(false);
+  const [contactFieldBlurred, setContactFieldBlurred] = useState(false);
 
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const hadAddonsSelectionRef = useRef(false);
+  const [addonsSectionOpen, setAddonsSectionOpen] = useState(false);
 
   const pricePreview = useMemo(() => {
     if (!tier || !delivery) return null;
@@ -156,8 +162,70 @@ export function OrderWizard({ locale }: { locale: string }) {
     clearWizardHash();
   }
 
+  useEffect(() => {
+    if (!fullMode || !wizardRef.current) return;
+    const root = wizardRef.current;
+
+    const focusables = () =>
+      Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])',
+        ),
+      );
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Tab") return;
+      const list = focusables();
+      if (list.length === 0) return;
+      const first = list[0]!;
+      const last = list[list.length - 1]!;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    const id = window.requestAnimationFrame(() => {
+      focusables()[0]?.focus();
+    });
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      window.cancelAnimationFrame(id);
+    };
+  }, [fullMode]);
+
+  useEffect(() => {
+    const on = appBundles.length > 0 || portableVmOn;
+    if (on && !hadAddonsSelectionRef.current) setAddonsSectionOpen(true);
+    hadAddonsSelectionRef.current = on;
+  }, [appBundles.length, portableVmOn]);
+
+  useEffect(() => {
+    if (step === 0) setComputerFieldBlurred(false);
+  }, [step]);
+
+  useEffect(() => {
+    if (step === 3) setContactFieldBlurred(false);
+  }, [step]);
+
   async function startCheckout() {
     if (!tier || !delivery) return;
+    const contactIssue = getContactFieldIssue(customerContact);
+    if (contactIssue != null) {
+      setContactFieldBlurred(true);
+      setCheckoutError(
+        contactIssue === "empty"
+          ? w("validationContactEmpty")
+          : w("validationContactInvalid"),
+      );
+      return;
+    }
     setCheckoutError(null);
     setCheckoutLoading(true);
     try {
@@ -203,24 +271,84 @@ export function OrderWizard({ locale }: { locale: string }) {
     delivery != null &&
     (!portableVmOn || portableVmHandoff != null);
   const canNextFrom2 = true;
-  const contactOk = hasUsableCustomerContact(
-    parseCustomerContact(customerContact),
-  );
+  const contactIssue = getContactFieldIssue(customerContact);
+  const contactOk = contactIssue === null;
+  const computerIssue = getComputerDescriptionIssue(computerDescription, 3);
+  const showComputerErr = computerFieldBlurred && computerIssue === "short";
+  const showContactErr = contactFieldBlurred && contactIssue != null;
 
   const stepContentId = `wizard-step-${step}-region`;
   const stepHint = w(STEP_HINT_KEYS[step]);
 
   const shellClass = fullMode
-    ? "fixed inset-0 z-[100] flex flex-col border border-edge bg-canvas"
+    ? "sparkki-wizard-full fixed inset-0 z-[100] flex flex-col border border-edge bg-canvas"
     : "vire-card mx-auto max-w-4xl scroll-mt-28 p-6 md:p-10";
 
-  return (
-    <section
-      data-testid="order-wizard"
-      id={WIZARD_ANCHOR}
-      className={shellClass}
-      aria-labelledby="wizard-title"
+  const wizardNavButtonRow = (
+    <div
+      className={
+        fullMode
+          ? "flex flex-wrap justify-between gap-3"
+          : "mt-10 grid grid-cols-2 gap-3 md:mt-10 md:flex md:flex-wrap md:justify-between md:gap-4"
+      }
     >
+      <button
+        type="button"
+        className="min-h-12 w-full rounded-lg border border-em px-6 py-3 font-semibold text-ink disabled:opacity-40 md:min-h-tap md:w-auto"
+        disabled={step === 0}
+        onClick={() => setStep((s) => Math.max(0, s - 1))}
+      >
+        {w("back")}
+      </button>
+      <button
+        type="button"
+        className="min-h-12 w-full rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas disabled:opacity-40 md:min-h-tap md:w-auto"
+        disabled={
+          (step === 0 && !canNextFrom0) ||
+          (step === 1 && !canNextFrom1) ||
+          (step === 2 && !canNextFrom2) ||
+          step === 3
+        }
+        onClick={() => {
+          if (step === 0 && canNextFrom0) setStep(1);
+          else if (step === 1 && canNextFrom1) setStep(2);
+          else if (step === 2 && canNextFrom2) setStep(3);
+        }}
+      >
+        {w("next")}
+      </button>
+    </div>
+  );
+
+  const wizardLegalHintEl = (
+    <p
+      className={`break-words text-fog ${
+        fullMode ? "mt-3 text-xs sm:text-sm" : "mt-6 text-sm"
+      }`}
+    >
+      {t("wizardLegalHint")}
+    </p>
+  );
+
+  return (
+    <>
+      {fullMode ? (
+        <div
+          className="sparkki-modal-backdrop fixed inset-0 z-[90]"
+          aria-hidden
+          onClick={closeFullscreen}
+        />
+      ) : null}
+      <section
+        ref={wizardRef}
+        data-testid="order-wizard"
+        data-order-wizard-dialog={fullMode ? "" : undefined}
+        id={WIZARD_ANCHOR}
+        className={shellClass}
+        role={fullMode ? "dialog" : undefined}
+        aria-modal={fullMode ? true : undefined}
+        aria-labelledby="wizard-title"
+      >
       <div
         className={`shrink-0 border-b border-edge bg-canvas/95 px-0 py-3 backdrop-blur-md md:py-4 ${
           fullMode ? "px-4 md:px-6" : ""
@@ -245,7 +373,7 @@ export function OrderWizard({ locale }: { locale: string }) {
 
         <nav
           aria-label={w("stepperLabel")}
-          className="mx-auto mt-4 max-w-4xl overflow-x-auto pb-1"
+          className="mx-auto mt-4 max-w-4xl overflow-x-auto overscroll-x-contain pb-1 touch-pan-x [-webkit-overflow-scrolling:touch]"
         >
           <ol className="flex min-w-min items-start gap-0 sm:gap-1">
             {STEP_NAV_KEYS.map((key, i) => {
@@ -307,16 +435,25 @@ export function OrderWizard({ locale }: { locale: string }) {
       </div>
 
       <div
-        className={`mx-auto w-full max-w-4xl flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-8 ${
-          fullMode ? "min-h-0" : ""
-        }`}
+        className={
+          fullMode
+            ? "mx-auto flex w-full max-w-4xl min-h-0 flex-1 flex-col"
+            : "mx-auto w-full max-w-4xl"
+        }
       >
         <div
-          id={stepContentId}
-          role="region"
-          aria-labelledby="wizard-title"
-          aria-describedby={`${stepContentId}-hint`}
+          className={
+            fullMode
+              ? "min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 py-4 touch-pan-y md:px-6 md:py-6"
+              : "px-4 py-6 md:px-6 md:py-8"
+          }
         >
+          <div
+            id={stepContentId}
+            role="region"
+            aria-labelledby="wizard-title"
+            aria-describedby={`${stepContentId}-hint`}
+          >
           {step === 0 ? (
             <div className="space-y-4">
               <h3 className="text-2xl font-semibold text-ink">{w("step1Title")}</h3>
@@ -327,15 +464,40 @@ export function OrderWizard({ locale }: { locale: string }) {
                 <textarea
                   id="wiz-computer"
                   rows={4}
-                  className="w-full resize-y rounded-lg border border-em bg-sunken px-4 py-3 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
+                  aria-required="true"
+                  aria-invalid={showComputerErr}
+                  aria-describedby={
+                    [
+                      "wiz-computer-hint",
+                      showComputerErr ? "wiz-computer-err" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || undefined
+                  }
+                  className={`sparkki-input w-full resize-y rounded-lg border bg-sunken px-4 py-3 text-ink placeholder:text-dust ${
+                    showComputerErr ? "border-danger" : "border-em"
+                  }`}
                   value={computerDescription}
                   onChange={(e) => setComputerDescription(e.target.value)}
+                  onBlur={() => setComputerFieldBlurred(true)}
                   placeholder={w("computerPlaceholder")}
                   maxLength={2000}
                 />
-                <p className="mt-2 text-base font-light leading-relaxed text-fog">
+                <p
+                  id="wiz-computer-hint"
+                  className="mt-2 text-base font-light leading-relaxed text-fog"
+                >
                   {w("computerHint")}
                 </p>
+                {showComputerErr ? (
+                  <p
+                    id="wiz-computer-err"
+                    role="alert"
+                    className="mt-2 text-base text-danger"
+                  >
+                    {w("validationComputerShort")}
+                  </p>
+                ) : null}
               </div>
             </div>
           ) : null}
@@ -413,148 +575,172 @@ export function OrderWizard({ locale }: { locale: string }) {
                   ))}
                 </div>
               </div>
-              <div>
-                <h3 className="text-2xl font-semibold text-ink">
-                  {w("bundlesTitle")}
-                </h3>
-                <p className="mt-2 text-base font-light leading-relaxed text-fog">
-                  {w("bundlesHint")}
-                </p>
-                <div className="mt-4 space-y-2.5" role="group" aria-label={w("bundlesTitle")}>
-                  {APP_BUNDLE_ORDER.map((id) => {
-                    const selected = appBundles.includes(id);
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        onClick={() => {
-                          setAppBundles((prev) =>
-                            selected
-                              ? prev.filter((x) => x !== id)
-                              : [...prev, id],
-                          );
-                        }}
-                        className={`flex w-full items-start gap-3 rounded-[10px] border p-4 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
-                          selected
-                            ? "border-g bg-g/[0.05]"
-                            : "border-edge bg-sunken hover:border-em"
-                        }`}
-                      >
-                        <span
-                          className={`mt-1 inline-flex size-4 shrink-0 rounded border-2 ${
-                            selected ? "border-g bg-g" : "border-em bg-canvas"
-                          }`}
-                          aria-hidden
-                        />
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-semibold text-ink">
-                            {w(WIZ_BUNDLE_MSG[id])}
-                          </span>
-                          <span className="mt-0.5 block font-mono text-xs text-g">
-                            +{(APP_BUNDLE_CENTS[id] / 100).toFixed(0)} €
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-semibold text-ink">{w("vmTitle")}</h3>
-                <p className="mt-2 text-base font-light leading-relaxed text-fog">
-                  {w("vmHint")}
-                </p>
-                <p className="mt-1 font-mono text-sm text-g">
-                  +{(PORTABLE_VM_ADDON_CENTS / 100).toFixed(0)} €
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (portableVmOn) {
-                      setPortableVmOn(false);
-                      setPortableVmHandoff(null);
-                    } else {
-                      setPortableVmOn(true);
-                      setPortableVmHandoff(PortableVmHandoff.CUSTOMER_STORAGE);
-                    }
-                  }}
-                  className={`mt-4 min-h-tap w-full max-w-md rounded-[10px] border px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
-                    portableVmOn
-                      ? "border-g bg-g/[0.08] text-ink"
-                      : "border-edge bg-sunken text-ink hover:border-em"
-                  }`}
-                >
-                  {portableVmOn ? w("vmDisableAddon") : w("vmEnableAddon")}
-                </button>
-                {portableVmOn ? (
-                  <div className="mt-6 space-y-3">
-                    <p className="text-sm font-semibold text-ink">
-                      {w("vmHandoffHeading")}
+              <details
+                className="rounded-2xl border border-edge bg-sunken/15 open:bg-sunken/25"
+                open={addonsSectionOpen}
+                onToggle={(e) =>
+                  setAddonsSectionOpen((e.target as HTMLDetailsElement).open)
+                }
+              >
+                <summary className="cursor-pointer select-none list-none rounded-2xl px-4 py-4 marker:hidden [&::-webkit-details-marker]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g">
+                  <span className="block text-xl font-semibold text-ink">
+                    {w("step2AddonsSummary")}
+                  </span>
+                  <span className="mt-1 block text-sm font-normal leading-snug text-fog">
+                    {w("step2AddonsHint")}
+                  </span>
+                </summary>
+                <div className="space-y-10 border-t border-edge/70 px-4 pb-6 pt-6">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-ink">
+                      {w("bundlesTitle")}
+                    </h3>
+                    <p className="mt-2 text-base font-light leading-relaxed text-fog">
+                      {w("bundlesHint")}
                     </p>
-                    {(
-                      [
-                        [
-                          PortableVmHandoff.CUSTOMER_STORAGE,
-                          "vmHandoffCustomerTitle",
-                          "vmHandoffCustomerDesc",
-                        ],
-                        [
-                          PortableVmHandoff.SHIPPED_MEDIA,
-                          "vmHandoffShippedTitle",
-                          "vmHandoffShippedDesc",
-                        ],
-                      ] as const
-                    ).map(([value, titleKey, descKey]) => (
-                      <button
-                        key={value}
-                        type="button"
-                        onClick={() => setPortableVmHandoff(value)}
-                        className={`flex w-full items-start gap-3 rounded-[10px] border p-4 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
-                          portableVmHandoff === value
-                            ? "border-g bg-g/[0.05]"
-                            : "border-edge bg-sunken hover:border-em"
-                        }`}
-                      >
-                        <span
-                          className={`mt-0.5 inline-flex size-4 shrink-0 rounded-full border-2 ${
-                            portableVmHandoff === value ? "border-g bg-g" : "border-em"
-                          }`}
-                          aria-hidden
-                        />
-                        <span>
-                          <span className="block text-sm font-semibold text-ink">
-                            {w(titleKey)}
-                          </span>
-                          <span className="mt-1 block text-[13px] font-light text-fog">
-                            {w(descKey)}
-                          </span>
-                        </span>
-                      </button>
-                    ))}
-                    <details className="mt-4 rounded-xl border border-edge bg-sunken/40 p-4 text-fog">
-                      <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
-                        {w("vmLegalToggle")}
-                      </summary>
-                      <div className="mt-3 space-y-3 text-[13px] font-light leading-relaxed">
-                        <p>{w("vmLegalP1")}</p>
-                        <p>{w("vmLegalP2")}</p>
-                        <p>{w("vmLegalP3")}</p>
-                        <p>{w("vmLegalP4")}</p>
-                        <p>
-                          {w("vmLegalPrivacyBefore")}{" "}
-                          <Link
-                            href="/tietosuoja"
-                            className="font-medium text-g underline-offset-2 hover:underline"
+                    <div
+                      className="mt-4 space-y-2.5"
+                      role="group"
+                      aria-label={w("bundlesTitle")}
+                    >
+                      {APP_BUNDLE_ORDER.map((id) => {
+                        const selected = appBundles.includes(id);
+                        return (
+                          <button
+                            key={id}
+                            type="button"
+                            onClick={() => {
+                              setAppBundles((prev) =>
+                                selected
+                                  ? prev.filter((x) => x !== id)
+                                  : [...prev, id],
+                              );
+                            }}
+                            className={`flex w-full items-start gap-3 rounded-[10px] border p-4 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                              selected
+                                ? "border-g bg-g/[0.05]"
+                                : "border-edge bg-sunken hover:border-em"
+                            }`}
                           >
-                            {w("vmLegalPrivacyLink")}
-                          </Link>
-                          {w("vmLegalPrivacyAfter")}
-                        </p>
-                      </div>
-                    </details>
+                            <span
+                              className={`mt-1 inline-flex size-4 shrink-0 rounded border-2 ${
+                                selected ? "border-g bg-g" : "border-em bg-canvas"
+                              }`}
+                              aria-hidden
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-sm font-semibold text-ink">
+                                {w(WIZ_BUNDLE_MSG[id])}
+                              </span>
+                              <span className="mt-0.5 block font-mono text-xs text-g">
+                                +{(APP_BUNDLE_CENTS[id] / 100).toFixed(0)} €
+                              </span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                ) : null}
-              </div>
+                  <div>
+                    <h3 className="text-2xl font-semibold text-ink">{w("vmTitle")}</h3>
+                    <p className="mt-2 text-base font-light leading-relaxed text-fog">
+                      {w("vmHint")}
+                    </p>
+                    <p className="mt-1 font-mono text-sm text-g">
+                      +{(PORTABLE_VM_ADDON_CENTS / 100).toFixed(0)} €
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (portableVmOn) {
+                          setPortableVmOn(false);
+                          setPortableVmHandoff(null);
+                        } else {
+                          setPortableVmOn(true);
+                          setPortableVmHandoff(PortableVmHandoff.CUSTOMER_STORAGE);
+                        }
+                      }}
+                      className={`mt-4 min-h-tap w-full max-w-md rounded-[10px] border px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                        portableVmOn
+                          ? "border-g bg-g/[0.08] text-ink"
+                          : "border-edge bg-sunken text-ink hover:border-em"
+                      }`}
+                    >
+                      {portableVmOn ? w("vmDisableAddon") : w("vmEnableAddon")}
+                    </button>
+                    {portableVmOn ? (
+                      <div className="mt-6 space-y-3">
+                        <p className="text-sm font-semibold text-ink">
+                          {w("vmHandoffHeading")}
+                        </p>
+                        {(
+                          [
+                            [
+                              PortableVmHandoff.CUSTOMER_STORAGE,
+                              "vmHandoffCustomerTitle",
+                              "vmHandoffCustomerDesc",
+                            ],
+                            [
+                              PortableVmHandoff.SHIPPED_MEDIA,
+                              "vmHandoffShippedTitle",
+                              "vmHandoffShippedDesc",
+                            ],
+                          ] as const
+                        ).map(([value, titleKey, descKey]) => (
+                          <button
+                            key={value}
+                            type="button"
+                            onClick={() => setPortableVmHandoff(value)}
+                            className={`flex w-full items-start gap-3 rounded-[10px] border p-4 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                              portableVmHandoff === value
+                                ? "border-g bg-g/[0.05]"
+                                : "border-edge bg-sunken hover:border-em"
+                            }`}
+                          >
+                            <span
+                              className={`mt-0.5 inline-flex size-4 shrink-0 rounded-full border-2 ${
+                                portableVmHandoff === value
+                                  ? "border-g bg-g"
+                                  : "border-em"
+                              }`}
+                              aria-hidden
+                            />
+                            <span>
+                              <span className="block text-sm font-semibold text-ink">
+                                {w(titleKey)}
+                              </span>
+                              <span className="mt-1 block text-[13px] font-light text-fog">
+                                {w(descKey)}
+                              </span>
+                            </span>
+                          </button>
+                        ))}
+                        <details className="mt-4 rounded-xl border border-edge bg-sunken/40 p-4 text-fog">
+                          <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
+                            {w("vmLegalToggle")}
+                          </summary>
+                          <div className="mt-3 space-y-3 text-[13px] font-light leading-relaxed">
+                            <p>{w("vmLegalP1")}</p>
+                            <p>{w("vmLegalP2")}</p>
+                            <p>{w("vmLegalP3")}</p>
+                            <p>{w("vmLegalP4")}</p>
+                            <p>
+                              {w("vmLegalPrivacyBefore")}{" "}
+                              <Link
+                                href="/tietosuoja"
+                                className="font-medium text-g underline-offset-2 hover:underline"
+                              >
+                                {w("vmLegalPrivacyLink")}
+                              </Link>
+                              {w("vmLegalPrivacyAfter")}
+                            </p>
+                          </div>
+                        </details>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              </details>
             </div>
           ) : null}
 
@@ -640,15 +826,48 @@ export function OrderWizard({ locale }: { locale: string }) {
                   </label>
                   <input
                     id="wiz-contact"
-                    className="min-h-tap w-full rounded-lg border border-em bg-sunken px-4 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
+                    aria-required="true"
+                    aria-invalid={showContactErr}
+                    aria-describedby={
+                      [
+                        "wiz-contact-hint",
+                        showContactErr ? "wiz-contact-err" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || undefined
+                    }
+                    className={`sparkki-input min-h-tap w-full rounded-lg border bg-sunken px-4 text-ink placeholder:text-dust ${
+                      showContactErr ? "border-danger" : "border-em"
+                    }`}
                     value={customerContact}
                     onChange={(e) => setCustomerContact(e.target.value)}
+                    onBlur={() => setContactFieldBlurred(true)}
                     autoComplete="email"
                     placeholder={w("contactPlaceholder")}
                   />
-                  <p className="mt-2 text-base font-light text-fog">
+                  <p
+                    id="wiz-contact-hint"
+                    className="mt-2 text-base font-light text-fog"
+                  >
                     {w("contactHint")}
                   </p>
+                  {showContactErr && contactIssue === "empty" ? (
+                    <p
+                      id="wiz-contact-err"
+                      role="alert"
+                      className="mt-2 text-base text-danger"
+                    >
+                      {w("validationContactEmpty")}
+                    </p>
+                  ) : showContactErr && contactIssue === "invalid" ? (
+                    <p
+                      id="wiz-contact-err"
+                      role="alert"
+                      className="mt-2 text-base text-danger"
+                    >
+                      {w("validationContactInvalid")}
+                    </p>
+                  ) : null}
                 </div>
               </div>
 
@@ -689,7 +908,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                         : w("vmHandoffShippedSummary")}
                     </p>
                   ) : null}
-                  <p>
+                  <p className="break-words">
                     <strong>{w("summaryContact")}:</strong>{" "}
                     {customerContact.trim()}
                   </p>
@@ -705,48 +924,35 @@ export function OrderWizard({ locale }: { locale: string }) {
                   ) : null}
                   <button
                     type="button"
-                    disabled={checkoutLoading}
-                    className="min-h-tap w-full rounded-xl bg-vire-green py-4 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60 md:max-w-md"
+                    disabled={checkoutLoading || !contactOk}
+                    aria-busy={checkoutLoading}
+                    className={`sparkki-btn-primary min-h-tap w-full min-w-0 justify-center py-4 pr-12 text-lg md:max-w-md ${
+                      checkoutLoading ? "sparkki-btn-loading" : ""
+                    }`}
                     onClick={() => void startCheckout()}
                   >
-                    {checkoutLoading ? "…" : w("payCta")}
+                    {checkoutLoading ? w("payCtaLoading") : w("payCta")}
                   </button>
                 </div>
               ) : null}
             </div>
           ) : null}
+          </div>
+          {!fullMode ? (
+            <>
+              {wizardNavButtonRow}
+              {wizardLegalHintEl}
+            </>
+          ) : null}
         </div>
-
-        <div className="mt-10 flex flex-wrap justify-between gap-4">
-          <button
-            type="button"
-            className="min-h-tap rounded-lg border border-em px-6 py-3 font-semibold text-ink disabled:opacity-40"
-            disabled={step === 0}
-            onClick={() => setStep((s) => Math.max(0, s - 1))}
-          >
-            {w("back")}
-          </button>
-          <button
-            type="button"
-            className="min-h-tap rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas disabled:opacity-40"
-            disabled={
-              (step === 0 && !canNextFrom0) ||
-              (step === 1 && !canNextFrom1) ||
-              (step === 2 && !canNextFrom2) ||
-              step === 3
-            }
-            onClick={() => {
-              if (step === 0 && canNextFrom0) setStep(1);
-              else if (step === 1 && canNextFrom1) setStep(2);
-              else if (step === 2 && canNextFrom2) setStep(3);
-            }}
-          >
-            {w("next")}
-          </button>
-        </div>
-
-        <p className="mt-6 text-sm text-fog">{t("wizardLegalHint")}</p>
+        {fullMode ? (
+          <div className="shrink-0 border-t border-edge bg-canvas/95 px-4 pb-safe pt-4 backdrop-blur-md md:px-6">
+            {wizardNavButtonRow}
+            {wizardLegalHintEl}
+          </div>
+        ) : null}
       </div>
     </section>
+    </>
   );
 }

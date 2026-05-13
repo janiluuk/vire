@@ -48,11 +48,11 @@ test.describe("public routes (SSG / static pages)", () => {
     ).toBeVisible();
   });
 
-  test("health returns vire service id", async ({ request }) => {
+  test("health returns sparkki service id", async ({ request }) => {
     const res = await request.get("/api/health");
     expect(res.ok()).toBeTruthy();
     const json = (await res.json()) as { ok?: boolean; service?: string };
     expect(json.ok).toBe(true);
-    expect(json.service).toBe("vire");
+    expect(json.service).toBe("sparkki");
   });
 });

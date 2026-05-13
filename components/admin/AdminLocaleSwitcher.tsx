@@ -11,7 +11,11 @@ export function AdminLocaleSwitcher({ current }: { current: "fi" | "en" }) {
   return (
     <div className="flex flex-wrap items-center justify-end gap-2 border-b border-edge bg-sunken/40 px-4 py-2 text-base text-ink">
       <span className="font-semibold text-fog">{t("adminLocaleLabel")}</span>
-      <div className="inline-flex gap-1 rounded-lg border border-em bg-card p-0.5">
+      <div
+        className="inline-flex gap-1 rounded-lg border border-em bg-card p-0.5"
+        role="group"
+        aria-label={t("adminLocaleLabel")}
+      >
         <button
           type="button"
           aria-pressed={current === "fi"}
