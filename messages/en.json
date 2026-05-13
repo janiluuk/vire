@@ -31,7 +31,8 @@
     "serviceTabOverview": "Overview",
     "serviceTabB2b": "Business",
     "serviceTabCare": "Sparkki Care",
-    "serviceTabTrack": "Track order"
+    "serviceTabTrack": "Track order",
+    "breadcrumbAria": "Breadcrumb"
   },
   "commandPalette": {
     "title": "Quick navigation",

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
+import { feedbackPrimaryCTA } from "@/lib/site/ui-feedback";
 
 function BrandMark({ name }: { name: string }) {
   const lower = name.toLowerCase();
@@ -24,7 +25,7 @@ function BrandMark({ name }: { name: string }) {
 
 /** Segmented top nav — same affordance as locale switcher; not used for the order CTA. */
 function topTabClass(active: boolean) {
-  return `min-h-tap rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-[color,background-color,transform,box-shadow] duration-hover ease-out-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
+  return `min-h-tap rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-[color,background-color,transform,box-shadow] duration-hover ease-out-soft active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
     active
       ? "bg-g text-canvas shadow-elevation-xs"
       : "text-fog hover:text-ink hover:-translate-y-px motion-reduce:hover:translate-none"
@@ -49,7 +50,7 @@ function MobileNavLink({
         onPick();
         dispatchBackgroundNavInteraction();
       }}
-      className={`min-h-12 rounded-lg px-4 py-3 text-base font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-g md:min-h-tap ${
+      className={`min-h-12 rounded-lg px-4 py-3 text-base font-semibold transition-[colors,transform] active:scale-[0.99] motion-reduce:active:scale-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g md:min-h-tap ${
         active ? "bg-g text-canvas" : "text-ink hover:bg-sunken"
       }`}
       aria-current={active ? "page" : undefined}
@@ -143,7 +144,7 @@ export function NavBar({ locale }: { locale: string }) {
     pathname.startsWith("/yhteiso/");
 
   return (
-    <header className="surface-header-scrim sticky top-0 z-30 border-b border-edge pt-safe backdrop-blur-spark-xl">
+    <header className="surface-header-scrim sparkki-header-reactive sticky top-0 z-30 border-b border-edge pt-safe backdrop-blur-spark-xl">
       <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-4 px-6 py-4 sm:px-12 sm:py-5">
         <Link
           href="/"
@@ -226,8 +227,11 @@ export function NavBar({ locale }: { locale: string }) {
 
           <Link
             href="/palvelu#palvelu-tilaa"
-            onClick={onNavClick}
-            className="inline-flex min-h-tap shrink-0 items-center justify-center rounded-lg bg-g px-5 py-2.5 text-sm font-bold tracking-tight text-canvas transition-opacity duration-150 hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
+            onClick={() => {
+              feedbackPrimaryCTA();
+              onNavClick();
+            }}
+            className="sparkki-pressable inline-flex min-h-tap shrink-0 items-center justify-center rounded-lg bg-g px-5 py-2.5 text-sm font-bold tracking-tight text-canvas transition-opacity duration-150 hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
           >
             {t("ctaOrder")}
           </Link>
@@ -352,10 +356,11 @@ export function NavBar({ locale }: { locale: string }) {
               <Link
                 href="/palvelu#palvelu-tilaa"
                 onClick={() => {
+                  feedbackPrimaryCTA();
                   setMobileOpen(false);
                   onNavClick();
                 }}
-                className="mt-2 inline-flex min-h-tap items-center justify-center rounded-lg bg-g px-4 py-3 text-sm font-bold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+                className="sparkki-pressable mt-2 inline-flex min-h-tap items-center justify-center rounded-lg bg-g px-4 py-3 text-sm font-bold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
               >
                 {t("ctaOrder")}
               </Link>

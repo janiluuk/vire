@@ -31,7 +31,8 @@
     "serviceTabOverview": "Yleiskatsaus",
     "serviceTabB2b": "Yritykset",
     "serviceTabCare": "Sparkki Care",
-    "serviceTabTrack": "Seuranta"
+    "serviceTabTrack": "Seuranta",
+    "breadcrumbAria": "Murupolku"
   },
   "commandPalette": {
     "title": "Pikanavigointi",

@@ -299,7 +299,7 @@ Reduce cognitive overload.
 - [ ] Add smart sidebar
 - [ ] Add recent actions
 - [ ] Add route memory
-- [ ] Add breadcrumb navigation
+- [x] Add breadcrumb navigation (see **Phase 11**)
 - [x] Add mobile drawer navigation — hamburger (`md:hidden`) + slide-over with main links, order CTA, locale
 
 ---
@@ -352,12 +352,25 @@ Make Sparkki feel memorable.
 
 ## Tasks
 
-- [ ] Add delightful empty states
-- [ ] Add ambient background animation
-- [ ] Add subtle sound hooks
-- [ ] Add contextual microinteractions
-- [ ] Add alive feeling to interface
-- [ ] Add subtle reactive lighting
+- [x] Add delightful empty states (`EmptyState` spark mark + `sparkki-empty-state` accent / hover)
+- [x] Add ambient background animation (`sparkki-ambient-sheen` in `EmotionalUxLayer`)
+- [x] Add subtle sound hooks (`lib/site/ui-feedback.ts` — `NEXT_PUBLIC_ENABLE_UI_SOUNDS=true`, respects reduced motion)
+- [x] Add contextual microinteractions (nav tab / mobile link press scale; `sparkki-pressable` order CTA)
+- [x] Add alive feeling to interface (sheen + header glow + empty-state polish + haptics on primary CTA)
+- [x] Add subtle reactive lighting (`--spark-nav-glow` → `sparkki-header-reactive` box-shadow)
+
+---
+
+# PHASE 11 — Breadcrumb navigation
+
+## Goal
+Orient users inside deep hubs without duplicating the whole IA.
+
+## Tasks
+
+- [x] Add hub breadcrumbs (`AutoHubBreadcrumbs` in `app/[locale]/layout.tsx` — `/tietoa/*`, service cluster, `/meista` / `/about` / `/yhteiso`)
+- [x] Add model detail trail (`KoneetDetailBreadcrumbs` on `/koneet/[slug]`; list view uses auto service crumbs)
+- [x] Localised aria label (`nav.breadcrumbAria`); slash separators; last segment `aria-current="page"`
 
 ---
 

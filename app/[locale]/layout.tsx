@@ -8,6 +8,8 @@ import { DeliveryStripGate } from "@/components/layout/DeliveryStripGate";
 import { LocaleMainMotion } from "@/components/layout/LocaleMainMotion";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { RoutePrefetchWarmup } from "@/components/layout/RoutePrefetchWarmup";
+import { EmotionalUxLayer } from "@/components/layout/EmotionalUxLayer";
+import { AutoHubBreadcrumbs } from "@/components/layout/HubBreadcrumbs";
 import { NavBar } from "@/components/layout/NavBar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -46,6 +48,7 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <BackgroundCanvasDynamic />
+      <EmotionalUxLayer />
       <div className="relative z-10 flex min-h-screen flex-col">
         <a
           href="#content"
@@ -61,6 +64,9 @@ export default async function LocaleLayout({
           aria-label={t("mainLandmark")}
           className="flex min-h-0 flex-1 flex-col"
         >
+          <div className="mx-auto w-full max-w-[1100px] px-6 sm:px-12 pt-3">
+            <AutoHubBreadcrumbs />
+          </div>
           <LocaleMainMotion>{children}</LocaleMainMotion>
         </main>
         <Footer />
