@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import {
+  parseExplicitCalendlyEmbedDomain,
+  withCalendlyInlineEmbedContext,
+} from "@/lib/site/calendly-url";
 
 declare global {
   interface Window {
@@ -18,17 +22,19 @@ const WIDGET_SCRIPT_SRC =
 const SCRIPT_MARKER = "data-sparkki-calendly";
 
 type Props = {
-  /** Normalised `https://calendly.com/...` scheduling URL */
-  embedUrl: string;
+  /** Normalised `https://calendly.com/.../event` (no required query params). */
+  schedulingUrl: string;
   /** Accessible name for the embedded scheduling region */
   title: string;
 };
 
 /**
  * Calendly inline “applet” — loads official widget.js and calls `initInlineWidget`.
- * Configure with **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** (public scheduling link only; no API keys).
+ * **`embed_domain`** is set from **`window.location.hostname`** in the browser so it
+ * always matches the site the visitor opened (avoids invalid embeds when build-time
+ * **`NEXT_PUBLIC_SITE_URL`** was wrong). Override with **`NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN`**.
  */
-export function BookingCalendarApplet({ embedUrl, title }: Props) {
+export function BookingCalendarApplet({ schedulingUrl, title }: Props) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,6 +46,14 @@ export function BookingCalendarApplet({ embedUrl, title }: Props) {
     function mount() {
       if (cancelled || !parent || !window.Calendly?.initInlineWidget) return;
       parent.replaceChildren();
+      const explicit = process.env.NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN?.trim();
+      const embedDomain =
+        (explicit && parseExplicitCalendlyEmbedDomain(explicit)) ||
+        window.location.hostname;
+      const embedUrl = withCalendlyInlineEmbedContext(
+        schedulingUrl,
+        embedDomain,
+      );
       window.Calendly.initInlineWidget({
         url: embedUrl,
         parentElement: parent,
@@ -79,7 +93,7 @@ export function BookingCalendarApplet({ embedUrl, title }: Props) {
       cancelled = true;
       parent.replaceChildren();
     };
-  }, [embedUrl]);
+  }, [schedulingUrl]);
 
   return (
     <div

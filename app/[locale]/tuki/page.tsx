@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { BookingCalendarApplet } from "@/components/tuki/BookingCalendarApplet";
 import { SupportContactForm } from "@/components/tuki/SupportContactForm";
-import {
-  normalizeCalendlySchedulingUrl,
-  resolveCalendlyEmbedDomain,
-  withCalendlyInlineEmbedContext,
-} from "@/lib/site/calendly-url";
+import { normalizeCalendlySchedulingUrl } from "@/lib/site/calendly-url";
 import { localePathAlternates } from "@/lib/site/seo";
 
 export async function generateMetadata({
@@ -36,13 +32,7 @@ export async function generateMetadata({
 export default async function TukiPage() {
   const t = await getTranslations("tuki");
   const calendlyRaw = process.env.NEXT_PUBLIC_CALENDLY_EMBED_URL?.trim() ?? "";
-  const calendlyBase = normalizeCalendlySchedulingUrl(calendlyRaw);
-  const calendlyUrl = calendlyBase
-    ? withCalendlyInlineEmbedContext(
-        calendlyBase,
-        resolveCalendlyEmbedDomain(),
-      )
-    : null;
+  const calendlySchedulingUrl = normalizeCalendlySchedulingUrl(calendlyRaw);
 
   return (
     <div className="mx-auto max-w-3xl space-y-10 px-4 py-12">
@@ -66,13 +56,13 @@ export default async function TukiPage() {
           {t("bookingTitle")}
         </h2>
         <p className="text-lg text-ink">{t("bookingIntro")}</p>
-        {calendlyRaw && !calendlyUrl ? (
+        {calendlyRaw && !calendlySchedulingUrl ? (
           <p className="rounded-xl border border-danger/40 bg-sunken/40 px-4 py-3 text-lg text-danger">
             {t("bookingInvalidUrl")}
           </p>
-        ) : calendlyUrl ? (
+        ) : calendlySchedulingUrl ? (
           <BookingCalendarApplet
-            embedUrl={calendlyUrl}
+            schedulingUrl={calendlySchedulingUrl}
             title={t("bookingIframeTitle")}
           />
         ) : (

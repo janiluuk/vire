@@ -2,7 +2,7 @@
 
 The support page (`/[locale]/tuki`) loads Calendly’s **inline scheduling widget** when **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** is set.
 
-The app **appends** **`embed_type=Inline`** and **`embed_domain=<host>`** to that URL at render time (unless you already set them in the env value). **`embed_domain`** is taken from **`NEXT_PUBLIC_SITE_URL`** (hostname only, no port) or from optional **`NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN`**. Without a correct **`embed_domain`**, Calendly often shows **“This Calendly URL is not valid.”** on real deployments (e.g. `https://sparkki.dudeisland.eu`) and on the lab host (**`192.168.2.100`**).
+The booking widget **appends** **`embed_type=Inline`** and **`embed_domain=…`** in the **browser**: by default **`embed_domain`** is **`window.location.hostname`** (so it always matches the site the visitor opened, even if **`NEXT_PUBLIC_SITE_URL`** was wrong at build time). Set **`NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN`** only when the public hostname must differ (e.g. proxy). Without a correct **`embed_domain`**, Calendly often shows **“This Calendly URL is not valid.”**
 
 ## Keys and secrets
 
@@ -30,7 +30,7 @@ NEXTAUTH_URL="http://192.168.2.100:1337"
 
 Then redeploy (e.g. **`./scripts/lab-stack-up.sh`**) so the image rebuilds with those values inlined.
 
-**Production (`sparkki.dudeisland.eu`):** set **`NEXT_PUBLIC_SITE_URL=https://sparkki.dudeisland.eu`** (no trailing slash) in the host’s env / platform settings and rebuild. If Calendly still blocks the embed, confirm the event link is active in Calendly and regenerate **Copy link** / **Add to website → Inline** and update **`NEXT_PUBLIC_CALENDLY_EMBED_URL`**.
+**Production (`sparkki.dudeisland.eu`):** ensure **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** is a valid **`https://calendly.com/…`** event link. **`embed_domain`** no longer depends on **`NEXT_PUBLIC_SITE_URL`** matching production, but you should still set **`NEXT_PUBLIC_SITE_URL`** correctly for SEO/metadata. In Calendly, allow your domain for embeds if your plan shows that control. If the embed still fails, try **Add to website → Inline** and compare the generated URL to your env value.
 
 ## Where the URL comes from (Calendly UI)
 
@@ -55,4 +55,4 @@ If you enable **Content-Security-Policy-Report-Only** in `next.config.mjs`, ensu
 ## Implementation reference
 
 - Component: `components/tuki/BookingCalendarApplet.tsx`
-- URL validation + inline context: `lib/site/calendly-url.ts` (`normalizeCalendlySchedulingUrl`, `resolveCalendlyEmbedDomain`, `withCalendlyInlineEmbedContext`)
+- URL validation + inline context: `lib/site/calendly-url.ts` (`normalizeCalendlySchedulingUrl`, `withCalendlyInlineEmbedContext`, `parseExplicitCalendlyEmbedDomain`); widget applies **`embed_domain`** client-side in `BookingCalendarApplet`.

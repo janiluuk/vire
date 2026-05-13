@@ -25,18 +25,25 @@ export function normalizeCalendlySchedulingUrl(raw: string): string | null {
 }
 
 /**
- * Hostname Calendly should treat as the embedding origin (`embed_domain` query param).
- * Prefer explicit **`NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN`** when the public site URL is
- * behind a proxy or differs from what Calendly must see.
+ * Parse **`NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN`** (hostname only, no port).
  */
-export function resolveCalendlyEmbedDomain(): string | null {
+export function parseExplicitCalendlyEmbedDomain(raw: string): string | null {
+  const t = raw.trim();
+  if (!t) return null;
+  const noProto = t.replace(/^https?:\/\//i, "");
+  const host = noProto.split("/")[0]?.trim();
+  if (!host) return null;
+  return host.replace(/:\d+$/, "") || null;
+}
+
+/**
+ * Hostname from env only (build-time). Prefer **`window.location.hostname`** in the
+ * booking widget client so **`embed_domain`** matches the site the user actually
+ * opened — wrong **`NEXT_PUBLIC_SITE_URL`** at build time breaks Calendly embeds.
+ */
+export function resolveCalendlyEmbedDomainFromEnv(): string | null {
   const explicit = process.env.NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN?.trim();
-  if (explicit) {
-    const noProto = explicit.replace(/^https?:\/\//i, "");
-    const host = noProto.split("/")[0]?.trim();
-    if (!host) return null;
-    return host.replace(/:\d+$/, "");
-  }
+  if (explicit) return parseExplicitCalendlyEmbedDomain(explicit);
   const site = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (!site) return null;
   try {

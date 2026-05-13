@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   normalizeCalendlySchedulingUrl,
-  resolveCalendlyEmbedDomain,
+  parseExplicitCalendlyEmbedDomain,
+  resolveCalendlyEmbedDomainFromEnv,
   withCalendlyInlineEmbedContext,
 } from "@/lib/site/calendly-url";
 
@@ -22,20 +23,26 @@ describe("calendly-url", () => {
     ).toBeNull();
   });
 
-  it("resolveCalendlyEmbedDomain uses hostname from NEXT_PUBLIC_SITE_URL", () => {
+  it("parseExplicitCalendlyEmbedDomain strips protocol and port", () => {
+    expect(parseExplicitCalendlyEmbedDomain("https://x.example:443")).toBe(
+      "x.example",
+    );
+  });
+
+  it("resolveCalendlyEmbedDomainFromEnv uses hostname from NEXT_PUBLIC_SITE_URL", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://sparkki.dudeisland.eu/fi/tuki");
-    expect(resolveCalendlyEmbedDomain()).toBe("sparkki.dudeisland.eu");
+    expect(resolveCalendlyEmbedDomainFromEnv()).toBe("sparkki.dudeisland.eu");
   });
 
-  it("resolveCalendlyEmbedDomain supports lab IP", () => {
+  it("resolveCalendlyEmbedDomainFromEnv supports lab IP", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "http://192.168.2.100:1337");
-    expect(resolveCalendlyEmbedDomain()).toBe("192.168.2.100");
+    expect(resolveCalendlyEmbedDomainFromEnv()).toBe("192.168.2.100");
   });
 
-  it("resolveCalendlyEmbedDomain prefers explicit CALENDLY_EMBED_DOMAIN and strips port", () => {
+  it("resolveCalendlyEmbedDomainFromEnv prefers explicit CALENDLY_EMBED_DOMAIN", () => {
     vi.stubEnv("NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN", "https://custom.host:443");
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://ignored.example");
-    expect(resolveCalendlyEmbedDomain()).toBe("custom.host");
+    expect(resolveCalendlyEmbedDomainFromEnv()).toBe("custom.host");
   });
 
   it("withCalendlyInlineEmbedContext adds embed_type and embed_domain", () => {
