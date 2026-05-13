@@ -1511,7 +1511,7 @@ Follow-ups (later phases or ops):
 
 - [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; technical routes such as `/vire-for-good`, CSS `.vire-*` aliases, `apps/vire-checker`, DB name `vire`, and env `VIRE_*` unchanged until explicit migrations).
 - [ ] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects.
-- [ ] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients.
+- [x] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients (**Phase 21** — `app/favicon.ico` + `app/apple-icon.png` from `app/icon.svg`; regenerate **`./scripts/generate-favicons.sh`**).
 - [ ] **Later** — optional Framer Motion for richer choreography; finish renaming `vire-*` usage in TSX to `sparkki-*` where safe. (Phases 3–4 ship CSS + minimal client wiring, no new animation library.)
 
 ---
@@ -1663,7 +1663,7 @@ This file is optimized for:
 - [x] Rename product-facing references **Vire → Sparkki** in core docs (**Phase 20** — `ROADMAP.md`, `FEATURES.md`, `DESIGN_SYSTEM.md`; technical identifiers unchanged — see Phase 2 follow-ups).
 - [x] Update package metadata — `package.json` / lockfile name **sparkki**
 - [x] Update browser titles — via **`messages/*`** + metadata helpers (**Sparkki**)
-- [ ] Replace `app/favicon.ico` with raster favicons derived from spark mark if older clients require it
+- [x] Replace `app/favicon.ico` with raster favicons derived from spark mark (**Phase 21** — see Phase 2 follow-ups)
 - [x] Replace logos — `app/icon.svg` spark mark + layout wiring
 - [x] Add new color palette — tokens in **`app/globals.css`** / Tailwind semantic colours
 - [x] Add brand typography — Inter + Syne (+ DM Mono) per Phase 2 log
