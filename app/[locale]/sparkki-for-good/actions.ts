@@ -7,6 +7,7 @@ import {
   hasUsableCustomerContact,
   parseCustomerContact,
 } from "@/lib/contact/parse-customer-contact";
+import { resolveForGoodNotifyEmail } from "@/lib/site/sparkki-env";
 
 const FOR_GOOD_PATH = "/sparkki-for-good";
 
@@ -40,8 +41,7 @@ export async function submitVireForGood(formData: FormData) {
   }
 
   const notifyTo =
-    process.env.VIRE_FOR_GOOD_NOTIFY_EMAIL?.trim() ||
-    process.env.B2B_QUOTE_NOTIFY_EMAIL?.trim();
+    resolveForGoodNotifyEmail() || process.env.B2B_QUOTE_NOTIFY_EMAIL?.trim();
   if (!notifyTo) {
     redirect(`/${locale}${FOR_GOOD_PATH}?err=config`);
   }

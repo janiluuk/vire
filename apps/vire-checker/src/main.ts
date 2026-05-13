@@ -8,9 +8,10 @@ const out = document.querySelector<HTMLPreElement>("#out");
 const copyBtn = document.querySelector<HTMLButtonElement>("#copy");
 const fetchSpecsBtn = document.querySelector<HTMLButtonElement>("#fetch-specs");
 
-const VIRE_API_BASE = (import.meta.env.VITE_VIRE_API_BASE as string | undefined)
-  ?.trim()
-  .replace(/\/$/, "");
+const SITE_API_BASE = (
+  (import.meta.env.VITE_SPARKKI_API_BASE as string | undefined)?.trim() ||
+  (import.meta.env.VITE_VIRE_API_BASE as string | undefined)?.trim()
+)?.replace(/\/$/, "");
 
 function diskValue(v: string): "hdd" | "ssd" | "unknown" | null | undefined {
   if (v === "") return undefined;
@@ -112,7 +113,7 @@ copyBtn?.addEventListener("click", async () => {
   }
 });
 
-if (VIRE_API_BASE && fetchSpecsBtn) {
+if (SITE_API_BASE && fetchSpecsBtn) {
   fetchSpecsBtn.hidden = false;
   fetchSpecsBtn.addEventListener("click", async () => {
     const make = document.querySelector<HTMLInputElement>("#make")!.value.trim();
@@ -132,7 +133,7 @@ if (VIRE_API_BASE && fetchSpecsBtn) {
     }
     fetchSpecsBtn.disabled = true;
     try {
-      const res = await fetch(`${VIRE_API_BASE}/api/public/laptop-specs`, {
+      const res = await fetch(`${SITE_API_BASE}/api/public/laptop-specs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ make, model }),

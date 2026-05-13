@@ -749,7 +749,7 @@ Planned product expansion (Care subscription, `/koneet`, group bookings, donatio
 - [x] **Info hub** — `/{locale}/tietoa/*` sidebar IA (Linux Mint, stability, common concerns, app alternatives Windows/Mac with `sourceOs` on `data/apps.json`). Legacy `/info` → `/tietoa/linux`, `/sovellukset` → `/tietoa/sovellukset/windows`.
 - [x] **Sparkki Care landing + subscription** — `/{locale}/care` (tiers + post-90-day timeline); Basic: `POST /api/care/checkout` → Stripe Billing subscription; webhook sync in `lib/billing/care-webhook.ts`; thank-you `/{locale}/care/kiitos`; admin list `/admin/care`. Env: `STRIPE_PRICE_CARE_MONTHLY`.
 - [x] **Compatibility database (public)** — `/{locale}/koneet` + `/{locale}/koneet/[slug]` backed by `ComputerModel`; sitemap includes model URLs.
-- [x] **Sparkki for Good** — `/{locale}/sparkki-for-good` two-field form (legacy `/{locale}/vire-for-good` → 308); email via `VIRE_FOR_GOOD_NOTIFY_EMAIL` or fallback `B2B_QUOTE_NOTIFY_EMAIL`.
+- [x] **Sparkki for Good** — `/{locale}/sparkki-for-good` two-field form (legacy `/{locale}/vire-for-good` → 308); email via **`SPARKKI_FOR_GOOD_NOTIFY_EMAIL`** (or legacy **`VIRE_FOR_GOOD_NOTIFY_EMAIL`**) or fallback **`B2B_QUOTE_NOTIFY_EMAIL`**.
 - [x] **Order-time app bundles** — Optional **curated app packs** the customer selects in the **service order wizard** (and pays for if priced): e.g. **local AI** (LLM + tooling), **media creator** pack, **music production** pack, developer essentials, etc. Requires: Prisma/Stripe fields (or JSON on `Order`), wizard UI + pricing in **`lib/billing`**, fulfillment notes for install scripts, admin order detail showing chosen bundles, transactional copy in **`lib/email`**.
 - [x] **Portable VM from existing system** — Optional add-on service: create a **portable virtual machine** (or bootable disk image) that captures the **current contents/state of the customer’s machine** before wipe / Linux install (e.g. P2V-style image, OVA/QCOW2, or agreed export format on external storage). Requires: clear **scope & licensing copy** (especially Windows in a VM), **data-handling SLA**, wizard + `Order` fields, priced line item in Stripe, handoff medium (customer USB/NAS vs shipped drive), and admin/fulfillment checklist.
 
@@ -860,7 +860,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 #### Developer experience
 
 - [x] **`apps/vire-checker` LAN + spec/AI docs** — see `apps/vire-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
-- [x] **`apps/vire-checker` optional “fetch specs” UI** — **`VITE_VIRE_API_BASE`** enables **Hae speksit verkosta** → `POST /api/public/laptop-specs` (see **`apps/vire-checker/README.md`**).
+- [x] **`apps/vire-checker` optional “fetch specs” UI** — **`VITE_SPARKKI_API_BASE`** (or legacy **`VITE_VIRE_API_BASE`**) enables **Hae speksit verkosta** → `POST /api/public/laptop-specs` (see **`apps/vire-checker/README.md`**).
 - [x] **Dependency / secret hygiene** — **`npm audit`** in CI (informational / non-blocking); pre-commit secret scan (gitleaks) optional.
 - [x] **`docs/repository-layout.md`** — Folder conventions; hub tabs under **`components/navigation/`**; Prisma-at-build caveat for Docker images.
 - [x] **Stripe webhook + order lookup API tests** — **`tests/functional/stripe-webhook.test.ts`** (signature / config paths); **`tests/functional/order-lookup.test.ts`** (validation + 404).

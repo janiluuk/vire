@@ -1509,7 +1509,7 @@ Shipped in codebase:
 
 Follow-ups (later phases or ops):
 
-- [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; CSS `.vire-*` aliases, `apps/vire-checker`, DB name `vire`, and env `VIRE_*` unchanged until explicit migrations).
+- [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; CSS `.vire-*` aliases, `apps/vire-checker`, DB name `vire`; **Phase 23** adds **`SPARKKI_*`** env aliases with **`VIRE_*`** fallback where applicable).
 - [x] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects (**Phase 22** — canonical **`/{locale}/sparkki-for-good`**; legacy path **308** in **`middleware.ts`**, query string preserved).
 - [x] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients (**Phase 21** — `app/favicon.ico` + `app/apple-icon.png` from `app/icon.svg`; regenerate **`./scripts/generate-favicons.sh`**).
 - [ ] **Later** — optional Framer Motion for richer choreography; finish renaming `vire-*` usage in TSX to `sparkki-*` where safe. (Phases 3–4 ship CSS + minimal client wiring, no new animation library.)
@@ -1668,7 +1668,7 @@ This file is optimized for:
 - [x] Add new color palette — tokens in **`app/globals.css`** / Tailwind semantic colours
 - [x] Add brand typography — Inter + Syne (+ DM Mono) per Phase 2 log
 - [x] Update README and docs — ongoing; **Phase 20** naming pass on roadmap + features + design system
-- [ ] Update environment branding variables — ops-specific (`DEPLOY_PATH`, mail domains); keep **`VIRE_*`** env names until a coordinated rename
+- [x] Update environment branding variables (**Phase 23** — **`SPARKKI_FOR_GOOD_NOTIFY_EMAIL`** + desktop **`VITE_SPARKKI_API_BASE`** preferred; **`VIRE_*`** / **`VITE_VIRE_*`** remain supported; ops paths like **`DEPLOY_PATH`** stay host-specific)
 - [x] Update app manifest — `app/manifest.ts`
 
 ---

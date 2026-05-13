@@ -62,8 +62,8 @@ See repo root **`.env.example`** for the full list.
 
 ### Optional LAN spec fetch (Vire API)
 
-**Shipped (optional):** when **`VITE_VIRE_API_BASE`** is set in `apps/vire-checker/.env` (e.g. `http://127.0.0.1:1337`), the **Hae speksit verkosta** button calls **`POST {base}/api/public/laptop-specs`** and prints JSON (including HTTP status) in the output panel. Same origin / CORS rules apply as in a normal browser; **Tauri** may require your API host to be reachable from the webview (see `src-tauri/tauri.conf.json` CSP).
+**Shipped (optional):** when **`VITE_SPARKKI_API_BASE`** (preferred) or legacy **`VITE_VIRE_API_BASE`** is set in `apps/vire-checker/.env` (e.g. `http://127.0.0.1:1337`), the **Hae speksit verkosta** button calls **`POST {base}/api/public/laptop-specs`** and prints JSON (including HTTP status) in the output panel. Same origin / CORS rules apply as in a normal browser; **Tauri** may require your API host to be reachable from the webview (see `src-tauri/tauri.conf.json` CSP).
 
 For stricter Tauri deployments, add an **HTTP allowlist** / plugin scope for your API origin per [Tauri security](https://v2.tauri.app/security/).
 
-Until **`VITE_VIRE_API_BASE`** is set, the checker remains the **offline compatibility / JSON** tool for local `checkCompatibility`; the **site** still provides full **networked spec hints** with SearXNG/LLM on the server.
+Until **`VITE_SPARKKI_API_BASE`** / **`VITE_VIRE_API_BASE`** is set, the checker remains the **offline compatibility / JSON** tool for local `checkCompatibility`; the **site** still provides full **networked spec hints** with SearXNG/LLM on the server.
