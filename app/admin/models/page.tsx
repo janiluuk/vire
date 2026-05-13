@@ -61,7 +61,7 @@ export default async function AdminModelsPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <Link href="/admin" className="text-vire-green underline">
+      <Link href="/admin" className="text-sparkki-green underline">
         ← {a.dashboard}
       </Link>
       <h1 className="mt-6 text-3xl font-bold text-ink">{a.models}</h1>
@@ -73,7 +73,7 @@ export default async function AdminModelsPage({
         </p>
       ) : null}
 
-      <section className="vire-card mt-8 p-6 sm:p-8">
+      <section className="sparkki-card mt-8 p-6 sm:p-8">
         <h2 className="text-xl font-bold text-ink">{a.modelsAddTitle}</h2>
         <form action={createComputerModel} className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2">
@@ -125,7 +125,7 @@ export default async function AdminModelsPage({
           <div className="flex items-end sm:col-span-2 lg:col-span-4">
             <button
               type="submit"
-              className="min-h-tap rounded-xl bg-vire-green px-6 py-3 font-semibold text-canvas hover:opacity-[0.85]"
+              className="min-h-tap rounded-xl bg-sparkki-green px-6 py-3 font-semibold text-canvas hover:opacity-[0.85]"
             >
               {a.modelsAddSubmit}
             </button>
@@ -137,7 +137,7 @@ export default async function AdminModelsPage({
         <Link
           href="/admin/models"
           className={`min-h-tap rounded-lg border border-em px-4 py-2 font-semibold ${
-            !statusParam ? "border-g bg-vire-green text-canvas" : "bg-card hover:bg-canvas"
+            !statusParam ? "border-g bg-sparkki-green text-canvas" : "bg-card hover:bg-canvas"
           }`}
         >
           {a.filterAll}
@@ -147,7 +147,7 @@ export default async function AdminModelsPage({
             key={s}
             href={`/admin/models?status=${s}`}
             className={`min-h-tap rounded-lg border border-em px-4 py-2 font-semibold ${
-              statusParam === s ? "border-g bg-vire-green text-canvas" : "bg-card hover:bg-canvas"
+              statusParam === s ? "border-g bg-sparkki-green text-canvas" : "bg-card hover:bg-canvas"
             }`}
           >
             {statusLabel(s)}
@@ -155,7 +155,7 @@ export default async function AdminModelsPage({
         ))}
       </div>
 
-      <div className="vire-card mt-6 overflow-x-auto">
+      <div className="sparkki-card mt-6 overflow-x-auto">
         <table className="min-w-full text-left text-lg">
           <thead className="border-b border-edge bg-canvas">
             <tr>
@@ -177,7 +177,7 @@ export default async function AdminModelsPage({
               models.map((m) => (
                 <tr key={m.id} className="border-b border-edge hover:bg-canvas/80">
                   <td className="px-4 py-3">
-                    <Link href={`/admin/models/${m.id}`} className="font-medium text-vire-green underline">
+                    <Link href={`/admin/models/${m.id}`} className="font-medium text-sparkki-green underline">
                       {m.make}
                     </Link>
                   </td>

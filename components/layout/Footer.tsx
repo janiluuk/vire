@@ -109,7 +109,7 @@ export async function Footer() {
           </div>
         </div>
         <div className="mt-10 border-t border-edge pt-6 text-center font-mono text-sm text-fog">
-          © {new Date().getFullYear()} Vire
+          © {new Date().getFullYear()} Sparkki
         </div>
       </div>
     </footer>

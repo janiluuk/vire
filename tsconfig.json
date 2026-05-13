@@ -25,5 +25,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types/**/*.d.ts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "apps/vire-checker"]
+  "exclude": ["node_modules", "apps/sparkki-checker"]
 }

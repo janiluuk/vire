@@ -28,7 +28,7 @@ const config = {
         statusProgress: "var(--status-progress)",
         statusDone: "var(--status-done)",
         statusCancel: "var(--status-cancel)",
-        vire: {
+        sparkki: {
           green: "var(--g)",
           amber: "var(--amber)",
         },

@@ -124,7 +124,7 @@ export function OrderWizard({ locale }: { locale: string }) {
   const [tier, setTier] = useState<Tier | null>(null);
   const [delivery, setDelivery] = useState<DeliveryMethod | null>(null);
   const [hddRemoval, setHddRemoval] = useState<HddRemovalOption>(
-    HddRemovalOption.VIRE_REMOVES,
+    HddRemovalOption.SPARKKI_REMOVES,
   );
   const [appBundles, setAppBundles] = useState<AppBundleId[]>([]);
   const [portableVmOn, setPortableVmOn] = useState(false);
@@ -282,7 +282,7 @@ export function OrderWizard({ locale }: { locale: string }) {
 
   const shellClass = fullMode
     ? "sparkki-wizard-full fixed inset-0 z-[100] flex flex-col border border-edge bg-canvas"
-    : "vire-card mx-auto max-w-4xl scroll-mt-28 p-6 md:p-10";
+    : "sparkki-card mx-auto max-w-4xl scroll-mt-28 p-6 md:p-10";
 
   const wizardNavButtonRow = (
     <div
@@ -302,7 +302,7 @@ export function OrderWizard({ locale }: { locale: string }) {
       </button>
       <button
         type="button"
-        className="min-h-12 w-full rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas disabled:opacity-40 md:min-h-tap md:w-auto"
+        className="min-h-12 w-full rounded-lg bg-sparkki-green px-6 py-3 font-semibold text-canvas disabled:opacity-40 md:min-h-tap md:w-auto"
         disabled={
           (step === 0 && !canNextFrom0) ||
           (step === 1 && !canNextFrom1) ||
@@ -772,7 +772,7 @@ export function OrderWizard({ locale }: { locale: string }) {
               <div className="space-y-3">
                 {(
                   [
-                    [HddRemovalOption.VIRE_REMOVES, "hddVireDesc"],
+                    [HddRemovalOption.SPARKKI_REMOVES, "hddSparkkiDesc"],
                     [HddRemovalOption.CUSTOMER_REMOVES, "hddSelfDesc"],
                     [HddRemovalOption.KEEP_IN_DEVICE, "hddKeepDesc"],
                   ] as const
@@ -795,11 +795,11 @@ export function OrderWizard({ locale }: { locale: string }) {
                     />
                     <span>
                       <span className="block text-sm font-semibold text-ink">
-                        {value === HddRemovalOption.VIRE_REMOVES &&
+                        {value === HddRemovalOption.SPARKKI_REMOVES &&
                         tier === "FULL_SERVICE"
-                          ? w("hddVireIncluded")
-                          : value === HddRemovalOption.VIRE_REMOVES
-                            ? w("hddVirePaid")
+                          ? w("hddSparkkiIncluded")
+                          : value === HddRemovalOption.SPARKKI_REMOVES
+                            ? w("hddSparkkiPaid")
                             : value === HddRemovalOption.CUSTOMER_REMOVES
                               ? w("hddSelf")
                               : w("hddKeep")}

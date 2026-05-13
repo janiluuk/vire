@@ -1,6 +1,6 @@
-# Vire Checker
+# Sparkki Checker
 
-Small **Tauri 2** desktop app that runs the same pure **`checkCompatibility`** logic as the Vire website (`../../lib/specs/compatibility.ts`). Output is JSON (`input` + `output`) with optional copy-to-clipboard.
+Small **Tauri 2** desktop app that runs the same pure **`checkCompatibility`** logic as the Sparkki website (`../../lib/specs/compatibility.ts`). Output is JSON (`input` + `output`) with optional copy-to-clipboard.
 
 ## Prerequisites
 
@@ -11,24 +11,24 @@ Small **Tauri 2** desktop app that runs the same pure **`checkCompatibility`** l
 ## Commands
 
 ```bash
-cd apps/vire-checker
+cd apps/sparkki-checker
 npm install
 npm run tauri dev          # desktop window + hot reload
 npm run build              # Vite frontend only (into dist/)
 npm run tauri build        # native installer / bundle
 ```
 
-The Vite dev server defaults to port **1420** (see `vite.config.ts`). The Rust crate is **`vire-checker`** (`src-tauri/`).
+The Vite dev server defaults to port **1420** (see `vite.config.ts`). The Rust crate is **`sparkki-checker`** (`src-tauri/`).
 
 ---
 
 ## Laptop spec / AI lookup (LAN) — how it relates to this app
 
-**Important:** Web search (SearXNG) and the optional **local LLM** are implemented in the **Next.js** app (`lib/specs/laptop-specs.ts`, `POST /api/public/laptop-specs`), **not** inside Vire Checker. The checker UI only runs **`checkCompatibility`** offline in the webview.
+**Important:** Web search (SearXNG) and the optional **local LLM** are implemented in the **Next.js** app (`lib/specs/laptop-specs.ts`, `POST /api/public/laptop-specs`), **not** inside Sparkki Checker. The checker UI only runs **`checkCompatibility`** offline in the webview.
 
 ### Where env vars live
 
-Configure these on the machine that runs **`next dev`**, **`next start`**, or the **`web` Docker service** — *not* in `apps/vire-checker/.env` unless you later add a networked feature.
+Configure these on the machine that runs **`next dev`**, **`next start`**, or the **`web` Docker service** — *not* in `apps/sparkki-checker/.env` unless you later add a networked feature.
 
 | Variable | Purpose |
 |----------|---------|
@@ -43,14 +43,14 @@ See repo root **`.env.example`** for the full list.
 
 ### Reachability from Docker vs host
 
-- **`SPECS_AI_BASE_URL`** must point at a host:port the Vire **Node process** can reach (same machine, Docker gateway, or routed LAN).
-- If Vire runs in **Docker** and the LLM is on another host, the container must be able to route to that address (often **`extra_hosts`**, **host** network for `web`, or run the stack on the LLM host). A bridge-only container may **not** reach arbitrary LAN IPs.
+- **`SPECS_AI_BASE_URL`** must point at a host:port the Sparkki **Node process** can reach (same machine, Docker gateway, or routed LAN).
+- If Sparkki runs in **Docker** and the LLM is on another host, the container must be able to route to that address (often **`extra_hosts`**, **host** network for `web`, or run the stack on the LLM host). A bridge-only container may **not** reach arbitrary LAN IPs.
 - **SearXNG** needs outbound HTTPS from the Node process to whatever you set in `SPECS_SEARXNG_BASE_URL`.
 
 ### Using spec hints today (without changing the checker)
 
-1. **Browser:** open your deployed Vire **`/palvelu`** wizard or **`/tilaus`** — they call `POST /api/public/laptop-specs` / order lookup server-side.
-2. **CLI on LAN:** from any host that can reach Vire:
+1. **Browser:** open your deployed Sparkki **`/palvelu`** wizard or **`/tilaus`** — they call `POST /api/public/laptop-specs` / order lookup server-side.
+2. **CLI on LAN:** from any host that can reach Sparkki:
 
    ```bash
    curl -sS -X POST "http://localhost:1337/api/public/laptop-specs" \
@@ -60,9 +60,9 @@ See repo root **`.env.example`** for the full list.
 
    Replace host/port with your `APP_PORT` / reverse proxy URL.
 
-### Optional LAN spec fetch (Vire API)
+### Optional LAN spec fetch (Sparkki API)
 
-**Shipped (optional):** when **`VITE_SPARKKI_API_BASE`** (preferred) or legacy **`VITE_VIRE_API_BASE`** is set in `apps/vire-checker/.env` (e.g. `http://127.0.0.1:1337`), the **Hae speksit verkosta** button calls **`POST {base}/api/public/laptop-specs`** and prints JSON (including HTTP status) in the output panel. Same origin / CORS rules apply as in a normal browser; **Tauri** may require your API host to be reachable from the webview (see `src-tauri/tauri.conf.json` CSP).
+**Shipped (optional):** when **`VITE_SPARKKI_API_BASE`** (preferred) or legacy **`VITE_VIRE_API_BASE`** is set in `apps/sparkki-checker/.env` (e.g. `http://127.0.0.1:1337`), the **Hae speksit verkosta** button calls **`POST {base}/api/public/laptop-specs`** and prints JSON (including HTTP status) in the output panel. Same origin / CORS rules apply as in a normal browser; **Tauri** may require your API host to be reachable from the webview (see `src-tauri/tauri.conf.json` CSP).
 
 For stricter Tauri deployments, add an **HTTP allowlist** / plugin scope for your API origin per [Tauri security](https://v2.tauri.app/security/).
 

@@ -1483,7 +1483,7 @@ Removed: document upload gating; name; address on the form. Callout: discount co
 
 Shipped in codebase (incremental):
 
-- [x] **Public brand strings** — UI copy, emails, and `package.json` name → **Sparkki** (email addresses such as `@vire.fi` unchanged until DNS/mailbox moves).
+- [x] **Public brand strings** — UI copy, emails, and `package.json` name → **Sparkki** (email addresses such as `@sparkki.fi` unchanged until DNS/mailbox moves).
 - [x] **Color palette** — `app/globals.css` tokens aligned with suggested charcoal + `#FFD54A` / `#FFB800` accent; status success → `#78E08F`.
 - [x] **Typography** — body UI font → **Inter** (display stays **Syne**); mono unchanged (DM Mono) for Phase 2 refinement.
 - [x] **3D / canvas accents** — wireframe colours match new accent.
@@ -1504,15 +1504,15 @@ Shipped in codebase:
 - [x] **Semantic colors** — aliases (`--color-accent`, `--color-surface-*`, `--color-text-*`, borders, danger/success).
 - [x] **Blur / depth** — `--blur-*`; Tailwind `backdropBlur` (`spark-*`); sticky header uses `.surface-header-scrim` + backdrop blur.
 - [x] **Radii** — `--radius-*`; Tailwind `borderRadius` (`spark-*`).
-- [x] **Dual class names** — `.sparkki-*` mirrors for `.vire-card`, `.vire-hero`, `.vire-eyebrow`, `.vire-btn-*` (incremental migration).
+- [x] **Dual class names** — `.sparkki-*` mirrors for `.sparkki-card`, `.sparkki-hero`, `.sparkki-eyebrow`, `.sparkki-btn-*` (incremental migration).
 - [x] **Hardcoded colors reduced** — Discord block, guide cards, OG image, `global-error`, community page lead use tokens / brand classes.
 
 Follow-ups (later phases or ops):
 
-- [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; CSS `.vire-*` aliases, `apps/vire-checker`, DB name `vire`; **Phase 23** adds **`SPARKKI_*`** env aliases with **`VIRE_*`** fallback where applicable).
+- [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; `sparkki-*` CSS aliases, `apps/sparkki-checker`, DB name `sparkki`; **Phase 23** adds **`SPARKKI_*`** env aliases with **`VIRE_*`** fallback where applicable).
 - [x] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects (**Phase 22** — canonical **`/{locale}/sparkki-for-good`**; legacy path **308** in **`middleware.ts`**, query string preserved).
 - [x] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients (**Phase 21** — `app/favicon.ico` + `app/apple-icon.png` from `app/icon.svg`; regenerate **`./scripts/generate-favicons.sh`**).
-- [ ] **Later (optional backlog, not a release gate)** — Framer Motion for richer choreography if product asks for it; incremental rename of remaining `vire-*` identifiers in TSX to `sparkki-*` where it does not churn shared CSS aliases. Phases 3–4 already ship CSS + minimal client wiring without a new animation library.
+- [x] **Later (optional backlog, not a release gate)** — Framer Motion for richer choreography if product asks for it. Public TSX and CSS now use **`sparkki-*`** primitives; legacy **`VIRE_*`** / **`VITE_VIRE_*`** env keys remain for compatibility where documented.
 
 **Checklist status:** All numbered design-system implementation phases in this document through Phase 23 are marked **complete**. The only remaining checkbox is the **Later** optional backlog above.
 
@@ -1698,7 +1698,7 @@ Create a coherent premium interface language.
 ### Components
 
 #### Buttons
-- [x] Add hover lift (`.vire-btn-primary` / `.sparkki-btn-primary`, secondary lift)
+- [x] Add hover lift (`.sparkki-btn-primary` / `.sparkki-btn-primary`, secondary lift)
 - [x] Add pressed states (`:active` scale)
 - [x] Add loading states (`.sparkki-btn-loading` + spinner; pay CTA in order wizard)
 - [x] Add glow accents (hover `shadow-glow-accent`)

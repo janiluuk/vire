@@ -35,7 +35,7 @@ export default async function PalveluKiitosPage({ searchParams }: Props) {
           <p>
             <Link
               href={`/tilaus/${info.orderId}`}
-              className="inline-flex min-h-tap items-center justify-center rounded-xl bg-vire-green px-6 py-3 text-lg font-semibold text-canvas hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vire-green"
+              className="inline-flex min-h-tap items-center justify-center rounded-xl bg-sparkki-green px-6 py-3 text-lg font-semibold text-canvas hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sparkki-green"
             >
               {t("trackOrder")}
             </Link>

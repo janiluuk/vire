@@ -190,7 +190,7 @@ export async function POST(req: Request) {
     data.locale,
     {
       postShip: data.deliveryMethod === "DROP_OFF",
-      hddVireCents: hddCents,
+      hddSparkkiCents: hddCents,
       appBundles,
       portableVm: portableVmSelected,
     },

@@ -104,7 +104,7 @@ export function AppGrid({
             <button
               type="button"
               onClick={() => setOpen(open === app.id ? null : app.id)}
-              className="flex w-full min-h-tap flex-col items-start gap-1 p-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
+              className="flex w-full min-h-tap flex-col items-start gap-1 p-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sparkki-green"
               aria-expanded={open === app.id}
             >
               <span className="font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-dust">
@@ -119,7 +119,7 @@ export function AppGrid({
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-lg font-bold text-ink">{alt.name}</h3>
                       {alt.preinstalled ? (
-                        <span className="rounded-full bg-vire-amber px-2 py-0.5 text-sm font-semibold text-ink">
+                        <span className="rounded-full bg-sparkki-amber px-2 py-0.5 text-sm font-semibold text-ink">
                           {t("preinstalledBadge")}
                         </span>
                       ) : null}
@@ -129,7 +129,7 @@ export function AppGrid({
                     </p>
                     <a
                       href={alt.url}
-                      className="mt-3 inline-block min-h-tap font-semibold text-vire-green underline underline-offset-2"
+                      className="mt-3 inline-block min-h-tap font-semibold text-sparkki-green underline underline-offset-2"
                       rel="noopener noreferrer"
                       target="_blank"
                     >

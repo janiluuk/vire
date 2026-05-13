@@ -79,7 +79,7 @@ export function LaptopSpecsTestPanel(props: {
     <div className="mt-8 space-y-6">
       <form
         onSubmit={onSubmit}
-        className="vire-card space-y-4 rounded-2xl p-5 sm:p-6"
+        className="sparkki-card space-y-4 rounded-2xl p-5 sm:p-6"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-lg">
@@ -105,7 +105,7 @@ export function LaptopSpecsTestPanel(props: {
         </div>
         <button
           type="submit"
-          className="min-h-tap rounded-lg bg-vire-green px-5 py-2.5 font-semibold text-white hover:opacity-95 disabled:opacity-60"
+          className="min-h-tap rounded-lg bg-sparkki-green px-5 py-2.5 font-semibold text-white hover:opacity-95 disabled:opacity-60"
           disabled={loading}
         >
           {formLabels.submit}

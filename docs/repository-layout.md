@@ -18,7 +18,7 @@ Where code and assets live, and where to add new work. **Next.js App Router** ru
 | **`tests/`** | Vitest unit + functional tests. |
 | **`docs/`** | Operations, API notes, site catalog, screenshots, **this file**. |
 | **`infra/`** | Try-Linux proxy and related lab infra. |
-| **`apps/vire-checker/`** | Tauri desktop app (own `package.json`; excluded from root `tsconfig` bundle). |
+| **`apps/sparkki-checker/`** | Tauri desktop app (own `package.json`; excluded from root `tsconfig` bundle). |
 | **`data/`** | Static JSON (e.g. app alternatives catalog). |
 | **`types/`** | Ambient / shared `.d.ts` (e.g. NextAuth module augmentation). |
 

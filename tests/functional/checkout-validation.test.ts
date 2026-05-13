@@ -34,7 +34,7 @@ describe("POST /api/checkout validation", () => {
         body: JSON.stringify({
           tier: "SSD_BASIC",
           deliveryMethod: "SELF",
-          hddRemoval: "VIRE_REMOVES",
+          hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo T450",
           customerContact: "a@b.co",
           locale: "fi",
@@ -55,7 +55,7 @@ describe("POST /api/checkout validation", () => {
         body: JSON.stringify({
           tier: "SSD_BASIC",
           deliveryMethod: "SELF",
-          hddRemoval: "VIRE_REMOVES",
+          hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",
           customerContact: "a@b.co",
           locale: "fi",
@@ -77,7 +77,7 @@ describe("POST /api/checkout validation", () => {
         body: JSON.stringify({
           tier: "SSD_BASIC",
           deliveryMethod: "SELF",
-          hddRemoval: "VIRE_REMOVES",
+          hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",
           customerContact: "a@b.co",
           locale: "fi",
@@ -98,7 +98,7 @@ describe("POST /api/checkout validation", () => {
         body: JSON.stringify({
           tier: "SSD_BASIC",
           deliveryMethod: "SELF",
-          hddRemoval: "VIRE_REMOVES",
+          hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",
           customerContact: "a@b.co",
           locale: "fi",
@@ -119,7 +119,7 @@ describe("POST /api/checkout validation", () => {
         body: JSON.stringify({
           tier: "SSD_BASIC",
           deliveryMethod: "SELF",
-          hddRemoval: "VIRE_REMOVES",
+          hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",
           customerContact: "a@b.co",
           locale: "fi",

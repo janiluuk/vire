@@ -51,7 +51,7 @@ export default async function PalveluPage({
         <ol className="mt-6 space-y-4 text-lg text-ink">
           {(["how1", "how2", "how3", "how4", "how5"] as const).map((key, i) => (
             <li key={key} className="flex gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-vire-green text-xl font-bold text-canvas">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-sparkki-green text-xl font-bold text-canvas">
                 {i + 1}
               </span>
               <span className="pt-2">{t(key)}</span>
@@ -84,7 +84,7 @@ export default async function PalveluPage({
               key={qKey}
               className="rounded-xl border border-edge bg-card/40 open:border-g/30 open:bg-g/[0.05]"
             >
-              <summary className="cursor-pointer select-none list-none px-4 py-4 font-semibold text-vire-green marker:hidden [&::-webkit-details-marker]:hidden">
+              <summary className="cursor-pointer select-none list-none px-4 py-4 font-semibold text-sparkki-green marker:hidden [&::-webkit-details-marker]:hidden">
                 {t(qKey)}
               </summary>
               <p className="border-t border-edge/80 px-4 pb-4 pt-3 text-base font-normal leading-relaxed text-fog">
@@ -107,7 +107,7 @@ export default async function PalveluPage({
 
       <section
         aria-labelledby="b2b-title"
-        className="vire-card border-vire-green/25 bg-vire-green/5 p-6 sm:p-8"
+        className="sparkki-card border-sparkki-green/25 bg-sparkki-green/5 p-6 sm:p-8"
       >
         <h2 id="b2b-title" className="text-2xl font-bold text-ink">
           {t("b2bBanner")}
@@ -115,7 +115,7 @@ export default async function PalveluPage({
         <p className="mt-4 text-lg text-ink">{t("b2b.intro")}</p>
         <Link
           href="/palvelu/b2b"
-          className="vire-btn-secondary mt-6 inline-flex min-h-tap items-center justify-center"
+          className="sparkki-btn-secondary mt-6 inline-flex min-h-tap items-center justify-center"
         >
           {t("b2bCta")}
         </Link>

@@ -37,7 +37,7 @@ export default async function AboutPage() {
         <p className="mt-4 text-xl leading-relaxed text-ink">{t("intro")}</p>
       </header>
 
-      <section aria-labelledby="company-heading" className="vire-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="company-heading" className="sparkki-card space-y-4 p-6 sm:p-8">
         <h2 id="company-heading" className="text-2xl font-bold text-ink">
           {t("companyTitle")}
         </h2>
@@ -49,7 +49,7 @@ export default async function AboutPage() {
         <p className="text-lg text-ink">{t("companyNote")}</p>
       </section>
 
-      <section aria-labelledby="address-heading" className="vire-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="address-heading" className="sparkki-card space-y-4 p-6 sm:p-8">
         <h2 id="address-heading" className="text-2xl font-bold text-ink">
           {t("addressTitle")}
         </h2>
@@ -63,7 +63,7 @@ export default async function AboutPage() {
           {t("teamTitle")}
         </h2>
         <ul className="grid gap-6 sm:grid-cols-2">
-          <li className="vire-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:gap-6 sm:p-8">
+          <li className="sparkki-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:gap-6 sm:p-8">
             <figure className="mx-auto w-full max-w-[220px] shrink-0 sm:mx-0">
               <div
                 role="img"
@@ -75,13 +75,13 @@ export default async function AboutPage() {
             </figure>
             <div className="min-w-0 flex-1">
               <h3 className="text-xl font-bold text-ink">{t("person1Name")}</h3>
-              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
+              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-sparkki-green">
                 {t("person1Role")}
               </p>
               <p className="mt-4 text-lg leading-relaxed text-ink">{t("person1Bio")}</p>
             </div>
           </li>
-          <li className="vire-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:gap-6 sm:p-8">
+          <li className="sparkki-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:gap-6 sm:p-8">
             <figure className="mx-auto w-full max-w-[220px] shrink-0 sm:mx-0">
               <div
                 role="img"
@@ -93,7 +93,7 @@ export default async function AboutPage() {
             </figure>
             <div className="min-w-0 flex-1">
               <h3 className="text-xl font-bold text-ink">{t("person2Name")}</h3>
-              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
+              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-sparkki-green">
                 {t("person2Role")}
               </p>
               <p className="mt-4 text-lg leading-relaxed text-ink">{t("person2Bio")}</p>
@@ -102,7 +102,7 @@ export default async function AboutPage() {
         </ul>
       </section>
 
-      <section aria-labelledby="contact-heading" className="vire-card space-y-4 p-6 sm:p-8">
+      <section aria-labelledby="contact-heading" className="sparkki-card space-y-4 p-6 sm:p-8">
         <h2 id="contact-heading" className="text-2xl font-bold text-ink">
           {t("contactTitle")}
         </h2>
@@ -111,7 +111,7 @@ export default async function AboutPage() {
             <span className="font-semibold text-ink">{t("phoneLabel")}: </span>
             <a
               href={`tel:${t("phoneTelHref")}`}
-              className="text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
+              className="text-sparkki-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sparkki-green"
             >
               {t("phoneValue")}
             </a>
@@ -120,7 +120,7 @@ export default async function AboutPage() {
             <span className="font-semibold text-ink">{t("emailLabel")}: </span>
             <a
               href={`mailto:${t("emailValue")}`}
-              className="text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
+              className="text-sparkki-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sparkki-green"
             >
               {t("emailValue")}
             </a>
@@ -133,7 +133,7 @@ export default async function AboutPage() {
         <p className="pt-2 text-lg text-ink">
           <Link
             href="/tuki"
-            className="font-semibold text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
+            className="font-semibold text-sparkki-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sparkki-green"
           >
             {t("supportPageLink")} →
           </Link>

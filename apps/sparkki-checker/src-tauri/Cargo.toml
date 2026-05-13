@@ -1,12 +1,12 @@
 [package]
-name = "vire-checker"
+name = "sparkki-checker"
 version = "0.1.0"
-description = "Vire Checker — local compatibility check (same logic as the web app)"
-authors = ["Vire"]
+description = "Sparkki Checker — local compatibility check (same logic as the web app)"
+authors = ["Sparkki"]
 edition = "2021"
 
 [lib]
-name = "vire_checker_lib"
+name = "sparkki_checker_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

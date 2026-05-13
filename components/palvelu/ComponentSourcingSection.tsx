@@ -53,7 +53,7 @@ function ComponentCard({
   const showWrite = c.writeSpeed.trim().length > 0;
 
   return (
-    <li className="vire-card-hover flex flex-col border border-edge p-6 sm:p-7">
+    <li className="sparkki-card-hover flex flex-col border border-edge p-6 sm:p-7">
       <p className="font-mono text-[10px] font-normal uppercase tracking-wider text-g">
         {t(`items.${id}.eyebrow`)}
       </p>

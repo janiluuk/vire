@@ -77,7 +77,7 @@ export default async function PalveluB2bPage({
         </p>
       ) : null}
 
-      <form action={submitB2bQuote} className="vire-card space-y-6 p-6 sm:p-8">
+      <form action={submitB2bQuote} className="sparkki-card space-y-6 p-6 sm:p-8">
         <input type="hidden" name="locale" value={locale} />
 
         <div>
@@ -113,7 +113,7 @@ export default async function PalveluB2bPage({
           <p className="mt-2 text-base font-light text-fog">{t("b2b.fieldContactHint")}</p>
         </div>
 
-        <button type="submit" className="vire-btn-primary w-full sm:w-auto">
+        <button type="submit" className="sparkki-btn-primary w-full sm:w-auto">
           {t("b2b.submit")}
         </button>
       </form>

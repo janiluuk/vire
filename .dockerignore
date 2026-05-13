@@ -8,6 +8,6 @@ node_modules
 *.md
 coverage
 .turbo
-apps/vire-checker
+apps/sparkki-checker
 e2e/test-results
 playwright-report

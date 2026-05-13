@@ -154,13 +154,13 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   }
 
   function thClass(active: boolean) {
-    return active ? "text-vire-green" : "text-ink";
+    return active ? "text-sparkki-green" : "text-ink";
   }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href="/admin" className="text-vire-green underline">
+        <Link href="/admin" className="text-sparkki-green underline">
           ← {a.dashboard}
         </Link>
         <Link
@@ -202,14 +202,14 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
         </div>
         <button
           type="submit"
-          className="min-h-tap rounded-lg bg-vire-green px-5 py-2 font-semibold text-canvas"
+          className="min-h-tap rounded-lg bg-sparkki-green px-5 py-2 font-semibold text-canvas"
         >
           {a.ordersSearch}
         </button>
         {q ? (
           <Link
             href={makeHref({ q: "", page: 1 })}
-            className="min-h-tap text-lg font-semibold text-vire-green underline"
+            className="min-h-tap text-lg font-semibold text-sparkki-green underline"
           >
             ×
           </Link>
@@ -221,7 +221,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
           href={makeHref({ status: "", page: 1 })}
           className={`min-h-tap rounded-full px-4 py-2 font-semibold ${
             !searchParams.status
-              ? "bg-vire-green text-canvas"
+              ? "bg-sparkki-green text-canvas"
               : "bg-card ring-1 ring-em"
           }`}
         >
@@ -233,7 +233,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             href={makeHref({ status: s, page: 1 })}
             className={`min-h-tap rounded-full px-4 py-2 font-semibold ${
               searchParams.status === s
-                ? "bg-vire-green text-canvas"
+                ? "bg-sparkki-green text-canvas"
                 : "bg-card ring-1 ring-em"
             }`}
           >
@@ -331,7 +331,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/orders/${o.id}`}
-                      className="font-medium text-vire-green underline"
+                      className="font-medium text-sparkki-green underline"
                     >
                       {o.customerName ?? o.customerEmail ?? o.customerPhone ?? o.id.slice(0, 8)}
                     </Link>

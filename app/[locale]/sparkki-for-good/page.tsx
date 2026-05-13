@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { localePathAlternates } from "@/lib/site/seo";
-import { submitVireForGood } from "./actions";
+import { submitSparkkiForGood } from "./actions";
 
 const FOR_GOOD_PATH = "/sparkki-for-good";
 
@@ -111,7 +111,7 @@ export default async function SparkkiForGoodPage({
         </p>
       ) : null}
 
-      <form action={submitVireForGood} className="mx-auto max-w-xl space-y-6">
+      <form action={submitSparkkiForGood} className="mx-auto max-w-xl space-y-6">
         <input type="hidden" name="locale" value={locale} />
         <div>
           <label htmlFor="fg-reason" className="mb-2 block font-semibold text-ink">
@@ -146,7 +146,7 @@ export default async function SparkkiForGoodPage({
         <p className="rounded-lg border border-g/30 bg-g/[0.06] px-4 py-3 text-base text-ink">
           {t("callout")}
         </p>
-        <button type="submit" className="vire-btn-primary w-full sm:w-auto">
+        <button type="submit" className="sparkki-btn-primary w-full sm:w-auto">
           {t("submit")}
         </button>
       </form>

@@ -97,7 +97,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/admin/orders" className="text-vire-green underline">
+      <Link href="/admin/orders" className="text-sparkki-green underline">
         ← {a.orderBack}
       </Link>
       <h1 className="mt-6 flex flex-wrap items-center gap-3 text-3xl font-bold">
@@ -105,7 +105,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
           {a.orderDetailTitle} · {order.id.slice(0, 8)}…
         </span>
         {order.dataMigration ? (
-          <span className="inline-flex items-center rounded-full bg-vire-amber/90 px-3 py-1 text-base font-semibold text-ink">
+          <span className="inline-flex items-center rounded-full bg-sparkki-amber/90 px-3 py-1 text-base font-semibold text-ink">
             {a.migrationBadge}
           </span>
         ) : null}
@@ -263,7 +263,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
           </select>
           <button
             type="submit"
-            className="min-h-tap rounded-lg bg-vire-green px-5 py-2 font-semibold text-canvas"
+            className="min-h-tap rounded-lg bg-sparkki-green px-5 py-2 font-semibold text-canvas"
           >
             {a.saveStatus}
           </button>
@@ -307,7 +307,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
             />
             <button
               type="submit"
-              className="min-h-tap rounded-lg border border-vire-amber bg-vire-amber/15 px-5 py-2 font-semibold text-ink"
+              className="min-h-tap rounded-lg border border-sparkki-amber bg-sparkki-amber/15 px-5 py-2 font-semibold text-ink"
             >
               {a.saveMigrationNotes}
             </button>
@@ -318,7 +318,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
           <input type="hidden" name="orderId" value={order.id} />
           <button
             type="submit"
-            className="min-h-tap rounded-lg bg-vire-amber px-5 py-2 font-semibold text-ink"
+            className="min-h-tap rounded-lg bg-sparkki-amber px-5 py-2 font-semibold text-ink"
           >
             {a.sendDone}
           </button>

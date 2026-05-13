@@ -36,7 +36,7 @@ Prioritised product specs (11 features: data migration add-on, Sparkki Care, `/k
 
 ## Design principles
 
-**Visual design:** **`DESIGN_SYSTEM.md`** is the contract for every screen — read it before building or restyling UI. Prefer existing patterns (**`sparkki-*`** primitives, semantic Tailwind from **`tailwind.config.ts`**, tokens from **`app/globals.css`**); legacy **`vire-*`** CSS aliases remain for gradual migration.
+**Visual design:** **`DESIGN_SYSTEM.md`** is the contract for every screen — read it before building or restyling UI. Prefer existing patterns (**`sparkki-*`** primitives, semantic Tailwind from **`tailwind.config.ts`**, tokens from **`app/globals.css`**).
 
 **UX and accessibility (non-negotiable):**
 
@@ -528,7 +528,7 @@ sparkki/   (repository root — historical clones may still use a `vire/` folder
 
 ```bash
 # Database
-DATABASE_URL="postgresql://postgres:password@localhost:5432/vire"
+DATABASE_URL="postgresql://postgres:password@localhost:5432/sparkki"
 
 # Auth (NextAuth)
 NEXTAUTH_SECRET="generate with: openssl rand -base64 32"
@@ -553,7 +553,7 @@ NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 NEXT_PUBLIC_DISCORD_INVITE="https://discord.gg/..."
 
 # Admin seed email
-ADMIN_EMAIL="admin@vire.fi"
+ADMIN_EMAIL="admin@sparkki.fi"
 ADMIN_USERNAME="admin"
 ADMIN_PASSWORD="changeme"
 ```
@@ -579,7 +579,7 @@ ADMIN_PASSWORD="changeme"
       image: postgres:16
       environment:
         POSTGRES_PASSWORD: password
-        POSTGRES_DB: vire
+        POSTGRES_DB: sparkki
       ports:
         - "5432:5432"
   ```
@@ -741,7 +741,7 @@ Planned product expansion (Care subscription, `/koneet`, group bookings, donatio
 - [x] Bulk B2B quote form on `/palvelu` — different flow from single-unit order (`/[locale]/palvelu/b2b`, email via `B2B_QUOTE_NOTIFY_EMAIL` + Resend).
 - [x] Expand guide library: all 7 guides written and published (`content/guides/*.mdx` + seed `Guide` rows; FI body / EN titles in DB).
 - [x] Sparkki YouTube channel linked everywhere (when `NEXT_PUBLIC_YOUTUBE_CHANNEL_URL` is set: home, footer, community).
-- [x] Sparkki Checker desktop app — `apps/vire-checker/` (Tauri 2 + Vite; folder name legacy). UI imports shared `lib/specs/compatibility.ts` (`checkCompatibility`); output is JSON (`input` + `output`). Run: `cd apps/vire-checker && npm install && npm run tauri dev`.
+- [x] Sparkki Checker desktop app — `apps/sparkki-checker/` (Tauri 2 + Vite). UI imports shared `lib/specs/compatibility.ts` (`checkCompatibility`); output is JSON (`input` + `output`). Run: `cd apps/sparkki-checker && npm install && npm run tauri dev`.
 - [x] Switch component sourcing to wholesale (Crucial/Kingston) when volume > 20 units/month — **ops policy**: when fulfilled SSD/RAM component orders average **>20 units/month** for **two consecutive months**, open or renegotiate Crucial/Kingston (or equivalent) wholesale accounts before scaling acquisition; track unit counts in finance/ops; no storefront code change required.
 - [x] Admin dashboard stats: revenue chart, orders per week, model approval rate — 7-day order bars + week revenue + approval %.
 - [x] Rate limiting on API routes (use `@upstash/ratelimit` or simple IP check) — shared `lib/http/rate-limit.ts` on order lookup + Stripe checkout routes.
@@ -861,8 +861,8 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 #### Developer experience
 
-- [x] **`apps/vire-checker` LAN + spec/AI docs** — see `apps/vire-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
-- [x] **`apps/vire-checker` optional “fetch specs” UI** — **`VITE_SPARKKI_API_BASE`** (or legacy **`VITE_VIRE_API_BASE`**) enables **Hae speksit verkosta** → `POST /api/public/laptop-specs` (see **`apps/vire-checker/README.md`**).
+- [x] **`apps/sparkki-checker` LAN + spec/AI docs** — see `apps/sparkki-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
+- [x] **`apps/sparkki-checker` optional “fetch specs” UI** — **`VITE_SPARKKI_API_BASE`** (or legacy **`VITE_VIRE_API_BASE`**) enables **Hae speksit verkosta** → `POST /api/public/laptop-specs` (see **`apps/sparkki-checker/README.md`**).
 - [x] **Dependency / secret hygiene** — **`npm audit`** in CI (informational / non-blocking); pre-commit secret scan (gitleaks) optional.
 - [x] **`docs/repository-layout.md`** — Folder conventions; hub tabs under **`components/navigation/`**; Prisma-at-build caveat for Docker images (**`--build-arg DATABASE_URL`** / **`host.docker.internal`**; see § Known sharp edges).
 - [x] **Stripe webhook + order lookup API tests** — **`tests/functional/stripe-webhook.test.ts`** (signature / config paths); **`tests/functional/order-lookup.test.ts`** (validation + 404).
@@ -874,7 +874,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 These apply to every coding session on this project.
 
 1. **Read this file first.** Before writing any code, confirm you know which phase you're working on. For post-launch product expansion, also read **`FEATURES.md`** and follow its priority table unless instructed otherwise.
-2. **Read `DESIGN_SYSTEM.md` for all UI/CSS.** Before adding or changing layouts, colours, typography, or components, align with that file and existing primitives (**`sparkki-*`** / **`vire-*`** aliases, semantic Tailwind). Do not introduce light-theme or generic gray-scale layouts unless **`DESIGN_SYSTEM.md`** is updated first.
+2. **Read `DESIGN_SYSTEM.md` for all UI/CSS.** Before adding or changing layouts, colours, typography, or components, align with that file and existing primitives (**`sparkki-*`**, semantic Tailwind). Do not introduce light-theme or generic gray-scale layouts unless **`DESIGN_SYSTEM.md`** is updated first.
 3. **Prisma is the DB layer.** Never write raw SQL. Always use `prisma.model.findMany()` etc.
 4. **Server components by default.** Only add `'use client'` when the component needs browser APIs or event handlers.
 5. **All text goes through next-intl.** No hardcoded Finnish or English strings in JSX. Use `const t = useTranslations('namespace')`.
@@ -917,7 +917,7 @@ These apply to every coding session on this project.
 
 Categories: `toimisto` | `selain` | `sahkoposti` | `musiikki` | `kuvat` | `viestinta` | `tietoturva` | `pelit`
 
-Minimum 15 apps at launch — see full list in `vire-implementation-spec.md`.
+Minimum 15 apps at launch — see bundled app ideas in **`FEATURES.md`** and **`data/apps.json`**.
 
 ---
 
@@ -931,7 +931,7 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  const email = process.env.ADMIN_EMAIL ?? 'admin@vire.fi'
+  const email = process.env.ADMIN_EMAIL ?? 'admin@sparkki.fi'
 
   await prisma.adminUser.upsert({
     where: { email },

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Vire Checker",
+  "productName": "Sparkki Checker",
   "version": "0.1.0",
-  "identifier": "fi.vire.checker",
+  "identifier": "fi.sparkki.checker",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Vire Checker",
+        "title": "Sparkki Checker",
         "width": 800,
         "height": 600
       }

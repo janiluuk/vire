@@ -1,4 +1,4 @@
-# Sparkki stack (Compose service names / default DB still use `vire` where historical)
+# Sparkki stack
 #
 # Local stack: Postgres, Prisma migrate, Next.js (`web`).
 #   docker compose up -d --build
@@ -13,16 +13,16 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_DB: ${POSTGRES_DB:-vire}
+      POSTGRES_DB: ${POSTGRES_DB:-sparkki}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - vire_pgdata:/var/lib/postgresql/data
+      - sparkki_pgdata:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-vire}",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-sparkki}",
         ]
       interval: 5s
       timeout: 5s
@@ -33,7 +33,7 @@ services:
     image: node:20-bookworm-slim
     restart: "no"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-vire}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-sparkki}
     volumes:
       - ./prisma:/app/prisma:ro
     working_dir: /app
@@ -57,15 +57,15 @@ services:
       extra_hosts:
         - "host.docker.internal:host-gateway"
       args:
-        DATABASE_URL: ${DATABASE_URL_BUILD:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@host.docker.internal:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-vire}}
+        DATABASE_URL: ${DATABASE_URL_BUILD:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@host.docker.internal:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-sparkki}}
     ports:
       - "${APP_PORT:-1337}:3000"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-vire}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-sparkki}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-dev-secret-change-in-production-min-32-chars}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:1337}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:1337}
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@vire.fi}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@sparkki.fi}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme}
     depends_on:
@@ -87,4 +87,4 @@ services:
       start_period: 40s
 
 volumes:
-  vire_pgdata:
+  sparkki_pgdata:

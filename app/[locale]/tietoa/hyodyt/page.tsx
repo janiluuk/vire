@@ -92,7 +92,7 @@ export default async function TietoaHyodytPage() {
         {BENEFIT_KEYS.map((key) => (
           <li
             key={key}
-            className="vire-card-hover border border-edge p-6 sm:p-7"
+            className="sparkki-card-hover border border-edge p-6 sm:p-7"
           >
             <span
               className="mb-4 flex size-11 items-center justify-center rounded-xl bg-g/15 text-xl text-g"

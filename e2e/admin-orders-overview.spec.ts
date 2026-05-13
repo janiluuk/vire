@@ -10,7 +10,7 @@ test.afterAll(async () => {
 });
 
 test("admin can open orders list after login", async ({ page }) => {
-  const email = process.env.ADMIN_EMAIL ?? "admin@vire.fi";
+  const email = process.env.ADMIN_EMAIL ?? "admin@sparkki.fi";
   const password = process.env.ADMIN_PASSWORD ?? "changeme";
 
   await page.goto("/admin/login", { waitUntil: "networkidle" });

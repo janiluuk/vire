@@ -7,7 +7,7 @@ function OrderWizardSkeleton() {
   const t = useTranslations("palvelu");
   return (
     <div
-      className="vire-card mx-auto max-w-4xl min-h-[28rem] scroll-mt-28 p-6 md:min-h-[32rem] md:p-10"
+      className="sparkki-card mx-auto max-w-4xl min-h-[28rem] scroll-mt-28 p-6 md:min-h-[32rem] md:p-10"
       role="status"
       aria-live="polite"
       aria-busy="true"

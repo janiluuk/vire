@@ -49,15 +49,15 @@ For production Postgres, schedule **`pg_dump`** (or managed backups) and documen
 
 ```bash
 # Replace container name / DB / user from your compose file.
-docker exec vire-db-1 pg_dump -U postgres -d vire -Fc -f /tmp/vire.dump
-docker cp vire-db-1:/tmp/vire.dump ./backups/vire-$(date -u +%Y%m%d-%H%M).dump
+docker compose exec -T db pg_dump -U postgres -d sparkki -Fc -f /tmp/sparkki.dump
+docker compose cp db:/tmp/sparkki.dump ./backups/sparkki-$(date -u +%Y%m%d-%H%M).dump
 ```
 
 **Restore into a fresh database (drill / staging)**
 
 ```bash
 # Create empty DB, then:
-pg_restore -h localhost -U postgres -d vire_restore --clean --if-exists ./backups/vire-YYYYMMDD.dump
+pg_restore -h localhost -U postgres -d sparkki_restore --clean --if-exists ./backups/sparkki-YYYYMMDD.dump
 ```
 
 Verify application connectivity and row counts after restore. Run a **restore drill** at least quarterly; keep dumps **encrypted** off-site with documented retention.

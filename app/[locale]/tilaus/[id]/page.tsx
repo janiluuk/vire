@@ -38,14 +38,14 @@ export default async function TilausOrderPage({ params }: Props) {
       <p className="text-center text-lg text-fog">
         <Link
           href="/tilaus"
-          className="font-semibold text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
+          className="font-semibold text-sparkki-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sparkki-green"
         >
           {t("backToHub")}
         </Link>
         {" · "}
         <Link
           href="/tuki"
-          className="font-semibold text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
+          className="font-semibold text-sparkki-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sparkki-green"
         >
           {tuki("title")}
         </Link>

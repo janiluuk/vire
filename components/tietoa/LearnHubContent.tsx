@@ -29,7 +29,7 @@ export async function LearnHubContent() {
           {benefitKeys.map((key) => (
             <li
               key={key}
-              className="vire-card-hover relative overflow-hidden border border-edge p-6 sm:p-7"
+              className="sparkki-card-hover relative overflow-hidden border border-edge p-6 sm:p-7"
             >
               <span
                 className="mb-4 flex size-11 items-center justify-center rounded-xl bg-g/15 text-xl text-g"
@@ -72,7 +72,7 @@ export async function LearnHubContent() {
         <div className="grid gap-4 md:grid-cols-2">
           <Link
             href="/tietoa/sovellukset/windows"
-            className="vire-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge p-6 transition-colors hover:border-g/40"
+            className="sparkki-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge p-6 transition-colors hover:border-g/40"
           >
             <div>
               <p className="font-mono text-[10px] uppercase tracking-wider text-dust">
@@ -85,7 +85,7 @@ export async function LearnHubContent() {
           </Link>
           <Link
             href="/tietoa/sovellukset/mac"
-            className="vire-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge p-6 transition-colors hover:border-g/40"
+            className="sparkki-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge p-6 transition-colors hover:border-g/40"
           >
             <div>
               <p className="font-mono text-[10px] uppercase tracking-wider text-dust">
@@ -105,7 +105,7 @@ export async function LearnHubContent() {
         </h2>
         <p className="max-w-3xl text-lg text-fog">{t("osSectionIntro")}</p>
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="vire-card border-vire-green/30 bg-vire-green/[0.07] p-6 sm:p-8">
+          <div className="sparkki-card border-sparkki-green/30 bg-sparkki-green/[0.07] p-6 sm:p-8">
             <p className="font-mono text-[10px] uppercase tracking-wider text-g">
               {t("osRecommendedBadge")}
             </p>
@@ -120,7 +120,7 @@ export async function LearnHubContent() {
               </Link>
             </p>
           </div>
-          <div className="vire-card border-edge p-6 sm:p-8">
+          <div className="sparkki-card border-edge p-6 sm:p-8">
             <p className="font-mono text-[10px] uppercase tracking-wider text-dust">
               {t("osAlsoRecommended")}
             </p>

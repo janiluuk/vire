@@ -213,7 +213,7 @@ export function SupportContactForm() {
           <button
             type="submit"
             disabled={loading}
-            className="min-h-tap rounded-xl bg-vire-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.9] disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-tap rounded-xl bg-sparkki-green px-8 py-3 font-semibold text-canvas hover:opacity-[0.9] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? t("formSending") : t("formSubmit")}
           </button>
