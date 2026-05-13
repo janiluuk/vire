@@ -9,6 +9,8 @@ const bodySchema = z.object({
   model: z.string(),
   ramGb: z.number().optional().nullable(),
   diskType: z.enum(["hdd", "ssd", "unknown"]).optional().nullable(),
+  /** Reserved for Sparkki Checker / other clients; defaults to `web`. */
+  source: z.enum(["web", "app"]).optional(),
 });
 
 export async function POST(req: Request) {
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "validation_error" }, { status: 400 });
   }
-  const { make, model, ramGb, diskType } = parsed.data;
+  const { make, model, ramGb, diskType, source } = parsed.data;
 
   const row = await prisma.computerModel.findUnique({
     where: {
@@ -52,6 +54,24 @@ export async function POST(req: Request) {
     diskType ?? "unknown",
     dbVerdict,
   );
+
+  const src = source === "app" ? "app" : "web";
+  try {
+    await prisma.compatibilityCheck.create({
+      data: {
+        source: src,
+        make: make.trim().slice(0, 200),
+        model: model.trim().slice(0, 200),
+        ramGb: ramGb ?? null,
+        diskType: diskType ?? null,
+        status: result.status,
+        reasons: result.reasons,
+        speedGainEstimate: result.speedGainEstimate,
+      },
+    });
+  } catch (err) {
+    console.error("[api/compatibility] failed to persist CompatibilityCheck", err);
+  }
 
   return NextResponse.json(result);
 }

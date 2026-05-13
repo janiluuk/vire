@@ -366,10 +366,8 @@ model CompatibilityCheck {
 
 ### Admin dashboard addition
 
-- New stat card on `/admin`: "Tarkistukset tänään: X"
-- New page `/admin/checks`: list of all compatibility checks with conversion rate
-- Aggregate view: pie chart of compatible vs borderline vs incompatible
-- Export CSV for grant reporting ("X machines checked in Finland, Y% were upgradeable")
+- **Shipped (aggregate slice):** `CompatibilityCheck` rows from the public `POST /api/compatibility` flow; **`/admin/checks`** lists the latest 100 runs; dashboard shows **checks today** count.
+- **Still optional:** pie chart / CSV export / conversion-to-order wiring when the wizard passes `reportId` or similar.
 
 ---
 
