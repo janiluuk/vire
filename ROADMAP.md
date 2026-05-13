@@ -788,7 +788,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 *Short working queue. Reconcile with checkboxes below; edit this list when items ship.*
 
 1. **Content-Security-Policy** — **`ENABLE_CSP_REPORT_ONLY=true`** emits report-only CSP from **`next.config.mjs`**; tighten policy using violation reports (**`docs/operations.md`**). Enforcing CSP with nonces still open.
-2. **E2E** — **Shipped:** order wizard happy path with mocked checkout in **`e2e/wizard-order.spec.ts`** (five-step flow: computer description, tier + delivery, HDD, contact, pay → **`/palvelu/kiitos`**). Admin login: **`e2e/admin-login.spec.ts`**.
+2. **E2E** — smoke, locale, service wizard (mocked checkout → **`/palvelu/kiitos`**), admin login + orders list, public routes + **`/meista`** rewrite; see **`e2e/*.spec.ts`**.
 3. **Synthetic monitoring** — external ping of `/api/health` + one public page — **runbook:** **`docs/operations.md`** (Docker healthcheck already in compose).
 4. **Admin audit trail** — **shipped:** `AdminAuditLog` + order detail log; guides/models mutations logged; extend UI as needed.
 5. **Structured logging** — **shipped:** JSON + request id on checkout, support-contact, Stripe webhook (`lib/logging/log.ts`, **`docs/operations.md`**).
@@ -825,7 +825,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 #### Quality & testing
 
 - [x] **Fix functional test `tests/functional/api-routes.test.ts`** — checkout + support-contact use **`getClientIpFromHeaders(req.headers)`**; tests send **`x-forwarded-for`**. Added **`getClientIpFromHeaders`** unit tests.
-- [x] **Expand E2E** — privacy + locale in **`e2e/smoke.spec.ts`**; admin login **`e2e/admin-login.spec.ts`**; order wizard (mocked checkout) **`e2e/wizard-order.spec.ts`** (field fills in the spec).
+- [x] **Expand E2E** — privacy + locale in **`e2e/smoke.spec.ts`**; admin login **`e2e/admin-login.spec.ts`**; admin orders list **`e2e/admin-orders-overview.spec.ts`**; public routes + IA rewrite **`e2e/public-routes.spec.ts`**; order wizard (mocked checkout) **`e2e/wizard-order.spec.ts`** (field fills in the spec).
 - [x] **Public API documentation** — **`docs/api-public.md`**.
 
 #### Performance & accessibility
@@ -837,7 +837,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 - [x] **`apps/vire-checker` LAN + spec/AI docs** — see `apps/vire-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
 - [ ] **`apps/vire-checker` optional “fetch specs” UI** — call Vire `POST /api/public/laptop-specs` when a base URL is configured (needs Tauri HTTP allowlist + env such as `VITE_VIRE_API_BASE`).
-- [ ] **Dependency / secret hygiene** — `npm audit` in CI (informational or gated); pre-commit secret scan (gitleaks) optional.
+- [ ] **Dependency / secret hygiene** — **`npm audit`** runs in CI (informational / non-blocking); pre-commit secret scan (gitleaks) optional.
 
 ---
 

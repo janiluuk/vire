@@ -38,7 +38,16 @@ npx prisma db seed
 
 ### App in Docker (production-like)
 
-Same as above — **`docker compose up -d --build`** is the full stack. The `web` entrypoint runs **`prisma migrate deploy`** on start, then **`node server.js`** (listen **0.0.0.0:3000** inside the container).
+Same as above — **`docker compose up -d --build`** is the full stack (Postgres, one-shot migrate, Next.js `web`). The `web` entrypoint runs **`prisma migrate deploy`** on start, then **`node server.js`** (listen **0.0.0.0:3000** inside the container; host port **`1337`** by default via **`APP_PORT`**).
+
+Open **http://localhost:1337/fi** (or **http://127.0.0.1:1337/fi**). Quick checks:
+
+```bash
+docker compose ps
+curl -sS http://127.0.0.1:1337/api/health
+```
+
+If the browser cannot connect but `web` is running, confirm nothing else is bound to **`1337`**, and that **`NEXTAUTH_URL`** / **`NEXT_PUBLIC_SITE_URL`** in `.env` match how you reach the machine (for remote hosts use the LAN or public URL, not `localhost`).
 
 ### Deploy to a lab host (e.g. 192.168.2.100)
 
