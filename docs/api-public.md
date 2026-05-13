@@ -1,6 +1,6 @@
-# Vire — public HTTP API
+# Sparkki — public HTTP API
 
-Base URL: `NEXT_PUBLIC_SITE_URL` (e.g. `https://vire.fi`). Locale-prefixed pages live under `/fi/...` and `/en/...`; JSON APIs below are **not** locale-prefixed unless noted.
+Base URL: `NEXT_PUBLIC_SITE_URL` (your deployed origin). Locale-prefixed pages live under `/fi/...` and `/en/...`; JSON APIs below are **not** locale-prefixed unless noted.
 
 All public JSON routes respond with `Content-Type: application/json` unless stated otherwise (**`POST /api/csp-report`** returns **204** with an empty body). Prefer `POST` + JSON bodies unless stated otherwise.
 
@@ -13,7 +13,7 @@ All public JSON routes respond with `Content-Type: application/json` unless stat
 **Response 200**
 
 ```json
-{ "ok": true, "service": "vire" }
+{ "ok": true, "service": "sparkki" }
 ```
 
 Used by Docker Compose `web` healthcheck and synthetic monitors.
@@ -64,7 +64,7 @@ Support is always **`EMAIL`** at checkout (90-day email support per product copy
 
 Optional: `dataMigration`, `dataMigrationSize` (`standard` \| `large`) — same validation rules as before.
 
-Postitus (`DROP_OFF`) adds **+€15**; HDD removal by Vire adds **+€20** except when `tier` is `FULL_SERVICE` (included).
+Postitus (`DROP_OFF`) adds **+€15**; HDD removal by Sparkki adds **+€20** except when `tier` is `FULL_SERVICE` (included).
 
 **Responses**
 
@@ -156,4 +156,4 @@ Requires `SUPPORT_NOTIFY_EMAIL` and Resend. **503** if not configured. **429** o
 
 ## Versioning
 
-No URL version prefix (`/v1`). Breaking changes should be coordinated with the Vire web app and any external clients (e.g. `apps/vire-checker`).
+No URL version prefix (`/v1`). Breaking changes should be coordinated with the Sparkki web app and any external clients (e.g. `apps/vire-checker`).
