@@ -696,6 +696,7 @@
       "summaryContact": "Yhteys",
       "summaryPrice": "Arvio yhteensä",
       "payCta": "Siirry maksamaan",
+      "payCtaLoading": "Siirretään maksuun…",
       "stripeMissing": "Maksu ei ole käytössä: aseta STRIPE_SECRET_KEY ympäristöön.",
       "errorGeneric": "Tilaus epäonnistui. Yritä uudelleen tai ota yhteyttä."
     },

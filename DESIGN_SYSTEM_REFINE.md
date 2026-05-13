@@ -37,7 +37,7 @@ Follow-ups (later phases or ops):
 - [ ] Sweep **ROADMAP.md**, **FEATURES.md**, **DESIGN_SYSTEM.md** for legacy “Vire” product naming.
 - [ ] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects.
 - [ ] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients.
-- [ ] **Phase 3+** — Framer Motion / page transitions; finish renaming `vire-*` usage in TSX to `sparkki-*` where safe.
+- [ ] **Later** — optional Framer Motion for richer choreography; finish renaming `vire-*` usage in TSX to `sparkki-*` where safe. (Phases 3–4 ship CSS + minimal client wiring, no new animation library.)
 
 ---
 
@@ -220,29 +220,29 @@ Create a coherent premium interface language.
 ## Components
 
 ### Buttons
-- [ ] Add hover lift
-- [ ] Add pressed states
-- [ ] Add loading states
-- [ ] Add glow accents
-- [ ] Add keyboard focus states
+- [x] Add hover lift (`.vire-btn-primary` / `.sparkki-btn-primary`, secondary lift)
+- [x] Add pressed states (`:active` scale)
+- [x] Add loading states (`.sparkki-btn-loading` + spinner; pay CTA in order wizard)
+- [x] Add glow accents (hover `shadow-glow-accent`)
+- [x] Add keyboard focus states (`:focus-visible` site-wide + button outlines)
 
 ### Cards
-- [ ] Add layered shadows
-- [ ] Add subtle hover motion
-- [ ] Add depth hierarchy
-- [ ] Improve spacing rhythm
+- [x] Add layered shadows (token-backed; hover → stronger shadow)
+- [x] Add subtle hover motion (`translateY`, respects reduced motion)
+- [x] Add depth hierarchy (elevation tokens + hover)
+- [x] Improve spacing rhythm (Phase 2 `spark-card` / padding tokens)
 
 ### Inputs
-- [ ] Add animated focus rings
+- [x] Add animated focus rings (`.sparkki-input`; wizard computer + contact fields)
 - [ ] Add inline validation
 - [ ] Improve readability
 - [ ] Improve mobile touch UX
 
 ### Modals
-- [ ] Add backdrop blur
-- [ ] Add scale transitions
-- [ ] Add focus trapping
-- [ ] Add ESC handling
+- [x] Add backdrop blur (fullscreen wizard: `.sparkki-modal-backdrop`)
+- [x] Add scale transitions (`.sparkki-wizard-full` panel enter)
+- [x] Add focus trapping (Tab cycle in fullscreen `OrderWizard`)
+- [x] Add ESC handling (existing hash close)
 
 ---
 
@@ -253,13 +253,13 @@ Make the product feel alive and premium.
 
 ## Tasks
 
-- [ ] Add page transitions
+- [x] Add page transitions (`LocaleMainMotion` + `.sparkki-page-enter` on locale routes)
 - [ ] Add stagger animations
-- [ ] Add skeleton loaders
-- [ ] Add smooth hover interpolation
-- [ ] Add animated navigation indicators
-- [ ] Add spring physics for panels
-- [ ] Add contextual transitions
+- [x] Add skeleton loaders (utility `.sparkki-skeleton` in `globals.css`; wire where needed)
+- [x] Add smooth hover interpolation (token durations/easing on buttons, cards, nav tabs)
+- [x] Add animated navigation indicators (nav tab transitions)
+- [x] Add spring physics for panels (`.sparkki-wizard-full` uses `--ease-spring`)
+- [ ] Add contextual transitions (broader polish — optional follow-up)
 
 ## Recommended Motion
 

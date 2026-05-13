@@ -697,6 +697,7 @@
       "summaryContact": "Contact",
       "summaryPrice": "Estimated total",
       "payCta": "Continue to payment",
+      "payCtaLoading": "Redirecting to payment…",
       "stripeMissing": "Payments disabled: set STRIPE_SECRET_KEY in the environment.",
       "errorGeneric": "Checkout failed. Try again or contact us."
     },

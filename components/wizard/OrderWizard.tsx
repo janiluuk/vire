@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import {
@@ -116,6 +116,7 @@ export function OrderWizard({ locale }: { locale: string }) {
   const t = useTranslations("palvelu");
   const w = useTranslations("palvelu.wizard");
   const fullMode = useWizardFullscreen();
+  const wizardRef = useRef<HTMLElement>(null);
 
   const [step, setStep] = useState(0);
 
@@ -155,6 +156,44 @@ export function OrderWizard({ locale }: { locale: string }) {
   function closeFullscreen() {
     clearWizardHash();
   }
+
+  useEffect(() => {
+    if (!fullMode || !wizardRef.current) return;
+    const root = wizardRef.current;
+
+    const focusables = () =>
+      Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])',
+        ),
+      );
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Tab") return;
+      const list = focusables();
+      if (list.length === 0) return;
+      const first = list[0]!;
+      const last = list[list.length - 1]!;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    const id = window.requestAnimationFrame(() => {
+      focusables()[0]?.focus();
+    });
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      window.cancelAnimationFrame(id);
+    };
+  }, [fullMode]);
 
   async function startCheckout() {
     if (!tier || !delivery) return;
@@ -211,16 +250,28 @@ export function OrderWizard({ locale }: { locale: string }) {
   const stepHint = w(STEP_HINT_KEYS[step]);
 
   const shellClass = fullMode
-    ? "fixed inset-0 z-[100] flex flex-col border border-edge bg-canvas"
+    ? "sparkki-wizard-full fixed inset-0 z-[100] flex flex-col border border-edge bg-canvas"
     : "vire-card mx-auto max-w-4xl scroll-mt-28 p-6 md:p-10";
 
   return (
-    <section
-      data-testid="order-wizard"
-      id={WIZARD_ANCHOR}
-      className={shellClass}
-      aria-labelledby="wizard-title"
-    >
+    <>
+      {fullMode ? (
+        <div
+          className="sparkki-modal-backdrop fixed inset-0 z-[90]"
+          aria-hidden
+          onClick={closeFullscreen}
+        />
+      ) : null}
+      <section
+        ref={wizardRef}
+        data-testid="order-wizard"
+        data-order-wizard-dialog={fullMode ? "" : undefined}
+        id={WIZARD_ANCHOR}
+        className={shellClass}
+        role={fullMode ? "dialog" : undefined}
+        aria-modal={fullMode ? true : undefined}
+        aria-labelledby="wizard-title"
+      >
       <div
         className={`shrink-0 border-b border-edge bg-canvas/95 px-0 py-3 backdrop-blur-md md:py-4 ${
           fullMode ? "px-4 md:px-6" : ""
@@ -327,7 +378,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                 <textarea
                   id="wiz-computer"
                   rows={4}
-                  className="w-full resize-y rounded-lg border border-em bg-sunken px-4 py-3 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
+                  className="sparkki-input w-full resize-y rounded-lg border border-em bg-sunken px-4 py-3 text-lg text-ink placeholder:text-dust"
                   value={computerDescription}
                   onChange={(e) => setComputerDescription(e.target.value)}
                   placeholder={w("computerPlaceholder")}
@@ -640,7 +691,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                   </label>
                   <input
                     id="wiz-contact"
-                    className="min-h-tap w-full rounded-lg border border-em bg-sunken px-4 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
+                    className="sparkki-input min-h-tap w-full rounded-lg border border-em bg-sunken px-4 text-lg text-ink placeholder:text-dust"
                     value={customerContact}
                     onChange={(e) => setCustomerContact(e.target.value)}
                     autoComplete="email"
@@ -706,10 +757,13 @@ export function OrderWizard({ locale }: { locale: string }) {
                   <button
                     type="button"
                     disabled={checkoutLoading}
-                    className="min-h-tap w-full rounded-xl bg-vire-green py-4 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60 md:max-w-md"
+                    aria-busy={checkoutLoading}
+                    className={`sparkki-btn-primary min-h-tap w-full min-w-0 justify-center py-4 pr-12 text-lg md:max-w-md ${
+                      checkoutLoading ? "sparkki-btn-loading" : ""
+                    }`}
                     onClick={() => void startCheckout()}
                   >
-                    {checkoutLoading ? "…" : w("payCta")}
+                    {checkoutLoading ? w("payCtaLoading") : w("payCta")}
                   </button>
                 </div>
               ) : null}
@@ -748,5 +802,6 @@ export function OrderWizard({ locale }: { locale: string }) {
         <p className="mt-6 text-sm text-fog">{t("wizardLegalHint")}</p>
       </div>
     </section>
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { BackgroundCanvas } from "@/components/layout/BackgroundCanvas";
 import { DeliveryStripGate } from "@/components/layout/DeliveryStripGate";
+import { LocaleMainMotion } from "@/components/layout/LocaleMainMotion";
 import { NavBar } from "@/components/layout/NavBar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -52,8 +53,12 @@ export default async function LocaleLayout({
         </a>
         <NavBar locale={locale} />
         <DeliveryStripGate />
-        <main id="content" lang={locale} className="flex-1">
-          {children}
+        <main
+          id="content"
+          lang={locale}
+          className="flex min-h-0 flex-1 flex-col"
+        >
+          <LocaleMainMotion>{children}</LocaleMainMotion>
         </main>
         <Footer />
       </div>

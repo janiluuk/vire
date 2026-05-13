@@ -23,8 +23,10 @@ function BrandMark({ name }: { name: string }) {
 
 /** Segmented top nav — same affordance as locale switcher; not used for the order CTA. */
 function topTabClass(active: boolean) {
-  return `min-h-tap rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
-    active ? "bg-g text-canvas" : "text-fog hover:text-ink"
+  return `min-h-tap rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-[color,background-color,transform,box-shadow] duration-hover ease-out-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
+    active
+      ? "bg-g text-canvas shadow-elevation-xs"
+      : "text-fog hover:text-ink hover:-translate-y-px motion-reduce:hover:translate-none"
   }`;
 }
 

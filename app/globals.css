@@ -90,6 +90,8 @@
   --duration-theme-bg: 1.4s;
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Phase 4 — subtle “spring” for panels (DESIGN_SYSTEM_REFINE.md) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* —— Elevation —— */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.22);
@@ -120,10 +122,54 @@
   --foreground: var(--text);
 }
 
+@keyframes spark-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spark-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spark-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spark-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spark-skeleton-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
 @layer base {
   :focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 25%, transparent);
   }
 
   h1,
@@ -162,6 +208,7 @@ body {
     padding: var(--space-card-padding);
     box-shadow: var(--shadow-xs);
     @apply border border-edge backdrop-blur-md transition-shadow transition-colors;
+    transition-property: box-shadow, border-color, background-color, transform;
     transition-duration: var(--duration-base);
     transition-timing-function: var(--ease-standard);
     background: color-mix(in srgb, var(--color-surface-card) 78%, transparent);
@@ -171,7 +218,15 @@ body {
   .vire-card:hover,
   .sparkki-card:hover {
     @apply border-em;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vire-card:hover,
+    .sparkki-card:hover {
+      transform: none;
+    }
   }
 
   .vire-card-hover {
@@ -221,7 +276,7 @@ body {
   .vire-btn-primary,
   .sparkki-btn-primary {
     border-radius: var(--radius-md);
-    @apply inline-flex min-h-tap min-w-[200px] items-center justify-center bg-g px-7 py-3.5 font-bold tracking-tight text-canvas;
+    @apply relative inline-flex min-h-tap min-w-[200px] items-center justify-center bg-g px-7 py-3.5 font-bold tracking-tight text-canvas;
     font-size: var(--text-md);
     transition: opacity var(--duration-fast) var(--ease-standard),
       transform var(--duration-hover) var(--ease-out-soft),
@@ -230,8 +285,56 @@ body {
 
   .vire-btn-primary:hover,
   .sparkki-btn-primary:hover {
-    opacity: 0.9;
+    opacity: 0.95;
     box-shadow: var(--shadow-glow-accent);
+    transform: translateY(-2px);
+  }
+
+  .vire-btn-primary:active,
+  .sparkki-btn-primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-xs);
+    transition-duration: var(--duration-instant);
+  }
+
+  .vire-btn-primary:disabled,
+  .sparkki-btn-primary:disabled {
+    transform: none;
+    opacity: 0.55;
+    box-shadow: none;
+  }
+
+  .sparkki-btn-loading {
+    pointer-events: none;
+    opacity: 0.88;
+  }
+
+  .sparkki-btn-loading::after {
+    content: "";
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    margin-top: -9px;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 2px solid color-mix(in srgb, var(--color-surface-canvas) 35%, transparent);
+    border-top-color: var(--color-surface-canvas);
+    animation: spark-spin 0.65s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vire-btn-primary:hover,
+    .sparkki-btn-primary:hover,
+    .vire-btn-primary:active,
+    .sparkki-btn-primary:active {
+      transform: none;
+    }
+
+    .sparkki-btn-loading::after {
+      animation: none;
+      border-color: var(--color-surface-canvas);
+    }
   }
 
   .vire-btn-primary:focus-visible,
@@ -253,11 +356,95 @@ body {
   .sparkki-btn-secondary:hover {
     background: var(--overlay-accent-hover);
     @apply text-ink;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .vire-btn-secondary:active,
+  .sparkki-btn-secondary:active {
+    transform: translateY(0) scale(0.99);
+    transition-duration: var(--duration-instant);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vire-btn-secondary:hover,
+    .sparkki-btn-secondary:hover,
+    .vire-btn-secondary:active,
+    .sparkki-btn-secondary:active {
+      transform: none;
+      box-shadow: none;
+    }
   }
 
   .vire-btn-secondary:focus-visible,
   .sparkki-btn-secondary:focus-visible {
     @apply outline outline-2 outline-offset-2 outline-g;
+  }
+
+  /* Phase 3 — form controls */
+  .sparkki-input,
+  textarea.sparkki-input {
+    border-radius: var(--radius-md);
+    transition: border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-hover) var(--ease-out-soft);
+  }
+
+  .sparkki-input:focus,
+  textarea.sparkki-input:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+
+  /* Phase 3 — fullscreen wizard / modal shell */
+  .sparkki-modal-backdrop {
+    cursor: pointer;
+    background: color-mix(in srgb, var(--color-surface-canvas) 72%, transparent);
+    backdrop-filter: blur(var(--blur-lg));
+    animation: spark-backdrop-in var(--duration-panel) var(--ease-out-soft) both;
+  }
+
+  .sparkki-wizard-full {
+    animation: spark-modal-in var(--duration-panel) var(--ease-spring) both;
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-modal-backdrop,
+    .sparkki-wizard-full {
+      animation: none;
+    }
+  }
+
+  /* Phase 4 — route content enter (see LocaleMainMotion) */
+  .sparkki-page-enter {
+    animation: spark-page-enter var(--duration-route) var(--ease-out-soft) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-page-enter {
+      animation: none;
+    }
+  }
+
+  /* Phase 4 — skeleton / loading blocks */
+  .sparkki-skeleton {
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-surface-card) 55%, transparent) 0%,
+      color-mix(in srgb, var(--color-surface-elevated) 75%, transparent) 50%,
+      color-mix(in srgb, var(--color-surface-card) 55%, transparent) 100%
+    );
+    background-size: 200% 100%;
+    animation: spark-skeleton-pulse 1.4s var(--ease-standard) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-skeleton {
+      animation: none;
+      opacity: 0.5;
+    }
   }
 
   .discord-block {
