@@ -11,26 +11,14 @@ The support page (`/[locale]/tuki`) loads Calendly’s **inline scheduling widge
 | Place | Use when |
 |--------|-----------|
 | **`.env`** or **`.env.local`** in the **project root** | Local `npm run dev` / `next build` on your machine |
-| **Docker Compose** | Add the same variable to the **`.env`** file Compose reads, or export it before `docker compose up`. The `web` service should receive `NEXT_PUBLIC_CALENDLY_EMBED_URL` (you may need to add a line under `web.environment` in `docker-compose.yml` if it is not passed through yet). |
+| **Docker Compose** | Add **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** to the **`.env`** Compose reads, then **rebuild** `web`. This repo ships **`docker-compose.override.yml`**, which passes the variable as a **build arg** (required for `NEXT_PUBLIC_*` inlining). |
 | **Vercel / Railway / etc.** | Project → Environment variables → Production & Preview |
 
 After changing **`NEXT_PUBLIC_*`** values, **rebuild** the Next.js app. In **Docker**, those variables are normally inlined during **`npm run build`** in the image builder stage — setting them only on the running container is **not enough** for statically generated content unless you also pass them as **build arguments** when building the image (see your `Dockerfile` / `docker-compose.yml`).
 
-The repo **`Dockerfile`** already declares **`ARG NEXT_PUBLIC_CALENDLY_EMBED_URL`** for the builder. Ensure **`docker-compose.yml`** passes it into the image build and (optionally) into the running container, for example:
+The repo **`Dockerfile`** already declares **`ARG NEXT_PUBLIC_CALENDLY_EMBED_URL`** for the builder. **`docker-compose.override.yml`** adds **`web.build.args`** so Compose passes **`${NEXT_PUBLIC_CALENDLY_EMBED_URL}`** from **`.env`** into the build. Set the variable in **`.env`** and run **`docker compose build web && docker compose up -d`** (use **`--no-cache`** if the URL changed and the layer was cached).
 
-```yaml
-web:
-  build:
-    context: .
-    dockerfile: Dockerfile
-    args:
-      NEXT_PUBLIC_CALENDLY_EMBED_URL: ${NEXT_PUBLIC_CALENDLY_EMBED_URL:-}
-  environment:
-    # …existing keys…
-    NEXT_PUBLIC_CALENDLY_EMBED_URL: ${NEXT_PUBLIC_CALENDLY_EMBED_URL:-}
-```
-
-Then set the variable in **`.env`** and run **`docker compose build --no-cache web && docker compose up -d`**.
+**Lab / `192.168.2.100`:** ensure **`/srv/vire/.env`** (or your **`DEPLOY_PATH`**) contains the same line, then redeploy (e.g. **`./scripts/lab-stack-up.sh`**) so the image rebuilds.
 
 ## Where the URL comes from (Calendly UI)
 
@@ -40,10 +28,10 @@ Then set the variable in **`.env`** and run **`docker compose build --no-cache w
 
    Alternatively: **Add to website** → **Inline embed** → copy the `https://calendly.com/...` URL from the snippet.
 
-4. Set:
+4. Set (example — replace **`30min`** with your event slug from **Copy link**):
 
    ```bash
-   NEXT_PUBLIC_CALENDLY_EMBED_URL="https://calendly.com/your-org/your-event"
+   NEXT_PUBLIC_CALENDLY_EMBED_URL="https://calendly.com/janiluuk/30min"
    ```
 
 Allowed hosts: **`calendly.com`** only, scheme **`https`**.

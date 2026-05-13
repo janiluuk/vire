@@ -1,0 +1,7 @@
+# Merged automatically by `docker compose` (not committed if you prefer — see .gitignore).
+# Passes Calendly URL into the image build so /tuki embed works (NEXT_PUBLIC_* is inlined at build).
+services:
+  web:
+    build:
+      args:
+        NEXT_PUBLIC_CALENDLY_EMBED_URL: ${NEXT_PUBLIC_CALENDLY_EMBED_URL:-}
