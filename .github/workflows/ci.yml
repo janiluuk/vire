@@ -52,8 +52,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: npm audit (informational)
-        run: npm audit --audit-level=high
+      - name: npm audit (dependency tree — informational)
+        run: |
+          echo "=== Production dependencies ==="
+          npm audit --omit=dev || true
+          echo "=== All dependencies ==="
+          npm audit --audit-level=critical || true
         continue-on-error: true
 
       - name: Prisma migrate

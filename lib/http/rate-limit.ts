@@ -39,8 +39,15 @@ function getLimiter(max: number, windowMs: number): Ratelimit | null {
 /** Use in Route Handlers where `Request` is available (also works in Vitest without Next request store). */
 export function getClientIpFromHeaders(h: Headers): string {
   const xf = h.get("x-forwarded-for");
-  if (xf) return xf.split(",")[0]?.trim() ?? "unknown";
-  return h.get("x-real-ip") ?? "unknown";
+  if (xf) {
+    for (const part of xf.split(",")) {
+      const ip = part.trim();
+      if (ip.length > 0) return ip;
+    }
+  }
+  const real = h.get("x-real-ip")?.trim();
+  if (real && real.length > 0) return real;
+  return "unknown";
 }
 
 /** Prefer `getClientIpFromHeaders(req.headers)` in `app/api/**` routes. */

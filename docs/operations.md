@@ -2,6 +2,14 @@
 
 This document complements **`docker-compose.yml`** (healthchecks) and **`docs/api-public.md`**.
 
+## Dependency and security audits
+
+- Run **`npm run security:audit`** for the full tree (includes devDependencies such as Lighthouse CLI).
+- Run **`npm run security:audit:prod`** to focus on **production** dependencies only.
+- **`package.json`** uses an **`overrides`** entry for **`cookie`** (transitively pulled by **next-auth**) so patched releases win over vulnerable nested versions where npm can reconcile them.
+- **Next.js** is pinned on the latest **14.2.x** line compatible with this app; the advisory database may still list ranges that include 14.2.x until metadata catches up — track [Next.js security releases](https://github.com/vercel/next.js/security) and upgrade minors when you can validate the app (jumping to **Next 15+** is a deliberate migration).
+- Dev-only chains (**`eslint-config-next` → glob**, **`@lhci/cli` → tmp/inquirer**) may remain flagged until those packages ship fixes; CI prints both prod-only and full reports without failing the job.
+
 ## Synthetic monitoring
 
 Point an external checker (Uptime Kuma, Grafana Cloud, Better Stack, etc.) at:
