@@ -3,11 +3,21 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import {
+  getFloatIconTexture,
+  pickFloatIconKind,
+  disposeFloatIconTextures,
+} from "@/lib/site/background-float-textures";
+import {
   VIRE_BG_NAV_EVENT,
   type VireBgNavDetail,
 } from "@/lib/site/background-nav";
 
-/** Decorative ambient canvas — DESIGN_SYSTEM.md (Three.js background spec) */
+type FloatSprite = THREE.Sprite & {
+  _vel: THREE.Vector3;
+  _spin: number;
+};
+
+/** Decorative ambient canvas — OS / app motifs, FI & EU flags (Three.js sprites). */
 export function BackgroundCanvas() {
   const ref = useRef<HTMLCanvasElement>(null);
 
@@ -35,12 +45,7 @@ export function BackgroundCanvas() {
     );
     camera.position.z = 20;
 
-    const geometry = new THREE.IcosahedronGeometry(0.3, 0);
-    const meshes: THREE.Mesh[] = [];
-
-    type MeshWithVel = THREE.Mesh & {
-      _vel: THREE.Vector3;
-    };
+    const sprites: THREE.Sprite[] = [];
 
     let navImpulse = 0;
 
@@ -68,17 +73,18 @@ export function BackgroundCanvas() {
     };
 
     if (reducedMotion) {
-      const mat = new THREE.MeshBasicMaterial({
-        color: 0x1df5a0,
+      const tex = getFloatIconTexture("fi");
+      const mat = new THREE.SpriteMaterial({
+        map: tex,
         transparent: true,
         opacity: 0.14,
-        wireframe: true,
+        depthWrite: false,
       });
-      const mesh = new THREE.Mesh(geometry, mat);
-      mesh.position.set(0, 0, 0);
-      mesh.scale.setScalar(1.45);
-      scene.add(mesh);
-      meshes.push(mesh);
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.setScalar(1.65);
+      sprite.position.set(0, 0, 0);
+      scene.add(sprite);
+      sprites.push(sprite);
       renderer.render(scene, camera);
       window.addEventListener("resize", onResize);
 
@@ -86,33 +92,36 @@ export function BackgroundCanvas() {
         window.removeEventListener(VIRE_BG_NAV_EVENT, bumpNavImpulse);
         window.removeEventListener("popstate", onPopState);
         window.removeEventListener("resize", onResize);
-        mat.dispose();
-        geometry.dispose();
+        const m = sprite.material as THREE.SpriteMaterial;
+        m.map = null;
+        m.dispose();
+        disposeFloatIconTextures();
         renderer.dispose();
       };
     }
 
     const count = Math.floor(80 + Math.random() * 41);
     for (let i = 0; i < count; i++) {
-      const amber = Math.random() < 0.15;
-      const mat = new THREE.MeshBasicMaterial({
-        color: amber ? 0xf5a623 : 0x1df5a0,
+      const kind = pickFloatIconKind();
+      const tex = getFloatIconTexture(kind);
+      const mat = new THREE.SpriteMaterial({
+        map: tex,
         transparent: true,
-        opacity: amber
-          ? 0.05 + Math.random() * 0.05
-          : 0.06 + Math.random() * 0.12,
-        wireframe: true,
+        opacity: 0.07 + Math.random() * 0.11,
+        depthWrite: false,
       });
-      const mesh = new THREE.Mesh(geometry, mat) as unknown as MeshWithVel;
-      mesh.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 30, 0);
-      mesh.scale.setScalar(0.3 + Math.random() * 1.2);
-      mesh._vel = new THREE.Vector3(
+      const sprite = new THREE.Sprite(mat) as FloatSprite;
+      const base = 0.4 + Math.random() * 1.15;
+      sprite.scale.set(base, base, 1);
+      sprite.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 30, 0);
+      sprite._vel = new THREE.Vector3(
         (Math.random() - 0.5) * 0.003,
         (Math.random() - 0.5) * 0.003,
         0,
       );
-      scene.add(mesh);
-      meshes.push(mesh);
+      sprite._spin = (Math.random() - 0.5) * 0.004;
+      scene.add(sprite);
+      sprites.push(sprite);
     }
 
     let animId = 0;
@@ -127,16 +136,16 @@ export function BackgroundCanvas() {
       navImpulse *= 0.9;
 
       const spin = 1 + impulse * 0.35;
-      meshes.forEach((m) => {
-        const mm = m as MeshWithVel;
+      sprites.forEach((sp) => {
+        const mm = sp as FloatSprite;
         const speed = 1 + impulse * 0.45;
         mm.position.addScaledVector(mm._vel, speed);
 
-        m.rotation.x += 0.002 * spin;
-        m.rotation.y += 0.001 * spin;
+        const mat = sp.material as THREE.SpriteMaterial;
+        mat.rotation += mm._spin * spin;
 
-        if (Math.abs(m.position.x) > 22) mm._vel.x *= -1;
-        if (Math.abs(m.position.y) > 17) mm._vel.y *= -1;
+        if (Math.abs(sp.position.x) > 22) mm._vel.x *= -1;
+        if (Math.abs(sp.position.y) > 17) mm._vel.y *= -1;
       });
 
       renderer.render(scene, camera);
@@ -159,10 +168,12 @@ export function BackgroundCanvas() {
       window.removeEventListener("popstate", onPopState);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
-      meshes.forEach((m) => {
-        (m.material as THREE.Material).dispose();
+      sprites.forEach((sp) => {
+        const m = sp.material as THREE.SpriteMaterial;
+        m.map = null;
+        m.dispose();
       });
-      geometry.dispose();
+      disposeFloatIconTextures();
       renderer.dispose();
     };
   }, []);

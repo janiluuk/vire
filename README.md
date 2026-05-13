@@ -6,13 +6,21 @@ Next.js site for Vire — refurbishment, DIY guides, orders, and admin tools.
 
 ### Database with Docker
 
-Postgres and **automatic Prisma migrations** are part of the default Compose stack:
+Postgres, **one-shot migrate**, and the **Next.js** app are the default Compose stack:
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-This starts `db`, waits until it is healthy, then runs the one-shot **`migrate`** service (`prisma migrate deploy`). Copy `.env.example` to `.env` / `.env.local` and keep `DATABASE_URL` aligned with `POSTGRES_*` (defaults match `docker-compose.yml`).
+On first run, **`--build`** builds the `web` image. This starts **`db`**, runs **`migrate`** when the DB is healthy, then starts **`web`** on **http://localhost:1337** (override the host port with **`APP_PORT`** in `.env`).
+
+To run only Postgres for host-based **`npm run dev`**:
+
+```bash
+docker compose up -d db
+```
+
+Copy **`.env.example`** to **`.env`**, set secrets and **`DATABASE_URL`** if needed (`.env` is gitignored). Optional **`.env.local`** can override single keys.
 
 Run the app on the host (default **http://localhost:1337**):
 
@@ -30,15 +38,7 @@ npx prisma db seed
 
 ### App in Docker (production-like)
 
-Build and run the Next.js standalone image after migrations (site on host port **1337** by default):
-
-```bash
-docker compose --profile app up -d --build
-```
-
-The `web` container waits for **`migrate`** to finish, then starts (the entrypoint also runs `prisma migrate deploy`).
-
-Open **http://localhost:1337** (set `APP_PORT` / `NEXT_PUBLIC_SITE_URL` / `NEXTAUTH_URL` in `.env` if you use another host or port).
+Same as above — **`docker compose up -d --build`** is the full stack. The `web` entrypoint runs **`prisma migrate deploy`** on start, then **`node server.js`** (listen **0.0.0.0:3000** inside the container).
 
 ### Deploy to a lab host (e.g. 192.168.2.100)
 

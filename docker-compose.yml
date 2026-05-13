@@ -1,12 +1,11 @@
 # Vire stack
 #
-# Postgres + Prisma migrations (default — no app image):
-#   docker compose up -d
-#   Use DATABASE_URL pointing at localhost:5432 for host-run Next.js / Prisma
-#   (see .env.example).
+# Local stack: Postgres, Prisma migrate, Next.js (`web`).
+#   docker compose up -d --build
+#   Web: http://localhost:1337 (set APP_PORT in `.env` to change host port).
 #
-# App + database + migrations (production-like). Web UI: http://localhost:1337 (override with APP_PORT).
-#   docker compose --profile app up -d --build
+# Database only (host-run `npm run dev` against Docker Postgres):
+#   docker compose up -d db
 #
 services:
   db:
@@ -50,7 +49,6 @@ services:
         npx --yes prisma@5.22.0 migrate deploy --schema=./prisma/schema.prisma
 
   web:
-    profiles: ["app"]
     build:
       context: .
       dockerfile: Dockerfile

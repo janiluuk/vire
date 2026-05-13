@@ -54,14 +54,14 @@ rsync "${RSYNC_FLAGS[@]}" \
 # Published port: host APP_PORT in docker-compose (default 1337). Override locally: APP_PORT=8080 ./scripts/lab-stack-up.sh
 REMOTE_PORT="${APP_PORT:-1337}"
 
-BUILD_CMD="docker compose --profile app build"
+BUILD_CMD="docker compose build"
 if [[ -n "$NO_CACHE" ]]; then
   BUILD_CMD+=" --no-cache"
 fi
 
-echo "==> Remote: ${BUILD_CMD} && docker compose --profile app up -d"
+echo "==> Remote: ${BUILD_CMD} && docker compose up -d"
 # shellcheck disable=SC2029
-ssh "${REMOTE_USER}@${HOST}" "cd '${REMOTE_PATH}' && ${BUILD_CMD} && docker compose --profile app up -d"
+ssh "${REMOTE_USER}@${HOST}" "cd '${REMOTE_PATH}' && ${BUILD_CMD} && docker compose up -d"
 
 BASE_URL="http://${HOST}:${REMOTE_PORT}"
 echo ""
