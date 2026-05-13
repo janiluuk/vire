@@ -96,6 +96,25 @@ model StripeProcessedEvent {
   createdAt DateTime @default(now())
 }
 
+/// Anonymous compatibility runs from POST /api/compatibility (wizard, /koneet, etc.) for aggregate stats.
+model CompatibilityCheck {
+  id                  String   @id @default(cuid())
+  createdAt           DateTime @default(now())
+  /// "web" | "app" (reserved for Sparkki Checker / future clients)
+  source              String   @default("web")
+  make                String
+  model               String
+  ramGb               Int?
+  diskType            String?
+  status              String
+  reasons             Json
+  speedGainEstimate   String
+  orderId             String?
+  convertedToOrder    Boolean  @default(false)
+
+  @@index([createdAt])
+}
+
 model ComputerModel {
   id         String           @id @default(cuid())
   createdAt  DateTime         @default(now())

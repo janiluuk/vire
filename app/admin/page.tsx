@@ -53,6 +53,7 @@ export default async function AdminDashboardPage() {
     ordersToday,
     todayRevenue,
     modelsUnchecked,
+    checksToday,
     recentOrders,
     approvedModels,
     rejectedModels,
@@ -66,6 +67,9 @@ export default async function AdminDashboardPage() {
       _sum: { priceEur: true },
     }),
     prisma.computerModel.count({ where: { status: "UNCHECKED" } }),
+    prisma.compatibilityCheck.count({
+      where: { createdAt: { gte: startOfToday } },
+    }),
     prisma.order.findMany({
       where: { createdAt: { gte: rangeStart } },
       select: { createdAt: true, priceEur: true, status: true },
@@ -132,7 +136,7 @@ export default async function AdminDashboardPage() {
       </header>
 
       <p className="mt-8 text-lg text-ink">{a.statsIntro}</p>
-      <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <li className="sparkki-card rounded-2xl p-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statOpenOrders}</p>
           <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink">{openOrders}</p>
@@ -151,6 +155,11 @@ export default async function AdminDashboardPage() {
         <li className="sparkki-card rounded-2xl p-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statModelsUnchecked}</p>
           <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink">{modelsUnchecked}</p>
+        </li>
+        <li className="sparkki-card rounded-2xl p-5">
+          <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statChecksToday}</p>
+          <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink">{checksToday}</p>
+          <p className="mt-1 text-sm text-fog">{a.statChecksTodayHint}</p>
         </li>
       </ul>
 
@@ -226,6 +235,12 @@ export default async function AdminDashboardPage() {
           className="min-h-tap rounded-xl border border-em bg-card px-5 py-3 font-semibold transition-colors duration-150 hover:border-g"
         >
           {a.models}
+        </Link>
+        <Link
+          href="/admin/checks"
+          className="min-h-tap rounded-xl border border-em bg-card px-5 py-3 font-semibold transition-colors duration-150 hover:border-g"
+        >
+          {a.checksNav}
         </Link>
         <Link
           href="/admin/guides"

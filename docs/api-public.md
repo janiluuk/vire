@@ -100,10 +100,11 @@ Creates a `UsbOrder` and Stripe Checkout Session.
 
 ### `POST /api/compatibility`
 
-**Body:** `{ "make": string, "model": string, "ramGb"?: number, "diskType"?: "hdd"|"ssd"|"unknown" }`
+**Body:** `{ "make": string, "model": string, "ramGb"?: number, "diskType"?: "hdd"|"ssd"|"unknown", "source"?: "web"|"app" }` — `source` defaults to `web` (reserved for desktop checker clients).
 
 **Responses:** JSON verdict from `lib/specs/compatibility.ts` (shape depends on client). `429` if rate limited.
 
+**Persistence:** On success the server appends an anonymous **`CompatibilityCheck`** row (make/model, inputs, verdict, reasons) for aggregate reporting; failures to write never change the JSON response.
 ---
 
 ## Public order lookup
