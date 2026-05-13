@@ -813,7 +813,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 4. **Admin audit trail** — **shipped:** `AdminAuditLog` + order detail log; guides/models mutations logged; extend UI as needed.
 5. **Structured logging** — **shipped:** JSON + request id on checkout, support-contact, Stripe webhook (`lib/logging/log.ts`, **`docs/operations.md`**).
 6. **Production image build + Prisma** — `next build` may invoke Prisma on static routes; Docker `docker compose build` logs connection errors when no DB is reachable at `DATABASE_URL`. Mitigations: pass a build-time DB URL, use `docker compose` build with `db` profile, or move DB-bound SSG to **`dynamic = 'force-dynamic'`** / client fetch. Documented in **`docs/repository-layout.md`** § Known sharp edges.
-7. **Dependency patch cadence** — Keep **Next.js** on a patched minor per security releases; triage **`npm audit`** critical/high on production dependencies (CI already runs audit in informational mode).
+7. **Dependency patch cadence + `npm audit`** — Stay on the latest validated **Next.js 14.2.x**; run **`npm run security:audit:prod`** before releases. The advisory database may still flag **Next** while the installed patch is fixed — cross-check [Next.js security advisories](https://github.com/vercel/next.js/security). Dev-only chains (**Lighthouse CLI**, **eslint-config-next → glob**) may remain reported until upstream releases land.
 
 #### Product / UX (still open from earlier phases)
 
@@ -861,6 +861,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 - [x] **`apps/vire-checker` optional “fetch specs” UI** — **`VITE_VIRE_API_BASE`** enables **Hae speksit verkosta** → `POST /api/public/laptop-specs` (see **`apps/vire-checker/README.md`**).
 - [x] **Dependency / secret hygiene** — **`npm audit`** in CI (informational / non-blocking); pre-commit secret scan (gitleaks) optional.
 - [x] **`docs/repository-layout.md`** — Folder conventions; hub tabs under **`components/navigation/`**; Prisma-at-build caveat for Docker images.
+- [x] **Stripe webhook + order lookup API tests** — **`tests/functional/stripe-webhook.test.ts`** (signature / config paths); **`tests/functional/order-lookup.test.ts`** (validation + 404).
 
 ---
 

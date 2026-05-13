@@ -7,6 +7,7 @@ import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
 const NAV = [
   { href: "/tietoa", key: "navHub" },
   { href: "/tietoa/hyodyt", key: "navBenefits" },
+  { href: "/tietoa/galleria", key: "navGallery" },
   { href: "/tietoa/linux", key: "navLinux" },
   { href: "/tietoa/vakaus", key: "navStability" },
   { href: "/tietoa/huolia", key: "navConcerns" },
@@ -36,7 +37,7 @@ export function InfoHubLayout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-[560px] flex-col">
       <nav
         aria-label={t("sidebarAria")}
-        className="flex flex-wrap gap-1 border-b border-edge bg-raised px-4 pt-1 sm:px-6"
+        className="flex flex-wrap gap-1 border-b border-edge bg-raised/70 px-4 pt-1 backdrop-blur-lg sm:px-6"
       >
         {NAV.map(({ href, key }) => {
           const active = navItemActive(pathname, href);
@@ -53,7 +54,7 @@ export function InfoHubLayout({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
-      <div className="flex-1 bg-canvas px-6 py-8 md:px-9 md:py-8">{children}</div>
+      <div className="flex-1 px-6 py-8 md:px-9 md:py-8">{children}</div>
     </div>
   );
 }

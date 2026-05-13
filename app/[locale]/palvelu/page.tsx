@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { localePathAlternates } from "@/lib/site/seo";
+import { ComponentSourcingSection } from "@/components/palvelu/ComponentSourcingSection";
 import { OrderWizard } from "@/components/wizard/OrderWizard";
 
 export async function generateMetadata({
@@ -100,6 +101,8 @@ export default async function PalveluPage({
         <p className="text-lg leading-relaxed text-fog">{t("backupsP1")}</p>
         <p className="text-lg leading-relaxed text-fog">{t("backupsP2")}</p>
       </section>
+
+      <ComponentSourcingSection />
 
       <section
         aria-labelledby="b2b-title"

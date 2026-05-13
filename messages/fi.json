@@ -68,6 +68,7 @@
     "sidebarAria": "Tietoa — välilehdet",
     "navHub": "Yleiskatsaus",
     "navBenefits": "Hyödyt",
+    "navGallery": "Demogalleria",
     "navLinux": "Päivitysprosessi",
     "navStability": "Vakaus & mukavuus",
     "navConcerns": "Yleisiä huolia",
@@ -75,7 +76,7 @@
     "navAppsMac": "Sovellukset — Mac",
     "hub": {
       "metaTitle": "Tietoa — anna koneelle uusi elämä",
-      "metaDescription": "Miksi vanhan koneen päivitys Linuxilla on järkevää, mitä peleistä ja ohjelmista löytyy, demoja, sovelluslistoja sekä päivitysprosessi ja suositellut jakelut.",
+      "metaDescription": "Miksi vanhan koneen päivitys Linuxilla on järkevää, mitä peleistä ja ohjelmista löytyy, sovelluslistoja sekä päivitysprosessi ja suositellut jakelut.",
       "eyebrow": "Tietoa",
       "title": "Vanha tietokone pystyy vielä paljon",
       "intro": "SSD, tarvittaessa lisämuisti ja kevyt Linux-asennus voivat muuttaa nuhjuisen läppärin tai pöytäkoneen nopeaksi arjen kumppaniksi — ilman uuden laitteen ostoa.",
@@ -109,9 +110,6 @@
       "appsMacTitle": "macOS → Linux -vaihtoehdot",
       "appsMacBody": "Tutut kategoriat, avoimen lähdekoodin painotteinen pino.",
       "appsCta": "Selaa listoja",
-      "concernsSectionTitle": "Yleisiä huolia — pikatiedot",
-      "concernsSectionIntro": "Kysymyksiä ennen Linuxiin siirtymistä; täydempi lista omalla sivullaan.",
-      "concernsMore": "Kaikki yleiset huolia →",
       "osSectionTitle": "Suosittelemme jakeluita",
       "osSectionIntro": "Keskitymme selkeisiin, hyvin tuettuihin työpöytiin. Useimmille päivityksille suosittelemme Linux Mintiä tuttuuden vuoksi ja Fedora Workstationia moderniin GNOME-kokemukseen.",
       "osRecommendedBadge": "Ensisijainen suositus",
@@ -123,6 +121,8 @@
       "osFedoraBody": "Hiottu GNOME-työpöytä, vahvat upstream-oletukset, erinomainen kehittäjille ja kotiin, jossa halutaan tuoreempaa pakettipinoa hyvällä QA:lla.",
       "osFedoraNote": "Voimme asentaa kumpaan tahansa tilauksesta riippuen — kysy, jos et tiedä kumpi sopii käyttötapaasi.",
       "moreTitle": "Syvene lisää",
+      "moreGallery": "Demogalleria — diaesitys →",
+      "moreConcerns": "Yleiset huolia — täydet vastaukset →",
       "moreStability": "Vakaus ja mukavuus →",
       "moreBenefits": "Hyödyt — yksityisyys, hinta, pelit… →",
       "moreDiy": "Tee itse -oppaat ja Linux-USB →",
@@ -140,15 +140,44 @@
         "dailyTitle": "Läksyt & verkko",
         "dailyCaption": "Oppilaitosportaalit, striimaus ja verkkopankki käyttäytyvät kuin modernissa selaimessa kuuluukin.",
         "creativeTitle": "Kuvat & sivuprojektit",
-        "creativeCaption": "Muokkaukset, viennit ja harrasteluova ilman uutta työasemaa."
+        "creativeCaption": "Muokkaukset, viennit ja harrasteluova ilman uutta työasemaa.",
+        "slidePrev": "Edellinen",
+        "slideNext": "Seuraava",
+        "slideIndicator": "{current} / {total}",
+        "thumbShow": "Näytä dia {n}: {title}",
+        "thumbsAria": "Kaikki diat"
       }
+    },
+    "galleria": {
+      "metaTitle": "Demogalleria — Tietoa",
+      "metaDescription": "Suuret diaesitysnäkymät työstä, peleistä, luovuudesta ja verkosta Linux-työpöydällä.",
+      "eyebrow": "Tietoa",
+      "title": "Demogalleria",
+      "intro": "Tyyliteltyjä näkymiä arjen työpöydistä — eivät kuvakaappauksia juuri sinun koneeltasi, mutta tuntuma siihen, miltä tuottavuus, pelit, luovuus ja selain voivat näyttää kevyellä Linux-asennuksella."
     },
     "hyodyt": {
       "metaTitle": "Hyödyt — Tietoa",
-      "metaDescription": "Yksityinen paikallinen työpöytä, suomalainen palvelu, taloudellisuus, vakaus, Steam ja pelit, tiedot koneellasi.",
+      "metaDescription": "Vanha rauta toimii kevyesti, ilmainen käyttöjärjestelmä ja avoin pinorakenne, turvallisuus ja yksityisyys — sekä Viren suomalainen palvelu.",
       "eyebrow": "Tietoa",
       "title": "Miksi tämä polku kannattaa",
       "intro": "Lyhyt katsaus siihen, mitä saat, kun Viren kautta uudistat vanhemman tietokoneen Linuxilla — pelkkää nopeutta enemmän.",
+      "highlightsTitle": "Perusteluja lyhyesti",
+      "highlightsIntro": "Kolme teemaa, joita kuulemme usein — vanha kone, hankintamalli ja oma hallintasi.",
+      "hwHighlightTitle": "Vanha rauta voi kulkea kevyesti ja nopeasti",
+      "hwHighlightLead": "Kevyt käyttöjärjestelmä ja oikea levy (SSD) tekevät enemmän kuin mikään yksittäinen \"uusi Windows\" samassa kotelossa: kone tuntuu käyttökelpoiselta vuosia pidempään.",
+      "hwHighlightP1": "Käynnistys ja ohjelmat aukeavat selvästi nopeammin kuin vanhalla HDD-Windows-yhdistelmällä.",
+      "hwHighlightP2": "Vähemmän taustapalveluita ja mainospainetta — kapasiteetti jää sinun tehtävillesi eikä kulu turhaan taustalla.",
+      "hwHighlightP3": "Moni 5–10 vuoden ikäinen kannettava tai pöytäkone riittää edelleen selaamiseen, toimistoon, kouluun ja videopuheluihin.",
+      "freeHighlightTitle": "Käyttöjärjestelmä ja avoin ohjelma — ei vuosilisenssiä",
+      "freeHighlightLead": "Työpöytä-Linux ja suuri osa ohjelmista ovat ilmaisia käyttää: maksat Virelle palvelusta ja mahdollisista osista — et toistuvaa käyttöjärjestelmälisenssiä.",
+      "freeHighlightP1": "Ei pakollista Microsoft- tai Apple-tiliä käyttöjärjestelmän käyttöön tässä pinossa.",
+      "freeHighlightP2": "Läpinäkyvä lähdekoodi ja yhteisöjen sekä yritysten ylläpitämä ekosysteemi — päivitykset ovat seurattavissa.",
+      "freeHighlightP3": "Voit asentaa pitkälti saman pinon uudestaan tuleviin koneisiin ilman uutta \"OS-maksua\".",
+      "secHighlightTitle": "Turvallisuus, yksityisyys ja omistajuus",
+      "secHighlightLead": "Kone on sinun työkalu — et tuote, jota mainostellaan päivittäin alustan takapajussa.",
+      "secHighlightP1": "Päivitysmalli on hallittu: ylläpitäjät korjaavat haavoittuvuuksia ilman, että kauppa pakottaa uutta versiota myyntisyistä.",
+      "secHighlightP2": "Oletusprofilointi ja telemetria ovat yleensä vähäisempiä kuin monessa kuluttaja-Windows-asennuksessa.",
+      "secHighlightP3": "Tiedostot ja tilit ovat sinun levylläsi — pilvi ja synkronointi tulevat vasta kun sinä ne kytket.",
       "b1Icon": "◇",
       "b1Title": "Yksityinen — ei pakollista pilvitiliä",
       "b1Body": "Työpöytäkäyttö pyörii omalla koneellasi. Käyttöjärjestelmä ei vaadi pilvitiliä, ja arjen tehtävät eivät ole sidottuja aina-päällä-palveluihin, ellet itse valitse niitä.",
@@ -554,6 +583,35 @@
     "backupsP2": "Luovutuksen yhteydessä saat vaiheittaiset kirjalliset ohjeet tiedostojen tai tilannekuvan palautukseen suomeksi tai englanniksi tilauksen mukaan — mukaan lukien mitä tehdä, jos järjestelmä ei käynnisty normaalisti (esim. live-USB:n avulla).",
     "b2bBanner": "Tarvitsetko useita koneita tai yritysmyyntiä?",
     "b2bCta": "Pyydä tarjous",
+    "components": {
+      "title": "Komponentit — mitä asennamme",
+      "intro": "Käytämme uusia, merkkisiä SSD- ja muistimoduleja. Alla tyypilliset mallit ja mitat; lopullisen valinnan teemme koneen ja emolevyn yhteensopivuuden mukaan. Linkki avaa Verkkokauppa.comin haun vastaavalle tuotteelle (hinta voi vaihdella).",
+      "reassurance": "Komponentit ovat uusia ja valmistajien normaalin kuluttajatakuun piirissä. Jos laite vaatii erikoisemman moduulin, kerromme siitä ennen työn aloitusta.",
+      "specCapacity": "Kapasiteetti",
+      "specInterface": "Liitäntä / tyyppi",
+      "specRead": "Luku",
+      "specWrite": "Kirjoitus",
+      "specClock": "Kello",
+      "specWarranty": "Takuu",
+      "shopCta": "Katso tuote Verkkokauppa.comissa ↗",
+      "items": {
+        "ssdSata": {
+          "eyebrow": "SATA SSD",
+          "lead": "Tyypillinen päivitys, kun koneessa on 2,5\" SATA-paikka.",
+          "warranty": "5 v (Samsung)"
+        },
+        "ssdNvme": {
+          "eyebrow": "NVMe SSD",
+          "lead": "Nopeampi levy, kun emolevy tukee M.2 NVMe -asennusta.",
+          "warranty": "5 v (Samsung)"
+        },
+        "ram8gb": {
+          "eyebrow": "Lisämuisti",
+          "lead": "DDR4-muisti, SODIMM tai DIMM riippuen koneesta — tarkka moduuli valitaan yhteensopivuuden mukaan.",
+          "warranty": "Valmistajatakuu (Kingston)"
+        }
+      }
+    },
     "wizardLegalHint": "Jatkamalla hyväksyt tilauksen ehdot ja henkilötietojen käsittelyn tilauksen toteuttamiseksi.",
     "wizard": {
       "title": "Tilaus",

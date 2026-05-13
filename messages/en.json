@@ -68,6 +68,7 @@
     "sidebarAria": "Learn — tabs",
     "navHub": "Overview",
     "navBenefits": "Benefits",
+    "navGallery": "Demo gallery",
     "navLinux": "Upgrade process",
     "navStability": "Stability & comfort",
     "navConcerns": "Common concerns",
@@ -75,7 +76,7 @@
     "navAppsMac": "Apps — Mac",
     "hub": {
       "metaTitle": "Learn — give your PC a second life",
-      "metaDescription": "Why upgrading older hardware with Linux is practical, what software and games are compatible, demos, app lists, the upgrade process, and recommended distributions.",
+      "metaDescription": "Why upgrading older hardware with Linux is practical, what software and games are compatible, app lists, the upgrade process, and recommended distributions.",
       "eyebrow": "Learn",
       "title": "Your old computer can still do a lot",
       "intro": "An SSD, optional RAM, and a light Linux install can turn a sluggish laptop or desktop into a fast daily driver — without buying a whole new machine.",
@@ -109,9 +110,6 @@
       "appsMacTitle": "macOS → Linux alternatives",
       "appsMacBody": "Familiar categories with open-source-friendly picks.",
       "appsCta": "Browse the lists",
-      "concernsSectionTitle": "Common concerns — quick answers",
-      "concernsSectionIntro": "Questions we hear before people switch; the full set has its own page.",
-      "concernsMore": "All common concerns →",
       "osSectionTitle": "Distributions we recommend",
       "osSectionIntro": "We focus on friendly, well-supported desktops. For most upgraders we recommend Linux Mint for familiarity and Fedora Workstation for a polished, up-to-date GNOME experience.",
       "osRecommendedBadge": "Primary recommendation",
@@ -123,6 +121,8 @@
       "osFedoraBody": "Polished GNOME desktop, strong defaults upstream, excellent for developers or households that want newer packages with solid QA.",
       "osFedoraNote": "We can install either depending on your habits — ask if you are unsure which fits best.",
       "moreTitle": "Go deeper",
+      "moreGallery": "Demo gallery — slideshow →",
+      "moreConcerns": "Common concerns — full answers →",
       "moreStability": "Stability & comfort →",
       "moreBenefits": "Benefits — privacy, value, games… →",
       "moreDiy": "DIY guides & Linux USB →",
@@ -140,15 +140,44 @@
         "dailyTitle": "Homework & the web",
         "dailyCaption": "School portals, streaming, and banking behave like you expect in a modern browser.",
         "creativeTitle": "Photos & side projects",
-        "creativeCaption": "Edits, exports, and hobby creative setups that do not require a brand-new workstation."
+        "creativeCaption": "Edits, exports, and hobby creative setups that do not require a brand-new workstation.",
+        "slidePrev": "Previous",
+        "slideNext": "Next",
+        "slideIndicator": "{current} / {total}",
+        "thumbShow": "Show slide {n}: {title}",
+        "thumbsAria": "All slides"
       }
+    },
+    "galleria": {
+      "metaTitle": "Demo gallery — Learn",
+      "metaDescription": "Large slideshow views of productivity, gaming, creativity, and the web on a Linux desktop.",
+      "eyebrow": "Learn",
+      "title": "Demo gallery",
+      "intro": "Stylized desktop scenes — not screenshots from your exact PC, but a feel for how multitasking, games, creative work, and browsing can look on a light Linux setup."
     },
     "hyodyt": {
       "metaTitle": "Benefits — Learn",
-      "metaDescription": "Private local desktop, Finnish service, value, stability, Steam and games, and your data on your machine.",
+      "metaDescription": "Older hardware that still feels fast, a license-free OS stack, security and privacy — plus Vire’s Finnish service.",
       "eyebrow": "Learn",
       "title": "Why this path works for you",
       "intro": "A quick overview of what you gain when you refresh an older computer with Linux through Vire — beyond raw speed.",
+      "highlightsTitle": "Reasons in short",
+      "highlightsIntro": "Three themes we hear about a lot — ageing hardware, how pricing works, and who really controls the machine.",
+      "hwHighlightTitle": "Older hardware can still feel quick and light",
+      "hwHighlightLead": "A lightweight OS plus the right disk (SSD) changes how long hardware stays pleasant — often more than bolting the latest consumer Windows onto the same box.",
+      "hwHighlightP1": "Boot and app opens feel dramatically better than a typical old HDD + Windows setup.",
+      "hwHighlightP2": "Fewer background services and ads fighting for CPU — capacity stays for your tasks.",
+      "hwHighlightP3": "Many laptops and desktops from the last 5–10 years are still perfectly viable for browsing, office work, school, and video calls.",
+      "freeHighlightTitle": "The OS and open apps — no yearly license fee",
+      "freeHighlightLead": "Desktop Linux and much of the software around it are free to use: you pay Vire for service (and any parts in your order), not an operating-system subscription.",
+      "freeHighlightP1": "No mandatory Microsoft or Apple account just to keep the OS usable in this stack.",
+      "freeHighlightP2": "Transparent source-led ecosystem with community and vendor maintenance — security fixes are visible and documented.",
+      "freeHighlightP3": "You can largely rebuild the same stack on the next machine without a fresh “OS tax”.",
+      "secHighlightTitle": "Security, privacy, and ownership",
+      "secHighlightLead": "The computer is your tool — not a channel for daily platform upsell baked into the install.",
+      "secHighlightP1": "Updates are deliberate: maintainers patch vulnerabilities without a retail calendar forcing new paid tiers for basics.",
+      "secHighlightP2": "Default telemetry and ad profiling are usually lighter than on many consumer Windows installs.",
+      "secHighlightP3": "Files and accounts stay on your disk — cloud and sync are opt-in when you choose them.",
       "b1Icon": "◇",
       "b1Title": "Private — no online account required",
       "b1Body": "Core desktop work runs on your PC. You are not tied to a cloud login for the operating system, and everyday tasks do not depend on always-on online services unless you choose them.",
@@ -555,6 +584,35 @@
     "backupsP2": "With handoff you receive written step-by-step instructions for restoring files or rolling back a snapshot, in Finnish or English to match your order — including what to do if the system will not boot normally (for example using a live USB).",
     "b2bBanner": "Need several machines or a business quote?",
     "b2bCta": "Request a quote",
+    "components": {
+      "title": "Parts — what we install",
+      "intro": "We use new brand-name SSDs and memory modules. Below are typical models and specs; the final choice depends on what your machine and motherboard support. The link opens a Verkkokauppa.com search for a matching product (retail price may vary).",
+      "reassurance": "Components are new and covered by the manufacturer’s standard consumer warranty. If your device needs a less common module, we tell you before work begins.",
+      "specCapacity": "Capacity",
+      "specInterface": "Interface / type",
+      "specRead": "Read",
+      "specWrite": "Write",
+      "specClock": "Clock",
+      "specWarranty": "Warranty",
+      "shopCta": "View product at Verkkokauppa.com ↗",
+      "items": {
+        "ssdSata": {
+          "eyebrow": "SATA SSD",
+          "lead": "Typical upgrade when the machine has a 2.5\" SATA bay.",
+          "warranty": "5 yr (Samsung)"
+        },
+        "ssdNvme": {
+          "eyebrow": "NVMe SSD",
+          "lead": "Faster storage when the board supports M.2 NVMe.",
+          "warranty": "5 yr (Samsung)"
+        },
+        "ram8gb": {
+          "eyebrow": "Extra RAM",
+          "lead": "DDR4 module, SODIMM or DIMM depending on the chassis — we pick a compatible kit.",
+          "warranty": "Manufacturer warranty (Kingston)"
+        }
+      }
+    },
     "wizardLegalHint": "By continuing you accept the order terms and processing of personal data to fulfill the order.",
     "wizard": {
       "title": "Order",

@@ -80,6 +80,12 @@ See [`.env.example`](./.env.example) for `DATABASE_URL`, auth, Stripe, email, pu
 
 **GitHub Actions** (`.github/workflows/ci.yml`) runs **E2E before Lighthouse** so Playwright and Lighthouse never compete for **:1337** in the same job. In CI, Playwright also enables **`reuseExistingServer`** when **`CI=true`** so a stray listener on **1337** does not hard-fail the run.
 
+### Security audits
+
+- **`npm run security:audit`** — full **`npm audit`** (dev + prod).
+- **`npm run security:audit:prod`** — production dependencies only.
+- CI prints **prod** and **full** audit summaries (informational). See **`docs/operations.md`** § *Dependency and security audits*.
+
 ### Vire Checker (Tauri desktop)
 
 Local compatibility tool using the same pure logic as the site (`lib/specs/compatibility.ts`). Lives in `apps/vire-checker/`.

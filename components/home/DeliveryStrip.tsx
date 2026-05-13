@@ -17,7 +17,7 @@ export function DeliveryStrip() {
     <div
       role="region"
       aria-label={t("ariaLabel")}
-      className="vire-delivery-strip border-y border-edge bg-raised text-ink"
+      className="vire-delivery-strip border-y border-edge bg-raised/70 text-ink backdrop-blur-xl"
     >
       <div className="mx-auto flex max-w-[1100px] flex-col divide-y divide-edge sm:flex-row sm:divide-x sm:divide-y-0">
         {items.map(({ key, icon }) => (

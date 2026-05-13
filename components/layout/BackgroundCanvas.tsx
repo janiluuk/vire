@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { usePathname } from "@/i18n/navigation";
+import { VIRE_BG_NAV_EVENT } from "@/lib/site/background-nav";
 
 type FloatMesh = THREE.Mesh & {
   _vel: THREE.Vector3;
@@ -17,6 +19,20 @@ function disposeMesh(m: THREE.Mesh) {
 /** Decorative ambient canvas — wireframe icosahedrons (DESIGN_SYSTEM.md). */
 export function BackgroundCanvas() {
   const ref = useRef<HTMLCanvasElement>(null);
+  const navEnergyRef = useRef(0);
+  const skipPathnameBumpRef = useRef(true);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (skipPathnameBumpRef.current) {
+      skipPathnameBumpRef.current = false;
+      return;
+    }
+    navEnergyRef.current = Math.min(
+      1.85,
+      navEnergyRef.current + 0.52,
+    );
+  }, [pathname]);
 
   useEffect(() => {
     const canvas = ref.current;
@@ -24,6 +40,17 @@ export function BackgroundCanvas() {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+
+    const bumpNavEnergy = () => {
+      if (reducedMotion) return;
+      navEnergyRef.current = Math.min(
+        1.85,
+        navEnergyRef.current + 0.52,
+      );
+    };
+
+    window.addEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+    window.addEventListener("hashchange", bumpNavEnergy);
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -73,6 +100,8 @@ export function BackgroundCanvas() {
 
       return () => {
         window.removeEventListener("resize", onResize);
+        window.removeEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+        window.removeEventListener("hashchange", bumpNavEnergy);
         meshes.forEach(disposeMesh);
         renderer.dispose();
       };
@@ -116,10 +145,25 @@ export function BackgroundCanvas() {
       if (now - last < 33) return;
       last = now;
 
+      let navBoost = navEnergyRef.current;
+      if (navBoost > 0.02) {
+        navEnergyRef.current *= 0.9;
+      } else {
+        navBoost = 0;
+        navEnergyRef.current = 0;
+      }
+
+      const maxVel = 0.028;
       meshes.forEach((mesh) => {
         mesh.position.add(mesh._vel);
         mesh.rotation.x += 0.002;
         mesh.rotation.y += 0.001;
+        if (navBoost > 0) {
+          mesh._vel.x += (Math.random() - 0.5) * 0.018 * navBoost;
+          mesh._vel.y += (Math.random() - 0.5) * 0.018 * navBoost;
+        }
+        mesh._vel.x = Math.max(-maxVel, Math.min(maxVel, mesh._vel.x));
+        mesh._vel.y = Math.max(-maxVel, Math.min(maxVel, mesh._vel.y));
         if (Math.abs(mesh.position.x) > 22) mesh._vel.x *= -1;
         if (Math.abs(mesh.position.y) > 17) mesh._vel.y *= -1;
       });
@@ -142,6 +186,8 @@ export function BackgroundCanvas() {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+      window.removeEventListener("hashchange", bumpNavEnergy);
       meshes.forEach(disposeMesh);
       geometry.dispose();
       renderer.dispose();
@@ -152,7 +198,7 @@ export function BackgroundCanvas() {
     <canvas
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 max-h-dvh max-w-full"
+      className="pointer-events-none fixed inset-0 -z-10 h-full min-h-dvh w-full"
     />
   );
 }

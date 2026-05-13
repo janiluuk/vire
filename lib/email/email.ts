@@ -10,6 +10,7 @@ import {
   isPortableVmHandoff,
 } from "@/lib/billing/portable-vm";
 import { getSiteUrl } from "@/lib/site/site-url";
+import { getServiceComponents } from "@/lib/data/service-components";
 
 export type MailLocale = "fi" | "en";
 
@@ -21,6 +22,22 @@ function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY;
   if (!key) return null;
   return new Resend(key);
+}
+
+function orderConfirmedComponentsBlock(loc: MailLocale): string {
+  const base = getSiteUrl();
+  const items = getServiceComponents();
+  const list = items
+    .map(
+      (c) =>
+        `${escapeHtml(c.brand)} ${escapeHtml(c.model)} (${escapeHtml(c.capacity)})`,
+    )
+    .join(", ");
+  const href = loc === "en" ? `${base}/en/palvelu#komponentit` : `${base}/fi/palvelu#komponentit`;
+  if (loc === "en") {
+    return `<p><strong>Parts</strong></p><p>We install new, warranted components such as: ${list}. Detailed specs and retailer links: <a href="${href}">service page — parts</a>.</p><p>Exact SKUs are confirmed for your machine on intake; components are new and covered by manufacturer warranty.</p>`;
+  }
+  return `<p><strong>Komponentit</strong></p><p>Asennamme uusia, takuullisia osia kuten: ${list}. Tarkemmat mitat ja ostolinkit: <a href="${href}">palvelusivu — komponentit</a>.</p><p>Tarkka malli vahvistetaan koneen mukaan käynnistyksessä; osat ovat uusia ja valmistajatakuun piirissä.</p>`;
 }
 
 function orderConfirmedMigrationBlock(
@@ -118,10 +135,11 @@ export async function sendOrderConfirmedEmail(params: {
     params.customerName.trim().length > 0
       ? `Hei ${escapeHtml(params.customerName)},`
       : "Hei,";
+  const componentsExtra = orderConfirmedComponentsBlock(loc);
   const html =
     loc === "en"
-      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> has been confirmed and we have received your payment.</p>${migrationExtra}${bundlesExtra}${vmExtra}`
-      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on vahvistettu ja maksu vastaanotettu.</p>${migrationExtra}${bundlesExtra}${vmExtra}`;
+      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> has been confirmed and we have received your payment.</p>${componentsExtra}${migrationExtra}${bundlesExtra}${vmExtra}`
+      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on vahvistettu ja maksu vastaanotettu.</p>${componentsExtra}${migrationExtra}${bundlesExtra}${vmExtra}`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,

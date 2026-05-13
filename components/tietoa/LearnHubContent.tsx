@@ -1,14 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { LearnHubDemoGallery } from "@/components/tietoa/LearnHubDemoGallery";
 import { TryLinuxSection } from "@/components/tietoa/TryLinuxSection";
 
 export async function LearnHubContent() {
   const t = await getTranslations("tietoa.hub");
-  const tConcerns = await getTranslations("tietoa.huolia");
 
   const benefitKeys = ["b1", "b2", "b3", "b4"] as const;
-  const concernPreview = ["q1", "q2", "q3"] as const;
 
   return (
     <div className="mx-auto max-w-4xl space-y-16 md:space-y-20">
@@ -32,7 +29,7 @@ export async function LearnHubContent() {
           {benefitKeys.map((key) => (
             <li
               key={key}
-              className="vire-card-hover relative overflow-hidden border border-edge bg-card p-6 sm:p-7"
+              className="vire-card-hover relative overflow-hidden border border-edge p-6 sm:p-7"
             >
               <span
                 className="mb-4 flex size-11 items-center justify-center rounded-xl bg-g/15 text-xl text-g"
@@ -67,8 +64,6 @@ export async function LearnHubContent() {
         </ul>
       </section>
 
-      <LearnHubDemoGallery />
-
       <section aria-labelledby="hub-apps-title" className="space-y-6">
         <h2 id="hub-apps-title" className="font-display text-2xl font-bold text-ink md:text-3xl">
           {t("appsSectionTitle")}
@@ -77,7 +72,7 @@ export async function LearnHubContent() {
         <div className="grid gap-4 md:grid-cols-2">
           <Link
             href="/tietoa/sovellukset/windows"
-            className="vire-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge bg-card p-6 transition-colors hover:border-g/40"
+            className="vire-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge p-6 transition-colors hover:border-g/40"
           >
             <div>
               <p className="font-mono text-[10px] uppercase tracking-wider text-dust">
@@ -90,7 +85,7 @@ export async function LearnHubContent() {
           </Link>
           <Link
             href="/tietoa/sovellukset/mac"
-            className="vire-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge bg-card p-6 transition-colors hover:border-g/40"
+            className="vire-card-hover flex min-h-tap flex-col justify-between rounded-2xl border border-edge p-6 transition-colors hover:border-g/40"
           >
             <div>
               <p className="font-mono text-[10px] uppercase tracking-wider text-dust">
@@ -102,36 +97,6 @@ export async function LearnHubContent() {
             <span className="mt-4 font-semibold text-g">{t("appsCta")} →</span>
           </Link>
         </div>
-      </section>
-
-      <section aria-labelledby="hub-concerns-title" className="space-y-6">
-        <h2 id="hub-concerns-title" className="font-display text-2xl font-bold text-ink md:text-3xl">
-          {t("concernsSectionTitle")}
-        </h2>
-        <p className="max-w-3xl text-lg text-fog">{t("concernsSectionIntro")}</p>
-        <ul className="space-y-4">
-          {concernPreview.map((qk) => (
-            <li
-              key={qk}
-              className="rounded-xl border border-edge bg-sunken/80 px-5 py-4 md:px-6 md:py-5"
-            >
-              <p className="font-semibold text-vire-green">
-                {tConcerns(`concerns.${qk}.question`)}
-              </p>
-              <p className="mt-2 text-base leading-relaxed text-fog">
-                {tConcerns(`concerns.${qk}.answer`)}
-              </p>
-            </li>
-          ))}
-        </ul>
-        <p>
-          <Link
-            href="/tietoa/huolia"
-            className="font-semibold text-g underline-offset-2 hover:underline"
-          >
-            {t("concernsMore")}
-          </Link>
-        </p>
       </section>
 
       <section aria-labelledby="hub-os-title" className="space-y-6">
@@ -155,7 +120,7 @@ export async function LearnHubContent() {
               </Link>
             </p>
           </div>
-          <div className="vire-card border-edge bg-card p-6 sm:p-8">
+          <div className="vire-card border-edge p-6 sm:p-8">
             <p className="font-mono text-[10px] uppercase tracking-wider text-dust">
               {t("osAlsoRecommended")}
             </p>
@@ -176,6 +141,19 @@ export async function LearnHubContent() {
           <li>
             <Link href="/tietoa/hyodyt" className="text-g underline-offset-2 hover:underline">
               {t("moreBenefits")}
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/tietoa/galleria"
+              className="text-g underline-offset-2 hover:underline"
+            >
+              {t("moreGallery")}
+            </Link>
+          </li>
+          <li>
+            <Link href="/tietoa/huolia" className="text-g underline-offset-2 hover:underline">
+              {t("moreConcerns")}
             </Link>
           </li>
           <li>

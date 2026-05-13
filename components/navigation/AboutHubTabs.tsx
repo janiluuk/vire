@@ -41,7 +41,7 @@ export function AboutHubTabs() {
   return (
     <nav
       aria-label={t("aboutSubNav")}
-      className="flex flex-wrap gap-1 border-b border-edge bg-raised px-4 pt-1 sm:px-6"
+      className="flex flex-wrap gap-1 border-b border-edge bg-raised/70 px-4 pt-1 backdrop-blur-lg sm:px-6"
     >
       {TABS.map(({ href, key }) => {
         const active =

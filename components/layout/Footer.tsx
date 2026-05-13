@@ -8,7 +8,7 @@ export async function Footer() {
   const t = await getTranslations("footer");
 
   return (
-    <footer className="mt-auto border-t border-edge bg-raised text-ink">
+    <footer className="mt-auto border-t border-edge bg-raised/75 text-ink backdrop-blur-xl">
       <div className="mx-auto max-w-[1100px] px-6 py-12 sm:px-12 sm:py-14">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))] lg:gap-12">
           <div className="max-w-md lg:max-w-none">

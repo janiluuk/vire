@@ -66,7 +66,8 @@ body {
 
 @layer components {
   .vire-card {
-    @apply rounded-2xl border bg-card p-7 transition-colors duration-200;
+    @apply rounded-2xl border border-edge p-7 backdrop-blur-md transition-colors duration-200;
+    background: color-mix(in srgb, var(--bg3) 78%, transparent);
   }
 
   .vire-card:hover {
@@ -78,7 +79,8 @@ body {
   }
 
   .vire-hero {
-    @apply relative overflow-hidden rounded-3xl border bg-card px-6 py-12 text-center sm:px-10 sm:py-16;
+    @apply relative overflow-hidden rounded-3xl border border-edge px-6 py-12 text-center backdrop-blur-lg sm:px-10 sm:py-16;
+    background: color-mix(in srgb, var(--bg3) 72%, transparent);
   }
 
   .vire-hero-inner {
@@ -135,7 +137,8 @@ body {
     overflow: hidden;
     border-radius: 16px;
     border: 1px solid var(--border);
-    background: var(--bg3);
+    background: color-mix(in srgb, var(--bg3) 78%, transparent);
+    backdrop-filter: blur(12px);
     padding: 28px;
     transition: border-color 0.2s;
   }
@@ -200,7 +203,11 @@ body {
   .step-strip {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    border-top: 1px solid var(--border);
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg3) 55%, transparent);
+    backdrop-filter: blur(14px);
   }
 
   .step-item {
@@ -258,7 +265,8 @@ body {
   .pricing-card-featured {
     position: relative;
     border-color: var(--g);
-    background: rgba(29, 245, 160, 0.04);
+    background: color-mix(in srgb, var(--g) 8%, transparent);
+    backdrop-filter: blur(10px);
   }
 
   .pricing-badge-featured {

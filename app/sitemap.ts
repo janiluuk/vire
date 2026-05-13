@@ -20,6 +20,7 @@ const STATIC_PATHS = [
   "/tilaus",
   "/tietoa",
   "/tietoa/hyodyt",
+  "/tietoa/galleria",
   "/tietoa/linux",
   "/tietoa/vakaus",
   "/tietoa/huolia",

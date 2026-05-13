@@ -37,7 +37,8 @@ Spec / planning docs at repo root: **`ROADMAP.md`**, **`FEATURES.md`**, **`DESIG
 ## Known sharp edges
 
 1. **`next build` and Prisma** — Some static pages call Prisma during the build. If `DATABASE_URL` is unset or points at a DB that is not reachable from the **Docker build** container (e.g. `localhost:5432` with no DB), you may see Prisma errors in build logs; the build can still complete when pages degrade gracefully. For reproducible image builds, point `DATABASE_URL` at a reachable DB during `docker compose build`, or refactor data-heavy SSG to dynamic routes. Tracked in **`ROADMAP.md`** (review backlog).
-2. **`@/*` imports** — TypeScript path alias maps to the repo root (`tsconfig.json`). Prefer `@/components/...`, `@/lib/...` over deep relatives.
+2. **`npm audit` and overrides** — **`package.json`** declares **`overrides.cookie`** so patched **cookie** wins where npm can dedupe (next-auth / @auth). Run **`npm run security:audit:prod`** for release checks; see **`docs/operations.md`**.
+3. **`@/*` imports** — TypeScript path alias maps to the repo root (`tsconfig.json`). Prefer `@/components/...`, `@/lib/...` over deep relatives.
 
 ## Related docs
 
