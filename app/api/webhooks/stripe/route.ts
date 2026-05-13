@@ -3,6 +3,12 @@ import { getRequestId, logApiEvent } from "@/lib/logging/log";
 import { prisma } from "@/lib/db/prisma";
 import { getStripe } from "@/lib/billing/stripe";
 import { sendOrderConfirmedEmail, sendUsbConfirmedEmail } from "@/lib/email/email";
+import {
+  notifyCarePaymentFailed,
+  refreshCareSubscriptionFromInvoice,
+  syncCareSubscriptionFromStripeSubscription,
+  upsertCareSubscriptionFromCheckoutSession,
+} from "@/lib/billing/care-webhook";
 
 function isPrismaUniqueViolation(e: unknown): boolean {
   return (
@@ -15,6 +21,11 @@ function isPrismaUniqueViolation(e: unknown): boolean {
 
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   const kind = session.metadata?.kind;
+
+  if (kind === "care") {
+    await upsertCareSubscriptionFromCheckoutSession(session);
+    return;
+  }
 
   if (kind === "service" && session.metadata?.orderId) {
     const orderId = session.metadata.orderId;
@@ -81,6 +92,40 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   }
 }
 
+const HANDLED_STRIPE_EVENTS = new Set([
+  "checkout.session.completed",
+  "customer.subscription.updated",
+  "customer.subscription.deleted",
+  "invoice.paid",
+  "invoice.payment_failed",
+]);
+
+async function dispatchStripeEvent(event: Stripe.Event) {
+  switch (event.type) {
+    case "checkout.session.completed":
+      await handleCheckoutSessionCompleted(
+        event.data.object as Stripe.Checkout.Session,
+      );
+      break;
+    case "customer.subscription.updated":
+    case "customer.subscription.deleted":
+      await syncCareSubscriptionFromStripeSubscription(
+        event.data.object as Stripe.Subscription,
+      );
+      break;
+    case "invoice.paid":
+      await refreshCareSubscriptionFromInvoice(
+        event.data.object as Stripe.Invoice,
+      );
+      break;
+    case "invoice.payment_failed":
+      await notifyCarePaymentFailed(event.data.object as Stripe.Invoice);
+      break;
+    default:
+      break;
+  }
+}
+
 export async function POST(req: Request) {
   const requestId = getRequestId(req);
   const stripe = getStripe();
@@ -119,8 +164,8 @@ export async function POST(req: Request) {
     id: event.id,
   });
 
-  if (event.type !== "checkout.session.completed") {
-    return new Response(JSON.stringify({ received: true }), {
+  if (!HANDLED_STRIPE_EVENTS.has(event.type)) {
+    return new Response(JSON.stringify({ received: true, ignored: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
@@ -139,13 +184,11 @@ export async function POST(req: Request) {
     throw e;
   }
 
-  const session = event.data.object as Stripe.Checkout.Session;
-
   try {
-    await handleCheckoutSessionCompleted(session);
-    logApiEvent(requestId, "stripe_webhook.checkout_completed_ok", {
+    await dispatchStripeEvent(event);
+    logApiEvent(requestId, "stripe_webhook.handler_ok", {
       eventId: event.id,
-      kind: session.metadata?.kind ?? null,
+      type: event.type,
     });
   } catch (e) {
     logApiEvent(requestId, "stripe_webhook.handler_error", {

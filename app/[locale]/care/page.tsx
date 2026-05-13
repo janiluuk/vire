@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { CareSubscribeForm } from "@/components/care/CareSubscribeForm";
 import { localePathAlternates } from "@/lib/site/seo";
 
 export async function generateMetadata({
@@ -16,8 +17,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function CarePage() {
-  const t = await getTranslations("care");
+export default async function CarePage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  const t = await getTranslations({ locale, namespace: "care" });
+  const careLocale = locale === "en" ? "en" : "fi";
 
   const tiers = [
     { key: "tierBasic" as const, desc: "tierBasicDesc" as const, price: "priceBasic" as const, featured: false },
@@ -70,6 +76,13 @@ export default async function CarePage() {
               {t(price)}
               <span className="text-lg font-normal text-fog"> {t("perMonth")}</span>
             </p>
+            {key === "tierBasic" ? (
+              <CareSubscribeForm locale={careLocale} />
+            ) : (
+              <p className="mt-6 text-base font-light leading-relaxed text-fog">
+                {t("tierHigherContact")}
+              </p>
+            )}
           </article>
         ))}
       </section>

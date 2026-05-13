@@ -24,6 +24,7 @@ const STATIC_PATHS = [
   "/tietoa/sovellukset/windows",
   "/tietoa/sovellukset/mac",
   "/care",
+  "/care/kiitos",
   "/koneet",
   "/vire-for-good",
 ] as const;

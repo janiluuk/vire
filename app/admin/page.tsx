@@ -216,6 +216,12 @@ export default async function AdminDashboardPage() {
           {a.usbOrders}
         </Link>
         <Link
+          href="/admin/care"
+          className="min-h-tap rounded-xl border border-em bg-card px-5 py-3 font-semibold transition-colors duration-150 hover:border-g"
+        >
+          {a.careSubscriptions}
+        </Link>
+        <Link
           href="/admin/models"
           className="min-h-tap rounded-xl border border-em bg-card px-5 py-3 font-semibold transition-colors duration-150 hover:border-g"
         >

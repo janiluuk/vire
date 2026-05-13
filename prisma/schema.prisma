@@ -168,3 +168,28 @@ enum AdminRole {
   SUPER
   EDITOR
 }
+
+/// Vire Care monthly subscription (FEATURES.md #2) — Stripe Billing.
+model CareSubscription {
+  id               String      @id @default(cuid())
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  customerEmail    String      @unique
+  customerName     String
+  /// Optional link to original service order.
+  orderId          String?
+  status           CareStatus  @default(ACTIVE)
+  stripeSubId      String      @unique
+  stripeCustomerId String?
+  currentPeriodEnd DateTime
+  cancelledAt      DateTime?
+  notes            String?
+  /// Checkout locale for transactional email (`fi` | `en`).
+  locale           String      @default("fi")
+}
+
+enum CareStatus {
+  ACTIVE
+  CANCELLED
+  PAUSED
+}
