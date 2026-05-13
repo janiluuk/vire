@@ -1512,7 +1512,9 @@ Follow-ups (later phases or ops):
 - [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; CSS `.vire-*` aliases, `apps/vire-checker`, DB name `vire`; **Phase 23** adds **`SPARKKI_*`** env aliases with **`VIRE_*`** fallback where applicable).
 - [x] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects (**Phase 22** — canonical **`/{locale}/sparkki-for-good`**; legacy path **308** in **`middleware.ts`**, query string preserved).
 - [x] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients (**Phase 21** — `app/favicon.ico` + `app/apple-icon.png` from `app/icon.svg`; regenerate **`./scripts/generate-favicons.sh`**).
-- [ ] **Later** — optional Framer Motion for richer choreography; finish renaming `vire-*` usage in TSX to `sparkki-*` where safe. (Phases 3–4 ship CSS + minimal client wiring, no new animation library.)
+- [ ] **Later (optional backlog, not a release gate)** — Framer Motion for richer choreography if product asks for it; incremental rename of remaining `vire-*` identifiers in TSX to `sparkki-*` where it does not churn shared CSS aliases. Phases 3–4 already ship CSS + minimal client wiring without a new animation library.
+
+**Checklist status:** All numbered design-system implementation phases in this document through Phase 23 are marked **complete**. The only remaining checkbox is the **Later** optional backlog above.
 
 ---
 

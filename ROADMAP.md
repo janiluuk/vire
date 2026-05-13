@@ -809,7 +809,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 **Design guardrails (ongoing):** Ship UI against **`DESIGN_SYSTEM.md`**; treat **`docs/site-pages.md`** and **`npm run docs:screenshots`** as regression references when navigation or layout changes. When **`FEATURES.md`** items add screens, extend the design system first if new patterns are needed, then implement.
 
-1. **Content-Security-Policy** — **`ENABLE_CSP_REPORT_ONLY=true`** emits report-only CSP from **`next.config.mjs`**; tighten policy using violation reports (**`docs/operations.md`**). Enforcing CSP with nonces still open.
+1. **Content-Security-Policy** — **`ENABLE_CSP_REPORT_ONLY=true`** emits report-only CSP; **`ENABLE_CSP_ENFORCE=true`** sends enforcing **`Content-Security-Policy`** from **`next.config.mjs`** (directives shared via **`content-security-policy.mjs`**; see **`docs/operations.md`**). **Stricter `script-src` without `unsafe-inline` / `unsafe-eval`** (per-request nonces or hashes) remains optional hardening after baseline enforcing is verified in production.
 2. **E2E + a11y** — **shipped:** smoke, locale, wizard (mocked checkout), admin login + orders, public routes + **`/meista`**, support + order lookup + experience pages, **axe-core** (**`e2e/a11y-axe.spec.ts`**), **Lighthouse CI** (informational) — see **`e2e/*.spec.ts`**, **`lighthouserc.json`**. Playwright **`webServer`** runs **`prisma migrate deploy`** before **`node server.js`** so the e2e DB matches the Prisma client.
 3. **Synthetic monitoring** — **shipped in repo:** optional scheduled workflow **`synthetic-monitoring.yml`** when **`SYNTHETIC_MONITORING_BASE_URL`** is set — see **`docs/operations.md`**. External Uptime Kuma / Grafana still recommended.
 4. **Admin audit trail** — **shipped:** `AdminAuditLog` + order detail log; guides/models mutations logged; extend UI as needed.
@@ -833,7 +833,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 #### Security & compliance
 
-- [x] **HTTP security headers (baseline)** — `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`; optional **`ENABLE_HSTS=true`** in `next.config.mjs`. **CSP:** optional **`ENABLE_CSP_REPORT_ONLY=true`** (report-only); enforcing strict CSP still open.
+- [x] **HTTP security headers (baseline)** — `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`; optional **`ENABLE_HSTS=true`** in `next.config.mjs`. **CSP:** optional **`ENABLE_CSP_REPORT_ONLY=true`** (report-only); optional **`ENABLE_CSP_ENFORCE=true`** (enforcing, same directives via **`content-security-policy.mjs`**). Stricter nonce/hash **`script-src`** without **`unsafe-inline`** remains optional (see review backlog § CSP).
 - [x] **Distributed rate limiting (optional)** — **`UPSTASH_REDIS_*`** in `lib/http/rate-limit.ts`; else in-memory (see **`docs/api-public.md`**).
 - [x] **Stripe webhook idempotency** — **`StripeProcessedEvent`** (`event.id`); duplicate → `deduped`; row removed on handler failure for Stripe retry.
 - [x] **Admin audit trail** — optional log of who changed order status, admin notes, model verdicts (who/when/old→new).
