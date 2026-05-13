@@ -1772,8 +1772,8 @@ Reduce cognitive overload.
 - [x] Add command palette (CMD+K) — `CommandPalette` (`⌘K` / `Ctrl+K`, filterable jump list, focus trap)
 - [x] Add keyboard shortcuts — palette toggle + Esc; hint in palette footer and `shortcutHint` on `xl+` header
 - [ ] Add smart sidebar
-- [ ] Add recent actions
-- [ ] Add route memory
+- [x] Add recent actions (Phase 12 — recent destinations in **⌘K** palette)
+- [x] Add route memory (Phase 12 — **`palette-recent-routes`** + **`CommandPalette`**)
 - [x] Add breadcrumb navigation (see **Phase 11**)
 - [x] Add mobile drawer navigation — hamburger (`md:hidden`) + slide-over with main links, order CTA, locale
 
@@ -1846,6 +1846,19 @@ Orient users inside deep hubs without duplicating the whole IA.
 - [x] Add hub breadcrumbs (`AutoHubBreadcrumbs` in `app/[locale]/layout.tsx` — `/tietoa/*`, service cluster, `/meista` / `/about` / `/yhteiso`)
 - [x] Add model detail trail (`KoneetDetailBreadcrumbs` on `/koneet/[slug]`; list view uses auto service crumbs)
 - [x] Localised aria label (`nav.breadcrumbAria`); slash separators; last segment `aria-current="page"`
+
+---
+
+## PHASE 12 — Command palette route memory
+
+### Goal
+Make repeat navigation faster without adding a permanent sidebar.
+
+### Tasks
+
+- [x] Persist recent locale-free paths (+ hash) in **`localStorage`** (`sparkki-palette-recent-v1`, max 6) via **`lib/site/palette-recent-routes.ts`**
+- [x] Record on **`usePathname`** updates + **`hashchange`** (skip `/admin`)
+- [x] Show **Recently opened** + **All pages** sections in **`CommandPalette`** when the filter is empty; dedupe catalog rows already listed under recent
 
 ---
 

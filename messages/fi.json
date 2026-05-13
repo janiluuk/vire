@@ -46,7 +46,9 @@
     "openMobileMenu": "Avaa valikko",
     "mobileMenuTitle": "Valikko",
     "closeMobileMenu": "Sulje valikko",
-    "language": "Kieli"
+    "language": "Kieli",
+    "recentHeading": "Viimeksi avatut",
+    "allPages": "Kaikki sivut"
   },
   "deliveryStrip": {
     "ariaLabel": "Toimitus ja tuki",

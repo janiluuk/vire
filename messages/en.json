@@ -46,7 +46,9 @@
     "openMobileMenu": "Open menu",
     "mobileMenuTitle": "Menu",
     "closeMobileMenu": "Close menu",
-    "language": "Language"
+    "language": "Language",
+    "recentHeading": "Recently opened",
+    "allPages": "All pages"
   },
   "deliveryStrip": {
     "ariaLabel": "Delivery and support",

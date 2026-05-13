@@ -2,17 +2,32 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import {
+  readRecentRoutes,
+  recordRecentRoute,
+} from "@/lib/site/palette-recent-routes";
 
 /**
  * Phase 6 — ⌘K / Ctrl+K quick jump to main public routes (no extra dependencies).
  */
+function labelForHref(
+  href: string,
+  catalog: readonly { href: string; label: string }[],
+): string {
+  const hit = catalog.find((i) => i.href === href);
+  if (hit) return hit.label;
+  return href;
+}
+
 export function CommandPalette() {
   const tNav = useTranslations("nav");
   const tPal = useTranslations("commandPalette");
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
+  const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -42,6 +57,33 @@ export function CommandPalette() {
     if (!s) return items;
     return items.filter((it) => it.label.toLowerCase().includes(s));
   }, [items, q]);
+
+  const recentSet = useMemo(() => new Set(recent), [recent]);
+
+  const catalogItems = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (s) return filtered;
+    return filtered.filter((it) => !recentSet.has(it.href));
+  }, [filtered, recentSet, q]);
+
+  useEffect(() => {
+    const path = !pathname || pathname === "" ? "/" : pathname;
+    const h = typeof window !== "undefined" ? window.location.hash : "";
+    recordRecentRoute(`${path}${h}`);
+  }, [pathname]);
+
+  useEffect(() => {
+    function onHash() {
+      const path = !pathname || pathname === "" ? "/" : pathname;
+      recordRecentRoute(`${path}${window.location.hash}`);
+    }
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (open) setRecent(readRecentRoutes());
+  }, [open]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -155,23 +197,86 @@ export function CommandPalette() {
           className="max-h-[min(50vh,22rem)] overflow-y-auto p-2"
           aria-label={tPal("title")}
         >
-          {filtered.length === 0 ? (
-            <p className="px-3 py-6 text-center text-fog">{tPal("noResults")}</p>
-          ) : (
-            <ul className="space-y-0.5">
-              {filtered.map((it) => (
-                <li key={it.href}>
-                  <button
-                    type="button"
-                    onClick={() => go(it.href)}
-                    className="flex w-full rounded-lg px-3 py-2.5 text-left text-base text-ink transition-colors hover:bg-sunken focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+          {(() => {
+            const showRecent = q.trim() === "" && recent.length > 0;
+            const searching = q.trim() !== "";
+            if (searching && catalogItems.length === 0) {
+              return (
+                <p className="px-3 py-6 text-center text-fog">{tPal("noResults")}</p>
+              );
+            }
+            return (
+              <>
+                {showRecent ? (
+                  <div className="mb-2 border-b border-edge pb-2" role="group">
+                    <p
+                      id="cmd-palette-recent-lbl"
+                      className="mb-1 px-3 text-xs font-semibold uppercase tracking-wide text-fog"
+                    >
+                      {tPal("recentHeading")}
+                    </p>
+                    <ul
+                      className="space-y-0.5"
+                      aria-labelledby="cmd-palette-recent-lbl"
+                    >
+                      {recent.map((href) => {
+                        const label = labelForHref(href, items);
+                        const known = items.some((i) => i.href === href);
+                        return (
+                          <li key={`recent:${href}`}>
+                            <button
+                              type="button"
+                              onClick={() => go(href)}
+                              className="flex w-full flex-col rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-sunken focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+                            >
+                              <span className="text-base text-ink">{label}</span>
+                              {!known ? (
+                                <span className="mt-0.5 truncate font-mono text-xs text-fog">
+                                  {href}
+                                </span>
+                              ) : null}
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {showRecent && catalogItems.length > 0 ? (
+                  <p
+                    id="cmd-palette-all-lbl"
+                    className="mb-1 px-3 pt-1 text-xs font-semibold uppercase tracking-wide text-fog"
                   >
-                    {it.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
+                    {tPal("allPages")}
+                  </p>
+                ) : null}
+
+                {catalogItems.length > 0 ? (
+                  <ul
+                    className="space-y-0.5"
+                    aria-labelledby={
+                      showRecent && catalogItems.length > 0
+                        ? "cmd-palette-all-lbl"
+                        : undefined
+                    }
+                  >
+                    {catalogItems.map((it) => (
+                      <li key={it.href}>
+                        <button
+                          type="button"
+                          onClick={() => go(it.href)}
+                          className="flex w-full rounded-lg px-3 py-2.5 text-left text-base text-ink transition-colors hover:bg-sunken focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+                        >
+                          {it.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </>
+            );
+          })()}
         </nav>
         <p className="border-t border-edge px-4 py-2 pb-safe text-center text-xs text-fog sm:pb-2">
           {tPal("closeHint")}
