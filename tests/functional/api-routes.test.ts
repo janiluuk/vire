@@ -22,10 +22,10 @@ describe("API route handlers", () => {
         },
         body: JSON.stringify({
           tier: "SSD_BASIC",
-          supportTier: "FULL",
           deliveryMethod: "HOME_PICKUP",
-          customerName: "Test",
-          customerEmail: "test@example.com",
+          hddRemoval: "CUSTOMER_REMOVES",
+          computerDescription: "Dell",
+          customerContact: "test@example.com",
           locale: "fi",
         }),
       }),
@@ -45,8 +45,7 @@ describe("API route handlers", () => {
             "x-forwarded-for": "203.0.113.51",
           },
           body: JSON.stringify({
-            name: "A",
-            email: "a@example.com",
+            contact: "+358401234567",
             message: "Hello support",
             locale: "en",
           }),

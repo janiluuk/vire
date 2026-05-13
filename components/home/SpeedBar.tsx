@@ -11,6 +11,14 @@ export function SpeedBar() {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setActive(true);
+      return;
+    }
+
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(

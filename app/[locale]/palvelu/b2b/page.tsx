@@ -81,89 +81,36 @@ export default async function PalveluB2bPage({
         <input type="hidden" name="locale" value={locale} />
 
         <div>
-          <label htmlFor="companyName" className="block text-sm font-semibold text-ink">
-            {t("b2b.fieldCompany")}
+          <label htmlFor="details" className="block text-sm font-semibold text-ink">
+            {t("b2b.fieldDetails")}
           </label>
-          <input
-            id="companyName"
-            name="companyName"
-            type="text"
+          <textarea
+            id="details"
+            name="details"
             required
-            maxLength={200}
-            autoComplete="organization"
-            className="mt-2 w-full rounded-lg border border-em bg-sunken px-3 py-2 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
+            rows={4}
+            maxLength={4000}
+            placeholder={t("b2b.fieldDetailsPlaceholder")}
+            className="mt-2 w-full resize-y rounded-lg border border-em bg-sunken px-3 py-2 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
           />
+          <p className="mt-2 text-base font-light text-fog">{t("b2b.fieldDetailsHint")}</p>
         </div>
 
         <div>
-          <label htmlFor="contactName" className="block text-sm font-semibold text-ink">
+          <label htmlFor="contact" className="block text-sm font-semibold text-ink">
             {t("b2b.fieldContact")}
           </label>
           <input
-            id="contactName"
-            name="contactName"
+            id="contact"
+            name="contact"
             type="text"
-            required
-            maxLength={200}
-            autoComplete="name"
-            className="mt-2 w-full rounded-lg border border-em bg-sunken px-3 py-2 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-ink">
-            {t("b2b.fieldEmail")}
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
             required
             maxLength={320}
             autoComplete="email"
+            placeholder={t("b2b.fieldContactPlaceholder")}
             className="mt-2 w-full rounded-lg border border-em bg-sunken px-3 py-2 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
           />
-        </div>
-
-        <div>
-          <label htmlFor="phone" className="block text-sm font-semibold text-ink">
-            {t("b2b.fieldPhone")}
-          </label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            maxLength={50}
-            autoComplete="tel"
-            className="mt-2 w-full rounded-lg border border-em bg-sunken px-3 py-2 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="estimatedUnits" className="block text-sm font-semibold text-ink">
-            {t("b2b.fieldUnits")}
-          </label>
-          <input
-            id="estimatedUnits"
-            name="estimatedUnits"
-            type="text"
-            maxLength={100}
-            placeholder={t("b2b.fieldUnitsPlaceholder")}
-            className="mt-2 w-full rounded-lg border border-em bg-sunken px-3 py-2 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="message" className="block text-sm font-semibold text-ink">
-            {t("b2b.fieldMessage")}
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            rows={5}
-            maxLength={4000}
-            className="mt-2 w-full rounded-lg border border-em bg-sunken px-3 py-2 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
-          />
+          <p className="mt-2 text-base font-light text-fog">{t("b2b.fieldContactHint")}</p>
         </div>
 
         <button type="submit" className="vire-btn-primary w-full sm:w-auto">

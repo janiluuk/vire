@@ -31,13 +31,17 @@ Creates a **service** `Order` row and a Stripe Checkout Session. Requires Stripe
 | Field | Type | Notes |
 | --- | --- | --- |
 | `tier` | enum | `SSD_BASIC`, `SSD_RAM`, `FULL_SERVICE` |
-| `supportTier` | enum | Prisma `SupportTier` |
 | `deliveryMethod` | enum | Prisma `DeliveryMethod` |
-| `customerName` | string | required |
-| `customerEmail` | string | email, required |
+| `hddRemoval` | enum | `VIRE_REMOVES`, `CUSTOMER_REMOVES`, `KEEP_IN_DEVICE` |
+| `computerDescription` | string | free-text “what computer” (stored on `Order.notes` intake) |
+| `customerContact` | string | **phone or email** (parsed server-side) |
 | `locale` | `"fi"` \| `"en"` | stored on order; used for transactional email |
 
-Optional: `computerMake`, `computerModel`, `customerPhone`, `address`, `preferredDate`, `notes`.
+Support is always **`EMAIL`** at checkout (90-day email support per product copy).
+
+Optional: `dataMigration`, `dataMigrationSize` (`standard` \| `large`) — same validation rules as before.
+
+Postitus (`DROP_OFF`) adds **+€15**; HDD removal by Vire adds **+€20** except when `tier` is `FULL_SERVICE` (included).
 
 **Responses**
 
@@ -103,7 +107,7 @@ Uses SearXNG / optional LLM (server env). **429** on rate limit.
 
 ### `POST /api/public/support-contact`
 
-**Body:** `{ "name", "email", "message", "locale": "fi"|"en" }`
+**Body:** `{ "contact", "message", "locale": "fi"|"en" }` — `contact` is a single phone-or-email field (parsed server-side).
 
 Requires `SUPPORT_NOTIFY_EMAIL` and Resend. **503** if not configured. **429** on rate limit.
 

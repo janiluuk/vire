@@ -93,6 +93,14 @@ export default async function PalveluPage({
         </dl>
       </section>
 
+      <section aria-labelledby="backups-title" className="space-y-4">
+        <h2 id="backups-title" className="text-2xl font-bold text-ink">
+          {t("backupsTitle")}
+        </h2>
+        <p className="text-lg leading-relaxed text-fog">{t("backupsP1")}</p>
+        <p className="text-lg leading-relaxed text-fog">{t("backupsP2")}</p>
+      </section>
+
       <section
         aria-labelledby="b2b-title"
         className="vire-card border-vire-green/25 bg-vire-green/5 p-6 sm:p-8"

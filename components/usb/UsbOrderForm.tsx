@@ -58,6 +58,18 @@ export function UsbOrderForm({ locale }: { locale: string }) {
         />
       </div>
       <div>
+        <label htmlFor="usb-address" className="mb-2 block font-semibold">
+          {t("usbAddress")}
+        </label>
+        <textarea
+          id="usb-address"
+          rows={3}
+          className="w-full rounded-lg border border-em px-4 py-3 text-lg"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
+      <div>
         <label htmlFor="usb-email" className="mb-2 block font-semibold">
           {t("usbEmail")}
         </label>
@@ -68,18 +80,6 @@ export function UsbOrderForm({ locale }: { locale: string }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
-        />
-      </div>
-      <div>
-        <label htmlFor="usb-address" className="mb-2 block font-semibold">
-          {t("usbAddress")}
-        </label>
-        <textarea
-          id="usb-address"
-          rows={3}
-          className="w-full rounded-lg border border-em px-4 py-3 text-lg"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
         />
       </div>
       {error ? (

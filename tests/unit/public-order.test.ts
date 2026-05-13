@@ -15,6 +15,7 @@ const baseOrder = {
   customerName: "Test User",
   customerEmail: "test@example.com",
   customerPhone: null,
+  hddRemoval: "VIRE_REMOVES" as const,
   address: null,
   preferredDate: null,
   notes: null,
@@ -42,8 +43,10 @@ const baseUsb = {
 describe("public order DTOs", () => {
   it("strips admin fields from service order", () => {
     const dto = toPublicServiceOrder(baseOrder);
-    expect(dto).not.toHaveProperty("customerEmail");
     expect(dto).not.toHaveProperty("adminNotes");
+    expect(dto).not.toHaveProperty("stripeSessionId");
+    expect(dto.kind).toBe("service");
+    expect(dto.customerEmail).toBe("test@example.com");
     expect(dto).not.toHaveProperty("stripeSessionId");
     expect(dto.kind).toBe("service");
     expect(dto.priceEur).toBe(19900);

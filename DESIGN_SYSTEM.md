@@ -60,6 +60,8 @@ Define these as CSS custom properties on `:root`. Never hardcode hex values in c
 - Red (`#FF6B6B`) appears only for destructive actions and error states.
 - No purples, blues, or teals anywhere outside the Discord block (which uses Discord's own `#5865F2`).
 
+**In this repository:** `app/globals.css` defines the same `:root` tokens. `tailwind.config.ts` maps **semantic names** for JSX: `bg-canvas` / `text-ink` / `text-fog` / `text-dust` / `bg-raised` / `bg-card` / `bg-sunken` / `border-edge` / `border-em` — prefer these over pasting hex or raw `var(...)` in components unless you are writing plain CSS.
+
 ---
 
 ## Typography
@@ -231,7 +233,7 @@ Always use `gap-4` (16px) between cards, `gap-3` (12px) between tight grids.
 ```html
 <nav class="site-nav">
   <!-- Logo: Syne 800 24px, --g colour for "Vire" brand mark -->
-  <div class="logo">Ver<span style="color: var(--text)">so</span></div>
+  <div class="logo">Vi<span style="color: var(--text)">re</span></div>
 
   <!-- Links: DM Sans 14px --muted, hover → --text -->
   <ul class="links">...</ul>
@@ -794,6 +796,8 @@ Colour the stat value when it has semantic meaning:
 - Canvas CSS: `position: fixed; inset: 0; z-index: -1; pointer-events: none`
 - Never use `OrbitControls` or any user-interactive camera
 
+**Current implementation (repo):** the live `BackgroundCanvas` may use **textured billboard sprites** (e.g. OS logos, FI/EU) with similar drift, edge wrap, 30fps cap, visibility pause, reduced-motion handling, and fixed camera — not necessarily wireframe icosahedrons. When changing the background, keep the **performance and accessibility** rules above; the wireframe mesh spec above remains the canonical “pure token” look if you switch back to geometry.
+
 ---
 
 ## Motion & transitions
@@ -914,9 +918,10 @@ These are non-negotiable and apply to every component.
 ```
 vire.fi/
 ├── /                          Homepage
-├── /palvelu                   Service detail + order wizard
-├── /tietoa                    Info hub (sidebar layout)
-│   ├── /tietoa/linux          About Linux Mint
+├── /palvelu                   Service detail + embedded order wizard (`#palvelu-tilaa` opens fullscreen)
+├── /tietoa                    Learn hub overview (sidebar layout)
+│   ├── /tietoa/hyodyt         Benefits (privacy, Finnish, economy, games, data…)
+│   ├── /tietoa/linux          About Linux Mint (+ try-Linux browser demo)
 │   ├── /tietoa/vakaus         Stability & comfort
 │   ├── /tietoa/huolia         Common concerns (FAQ)
 │   ├── /tietoa/sovellukset/windows   App alternatives — Windows tab
@@ -929,6 +934,7 @@ vire.fi/
 ├── /koneet                    Compatibility database
 │   └── /koneet/[slug]         Individual model page
 ├── /vire-for-good             Social pricing tier
+├── /tilaus                    Order tracking hub
 └── /admin                     Admin panel (protected)
 ```
 
@@ -937,18 +943,19 @@ vire.fi/
 Primary nav links:
 
 1. **Palvelu** — direct link to `/palvelu`
-2. **Tietoa ▾** — dropdown with:
-   - Linux Mintistä → `/tietoa/linux`
-   - Vakaus & mukavuus → `/tietoa/vakaus`
-   - Yleisiä huolia → `/tietoa/huolia`
-   - Sovellukset — Windows → `/tietoa/sovellukset/windows`
-   - Sovellukset — Mac → `/tietoa/sovellukset/mac`
+2. **Learn / Tietoa** — primary link to `/tietoa` (overview); **▾** opens submenu:
+   - Overview → `/tietoa`
+   - Benefits → `/tietoa/hyodyt`
+   - Linux Mint → `/tietoa/linux`
+   - Stability & comfort → `/tietoa/vakaus`
+   - Common concerns → `/tietoa/huolia`
+   - Apps — Windows → `/tietoa/sovellukset/windows`
+   - Apps — Mac → `/tietoa/sovellukset/mac`
 3. **Tee itse** — direct link to `/itse`
-4. **Meistä ▾** — dropdown with:
-   - Yritys → `/meista`
-   - Yhteisö & Discord → `/meista/yhteiso`
-5. **Tuki** — direct link to `/tuki`
-6. **Tilaa →** (CTA button, always rightmost)
+4. **Koneet** — direct link to `/koneet` (compatibility DB)
+5. **Meistä ▾** — dropdown: Company → `/meista`, Community & Discord → `/meista/yhteiso`
+6. **Tuki** — direct link to `/tuki`
+7. **Tilaa →** — CTA to `/palvelu#palvelu-tilaa` (order wizard)
 
 Dropdown styling:
 
@@ -1356,11 +1363,96 @@ Each pricing card now includes a dim note about HDD removal:
 
 ## Updated footer structure
 
-Footer columns (4-column grid):
+Footer columns (4-column grid, wider brand column):
 
-1. **Logo + tagline** (wider: `1.5fr`)
-2. **Palvelu** — Miten toimii, Hinnat, B2B, Tilaa
-3. **Tietoa** — Linux Mintistä, Sovellukset, Tee itse, Yhteisö (links to `/meista/yhteiso`)
-4. **Yhteys** — hei@vire.fi, Tuki, Tietosuoja
+1. **Logo + tagline** (`1.5fr`)
+2. **Palvelu** — How it works, Pricing, B2B, Care, Compatibility (`/koneet`), Vire for Good
+3. **Learn / Tietoa** — Overview (`/tietoa`), Benefits (`/tietoa/hyodyt`), Linux Mint, Apps (Windows tab), DIY (`/itse`), Community (`/meista/yhteiso`)
+4. **Contact** — email, Support, Privacy, optional YouTube
 
-Community link in footer goes to `/meista/yhteiso`, not a standalone `/yhteiso` route.
+Community link targets `/meista/yhteiso`. Label copy is locale-specific (`footer.*` / `nav.*`).
+
+---
+
+## Simplified user flows — form rules
+
+These rules override any previous form spec. Every form in Vire must pass the minimum-fields test before shipping.
+
+### Principle
+
+**Collect only what is needed to take the next action.** If a field's answer will be provided naturally in a follow-up conversation, do not ask for it upfront. If the answer can be inferred or looked up by Vire, do not ask.
+
+---
+
+### Ask a quote (`/palvelu` or any CTA)
+
+**2 fields. No more.**
+
+1. Free text — “Mitä haluaisit tietää tai tehdä?” — placeholder: “Esim: Meillä on 15 vanhaa Dell-läppäriä...”, rows: 4, resize: vertical, hint: “Mallinimi, laitemäärä, aikataulu — mitä ikinä on mielessä.”
+2. Phone or email — “Puhelin tai sähköposti” — placeholder: “+358 XX XXX XXXX tai nimi@esimerkki.fi”, hint: “Vastaamme samalla tavalla millä otat yhteyttä.”
+
+Removed: name, computer make, computer model, RAM, disk type, device count, address, subject line. The free-text field replaces all of these — the customer says what is relevant, not what the form dictates.
+
+---
+
+### Order wizard (`/palvelu`)
+
+The consumer checkout lives on **`/palvelu`** (embedded wizard + optional fullscreen via `#palvelu-tilaa`). Do not use a separate `/tilaa` route in new code.
+
+**5 steps** in the live wizard: (1) computer description free text, (2) service tier + delivery cards, (3) HDD preference with amber callout, (4) phone-or-email contact, (5) summary + Stripe pay. There is **no separate support-tier step** — default included support applies; Care upsell is documented as post-purchase email sequence.
+
+**Removed from wizard:** separate make/model fields (replaced by step 1 free text); RAM amount; disk type; full name; support tier selection (default 90-day email support; Care+ upsell at day 75 via email); separate address fields during checkout (address only when needed, via follow-up); structured subject lines.
+
+**Total wizard inputs:** minimal set: one free-text computer field, tier + delivery selections, HDD choice, unified contact — aligned with product copy.
+
+---
+
+### Support contact (`/tuki`)
+
+**2 fields** when writing a message. Channel self-selects urgency.
+
+Channel selector (3 options, not a “field”): Write a message (default) / Ask on Discord / Call (ma–pe 10–17).
+
+If “Write a message” selected:
+
+1. Textarea — “Mitä tapahtui?” — rows: 3, no resize; placeholder per locale.
+2. Phone or email — single field; placeholder: “Sähköposti tai puhelin”.
+
+Removed: order number field; subject line; urgency dropdown; computer model on the form.
+
+---
+
+### USB stick & Starter Kit order (`/itse`)
+
+**3 fields.** Physical delivery requires name and address; email for tracking.
+
+1. Nimi — full name.
+2. Postiosoite — single combined address field; hint: Finland shipping; contact first for abroad.
+3. Sähköposti — tracking.
+
+Removed: phone; separate postcode/city; confirm email field; redundant country field where implied.
+
+---
+
+### Vire for Good application (`/vire-for-good`)
+
+**2 fields. Trust first, document later.**
+
+1. Free text — “Miksi haet alennusta?” — rows: 2; hint that proof is not required upfront.
+2. Phone or email — single field.
+
+Removed: document upload gating; name; address on the form. Callout: discount confirmed before payment.
+
+---
+
+### Global field rules
+
+- **Phone or email unified** on public quote, wizard contact, support message flow, and Vire for Good — one field; server detects type.
+- **Name not collected during service checkout** — comes in the first reply. Exception: postal orders (USB / kit) where the label needs a name.
+- **Address only when physically needed** — not in the main service wizard at checkout; follow-up when delivery requires it. USB/kit orders ask address once because fulfilment needs it immediately.
+- **No confirm-email field.**
+- **No separate subject line** — the textarea is the subject.
+- **No order number on support** — looked up from contact where possible.
+- **No document upload gating** on Vire for Good pre-submit.
+- **Support tier not in the service wizard** — default EMAIL (90-day); Care+ via lifecycle email.
+- **Prefer free text over rigid structure** for “what computer” and similar — staff reads and follows up.

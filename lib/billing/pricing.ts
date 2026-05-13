@@ -1,4 +1,9 @@
-import type { ServiceTier, SupportTier } from "@prisma/client";
+import type {
+  DeliveryMethod,
+  HddRemovalOption,
+  ServiceTier,
+  SupportTier,
+} from "@prisma/client";
 
 /** Default EUR prices in cents when Stripe Price IDs are not set. */
 export const TIER_BASE_CENTS: Record<
@@ -32,6 +37,25 @@ export function serviceOrderTotalCents(
 export const DATA_MIGRATION_STANDARD_CENTS = 35_00;
 export const DATA_MIGRATION_LARGE_CENTS = 50_00;
 
+/** Postitus (DROP_OFF) — EUR cents. */
+export const DELIVERY_POST_CENTS = 15_00;
+
+/** HDD removal by Vire — EUR cents (waived when tier already includes it). */
+export const HDD_REMOVAL_VIRE_CENTS = 20_00;
+
+export function deliveryAddonCents(method: DeliveryMethod): number {
+  return method === "DROP_OFF" ? DELIVERY_POST_CENTS : 0;
+}
+
+export function hddRemovalAddonCents(
+  tier: Exclude<ServiceTier, "B2B">,
+  option: HddRemovalOption,
+): number {
+  if (option !== "VIRE_REMOVES") return 0;
+  if (tier === "FULL_SERVICE") return 0;
+  return HDD_REMOVAL_VIRE_CENTS;
+}
+
 export function dataMigrationAddonCents(
   size: "standard" | "large",
 ): number {
@@ -46,6 +70,24 @@ export function serviceOrderTotalWithMigrationCents(
   const base = serviceOrderTotalCents(tier, supportTier);
   if (!migration) return base;
   return base + dataMigrationAddonCents(migration.size);
+}
+
+/** Full service checkout total including delivery + HDD removal rules. */
+export function serviceCheckoutTotalCents(params: {
+  tier: Exclude<ServiceTier, "B2B">;
+  supportTier: SupportTier;
+  migration: { size: "standard" | "large" } | null;
+  deliveryMethod: DeliveryMethod;
+  hddRemoval: HddRemovalOption;
+}): number {
+  let total = serviceOrderTotalWithMigrationCents(
+    params.tier,
+    params.supportTier,
+    params.migration,
+  );
+  total += deliveryAddonCents(params.deliveryMethod);
+  total += hddRemovalAddonCents(params.tier, params.hddRemoval);
+  return total;
 }
 
 export const USB_ORDER_CENTS = 990;

@@ -1,5 +1,6 @@
 import type { ServiceTier, SupportTier } from "@prisma/client";
 import {
+  DELIVERY_POST_CENTS,
   dataMigrationAddonCents,
   getStripePriceIdForTier,
   serviceOrderTotalCents,
@@ -41,11 +42,45 @@ function migrationStripeProduct(
   };
 }
 
+function deliveryShipStripeProduct(
+  receiptLocale: "fi" | "en",
+): { name: string; description: string } {
+  if (receiptLocale === "en") {
+    return {
+      name: "Vire — Shipping (return parcel)",
+      description: "Postal round trip within Finland",
+    };
+  }
+  return {
+    name: "Vire — Postitus (paluu lähetys)",
+    description: "Postituksen lisä maksu, koko Suomi",
+  };
+}
+
+function hddRemovalStripeProduct(
+  receiptLocale: "fi" | "en",
+): { name: string; description: string } {
+  if (receiptLocale === "en") {
+    return {
+      name: "Vire — HDD removal",
+      description: "We remove the old hard drive as part of prep",
+    };
+  }
+  return {
+    name: "Vire — HDD-poisto",
+    description: "Kiintolevyn irrotus valmistelussa",
+  };
+}
+
 export function buildServiceLineItems(
   tier: Exclude<ServiceTier, "B2B">,
   supportTier: SupportTier,
   migration: { size: "standard" | "large" } | null = null,
   receiptLocale: "fi" | "en" = "fi",
+  extras?: {
+    postShip?: boolean;
+    hddVireCents?: number;
+  },
 ): CheckoutLineItem[] {
   const priceId = getStripePriceIdForTier(tier);
   const migrationCents = migration
@@ -68,9 +103,34 @@ export function buildServiceLineItems(
     },
   };
 
+  const postCents = extras?.postShip ? DELIVERY_POST_CENTS : 0;
+  const postMeta = deliveryShipStripeProduct(receiptLocale);
+  const postItem: CheckoutLineItem = {
+    quantity: 1,
+    price_data: {
+      currency: "eur",
+      unit_amount: postCents,
+      product_data: { name: postMeta.name, description: postMeta.description },
+    },
+  };
+
+  const hddCents =
+    typeof extras?.hddVireCents === "number" ? extras.hddVireCents : 0;
+  const hddMeta = hddRemovalStripeProduct(receiptLocale);
+  const hddItem: CheckoutLineItem = {
+    quantity: 1,
+    price_data: {
+      currency: "eur",
+      unit_amount: hddCents,
+      product_data: { name: hddMeta.name, description: hddMeta.description },
+    },
+  };
+
   if (priceId) {
     const items: CheckoutLineItem[] = [{ price: priceId, quantity: 1 }];
     if (migration) items.push(migrationItem);
+    if (postCents > 0) items.push(postItem);
+    if (hddCents > 0) items.push(hddItem);
     return items;
   }
   const amount = serviceOrderTotalCents(tier, supportTier);
@@ -88,6 +148,8 @@ export function buildServiceLineItems(
     },
   ];
   if (migration) items.push(migrationItem);
+  if (postCents > 0) items.push(postItem);
+  if (hddCents > 0) items.push(hddItem);
   return items;
 }
 

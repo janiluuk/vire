@@ -178,7 +178,7 @@ body {
   }
 
   .guide-title {
-    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
     font-size: 17px;
     font-weight: 700;
     line-height: 1.3;

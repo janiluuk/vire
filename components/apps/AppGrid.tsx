@@ -15,9 +15,19 @@ export type AppItem = {
   id: string;
   name: string;
   category: string;
+  /** Windows vs Mac source app; `both` lists under either filter. */
+  sourceOs?: "windows" | "mac" | "both";
   icon: string;
   alternatives: Alt[];
 };
+
+function matchesSourceFilter(
+  app: AppItem,
+  filter: "windows" | "mac",
+): boolean {
+  const o = app.sourceOs ?? "both";
+  return o === "both" || o === filter;
+}
 
 const categories = [
   "toimisto",
@@ -30,16 +40,27 @@ const categories = [
   "pelit",
 ] as const;
 
-export function AppGrid({ apps }: { apps: AppItem[] }) {
+export function AppGrid({
+  apps,
+  sourceOsFilter,
+}: {
+  apps: AppItem[];
+  /** When set, only apps with this source OS (or `both`) are shown. */
+  sourceOsFilter?: "windows" | "mac";
+}) {
   const t = useTranslations("sovellukset");
   const locale = useLocale();
   const [cat, setCat] = useState<string | "all">("all");
   const [open, setOpen] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    if (cat === "all") return apps;
-    return apps.filter((a) => a.category === cat);
-  }, [apps, cat]);
+    let list = apps;
+    if (sourceOsFilter) {
+      list = list.filter((a) => matchesSourceFilter(a, sourceOsFilter));
+    }
+    if (cat === "all") return list;
+    return list.filter((a) => a.category === cat);
+  }, [apps, cat, sourceOsFilter]);
 
   return (
     <div>
@@ -47,10 +68,10 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
         <button
           type="button"
           onClick={() => setCat("all")}
-          className={`min-h-tap rounded-full px-4 py-2 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
+          className={`min-h-tap rounded-full border px-4 py-2 text-sm font-normal transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
             cat === "all"
-              ? "bg-vire-green text-canvas"
-              : "bg-card text-ink ring-1 ring-em"
+              ? "border-g bg-g/[0.12] text-g"
+              : "border-em text-fog hover:bg-g/[0.05] hover:text-ink"
           }`}
         >
           {t("filterAll")}
@@ -60,10 +81,10 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
             key={c}
             type="button"
             onClick={() => setCat(c)}
-            className={`min-h-tap rounded-full px-4 py-2 font-semibold capitalize focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
+            className={`min-h-tap rounded-full border px-4 py-2 text-sm font-normal capitalize transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
               cat === c
-                ? "bg-vire-green text-canvas"
-                : "bg-card text-ink ring-1 ring-em"
+                ? "border-g bg-g/[0.12] text-g"
+                : "border-em text-fog hover:bg-g/[0.05] hover:text-ink"
             }`}
           >
             {c}
@@ -72,17 +93,24 @@ export function AppGrid({ apps }: { apps: AppItem[] }) {
       </div>
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((app) => (
-          <li key={app.id} className="rounded-2xl border border-edge bg-card">
+          <li
+            key={app.id}
+            className={`rounded-xl border bg-card transition-all duration-150 ${
+              open === app.id
+                ? "border-g2 bg-g/[0.05]"
+                : "border-edge hover:border-g2"
+            }`}
+          >
             <button
               type="button"
               onClick={() => setOpen(open === app.id ? null : app.id)}
               className="flex w-full min-h-tap flex-col items-start gap-1 p-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
               aria-expanded={open === app.id}
             >
-              <span className="text-xs font-bold uppercase text-vire-green">
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-dust">
                 {app.category}
               </span>
-              <span className="text-xl font-bold text-ink">{app.name}</span>
+              <span className="text-base font-medium text-ink">{app.name}</span>
             </button>
             {open === app.id ? (
               <div className="border-t border-edge px-5 pb-5 pt-2">

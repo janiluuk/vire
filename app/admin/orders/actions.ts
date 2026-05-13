@@ -135,10 +135,22 @@ export async function sendOrderDone(formData: FormData) {
   if (typeof orderId !== "string") return;
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) return;
+  if (!order.customerEmail?.trim()) {
+    await recordAdminAudit({
+      actorEmail: actorEmail(session),
+      action: "order.done_email_skipped_no_recipient",
+      entity: "Order",
+      entityId: orderId,
+      metadata: {},
+    });
+    revalidatePath("/admin/orders");
+    revalidatePath(`/admin/orders/${orderId}`);
+    redirect(`/admin/orders/${orderId}?email=failed`);
+  }
   const result = await sendOrderDoneEmail({
     to: order.customerEmail,
     orderId: order.id,
-    customerName: order.customerName,
+    customerName: order.customerName ?? "",
     locale: order.locale,
   });
   await recordAdminAudit({

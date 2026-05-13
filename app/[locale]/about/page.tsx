@@ -63,19 +63,41 @@ export default async function AboutPage() {
           {t("teamTitle")}
         </h2>
         <ul className="grid gap-6 sm:grid-cols-2">
-          <li className="vire-card flex flex-col p-6 sm:p-8">
-            <h3 className="text-xl font-bold text-ink">{t("person1Name")}</h3>
-            <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
-              {t("person1Role")}
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-ink">{t("person1Bio")}</p>
+          <li className="vire-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:gap-6 sm:p-8">
+            <figure className="mx-auto w-full max-w-[220px] shrink-0 sm:mx-0">
+              <div
+                role="img"
+                aria-label={t("personPhotoPlaceholder")}
+                className="flex aspect-square w-full items-center justify-center rounded-2xl border-2 border-dashed border-em bg-sunken px-4 text-center text-sm leading-snug text-fog"
+              >
+                {t("personPhotoPlaceholder")}
+              </div>
+            </figure>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xl font-bold text-ink">{t("person1Name")}</h3>
+              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
+                {t("person1Role")}
+              </p>
+              <p className="mt-4 text-lg leading-relaxed text-ink">{t("person1Bio")}</p>
+            </div>
           </li>
-          <li className="vire-card flex flex-col p-6 sm:p-8">
-            <h3 className="text-xl font-bold text-ink">{t("person2Name")}</h3>
-            <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
-              {t("person2Role")}
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-ink">{t("person2Bio")}</p>
+          <li className="vire-card flex flex-col gap-4 p-6 sm:flex-row sm:items-start sm:gap-6 sm:p-8">
+            <figure className="mx-auto w-full max-w-[220px] shrink-0 sm:mx-0">
+              <div
+                role="img"
+                aria-label={t("personPhotoPlaceholder")}
+                className="flex aspect-square w-full items-center justify-center rounded-2xl border-2 border-dashed border-em bg-sunken px-4 text-center text-sm leading-snug text-fog"
+              >
+                {t("personPhotoPlaceholder")}
+              </div>
+            </figure>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xl font-bold text-ink">{t("person2Name")}</h3>
+              <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-vire-green">
+                {t("person2Role")}
+              </p>
+              <p className="mt-4 text-lg leading-relaxed text-ink">{t("person2Bio")}</p>
+            </div>
           </li>
         </ul>
       </section>
@@ -88,7 +110,7 @@ export default async function AboutPage() {
           <li>
             <span className="font-semibold text-ink">{t("phoneLabel")}: </span>
             <a
-              href={`tel:${t("phoneValue").replace(/\s/g, "")}`}
+              href={`tel:${t("phoneTelHref")}`}
               className="text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
             >
               {t("phoneValue")}

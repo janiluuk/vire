@@ -2,156 +2,134 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import type { DeliveryMethod, SupportTier } from "@prisma/client";
-import { LaptopSpecsCard } from "@/components/laptop-specs/LaptopSpecsCard";
-import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
+import { Link, usePathname } from "@/i18n/navigation";
+import { DeliveryMethod, HddRemovalOption, SupportTier } from "@prisma/client";
 import {
-  DATA_MIGRATION_LARGE_CENTS,
-  DATA_MIGRATION_STANDARD_CENTS,
-  serviceOrderTotalWithMigrationCents,
+  hddRemovalAddonCents,
+  serviceCheckoutTotalCents,
 } from "@/lib/billing/pricing";
+import {
+  hasUsableCustomerContact,
+  parseCustomerContact,
+} from "@/lib/contact/parse-customer-contact";
+
+const WIZARD_ANCHOR = "palvelu-tilaa";
+
+function clearWizardHash() {
+  if (typeof window === "undefined") return;
+  if (window.location.hash !== `#${WIZARD_ANCHOR}`) return;
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.pathname}${window.location.search}`,
+  );
+  window.dispatchEvent(new Event("hashchange"));
+}
+
+const STEP_NAV_KEYS = [
+  "stepNav1",
+  "stepNav2",
+  "stepNav3",
+  "stepNav4",
+  "stepNav5",
+] as const;
+
+const STEP_HINT_KEYS = [
+  "stepHint0",
+  "stepHint1",
+  "stepHint2",
+  "stepHint3",
+  "stepHint4",
+] as const;
 
 type Tier = "SSD_BASIC" | "SSD_RAM" | "FULL_SERVICE";
 
-type CompatApi = {
-  status: string;
-  reasons: string[];
-  speedGainEstimate: string;
-};
+function useWizardFullscreen() {
+  const pathname = usePathname();
+  const [full, setFull] = useState(false);
 
-const REASON_KEYS = new Set([
-  "already_ssd",
-  "low_ram",
-  "limited_hardware_class",
-  "ssd_upgrade_strongly_recommended",
-  "generic_ok",
-  "missing_make_or_model",
-]);
+  useEffect(() => {
+    function fromHash() {
+      if (typeof window === "undefined") return false;
+      return window.location.hash === `#${WIZARD_ANCHOR}`;
+    }
+    function sync() {
+      setFull(fromHash());
+    }
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!pathname?.includes("palvelu")) return;
+    setFull(window.location.hash === `#${WIZARD_ANCHOR}`);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!full) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [full]);
+
+  useEffect(() => {
+    if (!full) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        clearWizardHash();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [full]);
+
+  return full;
+}
 
 export function OrderWizard({ locale }: { locale: string }) {
   const t = useTranslations("palvelu");
   const w = useTranslations("palvelu.wizard");
-  const wReasons = useTranslations("palvelu.wizard.reasons");
+  const fullMode = useWizardFullscreen();
+
   const [step, setStep] = useState(0);
 
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
-  const [compat, setCompat] = useState<CompatApi | null>(null);
-  const [compatLoading, setCompatLoading] = useState(false);
-
+  const [computerDescription, setComputerDescription] = useState("");
   const [tier, setTier] = useState<Tier | null>(null);
-  const [dataMigration, setDataMigration] = useState(false);
-  const [dataMigrationSize, setDataMigrationSize] = useState<
-    "standard" | "large" | null
-  >(null);
   const [delivery, setDelivery] = useState<DeliveryMethod | null>(null);
-  const [support, setSupport] = useState<SupportTier | null>(null);
-  const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [notes, setNotes] = useState("");
-  const [preferredDate, setPreferredDate] = useState("");
+  const [hddRemoval, setHddRemoval] = useState<HddRemovalOption>(
+    HddRemovalOption.VIRE_REMOVES,
+  );
+  const [customerContact, setCustomerContact] = useState("");
 
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const [specs, setSpecs] = useState<LaptopSpecsInsight | null>(null);
-  const [specsLoading, setSpecsLoading] = useState(false);
-  const [specsTouched, setSpecsTouched] = useState(false);
-
-  useEffect(() => {
-    const mk = make.trim();
-    const mo = model.trim();
-    if (mk.length < 2 || mo.length < 2) {
-      setSpecs(null);
-      setSpecsLoading(false);
-      setSpecsTouched(false);
-      return;
-    }
-    const ac = new AbortController();
-    const tid = window.setTimeout(() => {
-      setSpecsTouched(true);
-      void (async () => {
-        setSpecsLoading(true);
-        try {
-          const res = await fetch("/api/public/laptop-specs", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ make: mk, model: mo }),
-            signal: ac.signal,
-          });
-          const data = (await res.json()) as {
-            ok?: boolean;
-            summary?: string | null;
-            specUrl?: string | null;
-          };
-          if (ac.signal.aborted) return;
-          if (data.ok) {
-            setSpecs({
-              summary: data.summary ?? null,
-              specUrl: data.specUrl ?? null,
-            });
-          } else {
-            setSpecs(null);
-          }
-        } catch {
-          if (!ac.signal.aborted) setSpecs(null);
-        } finally {
-          if (!ac.signal.aborted) setSpecsLoading(false);
-        }
-      })();
-    }, 750);
-    return () => {
-      window.clearTimeout(tid);
-      ac.abort();
-    };
-  }, [make, model]);
-
-  const showSpecsPanel =
-    (step === 0 || step === 1 || step === 5) &&
-    make.trim().length >= 2 &&
-    model.trim().length >= 2 &&
-    specsTouched;
-
   const pricePreview = useMemo(() => {
-    if (!tier || !support) return null;
-    try {
-      const migration =
-        dataMigration && dataMigrationSize
-          ? { size: dataMigrationSize }
-          : null;
-      return serviceOrderTotalWithMigrationCents(tier, support, migration);
-    } catch {
-      return null;
-    }
-  }, [tier, support, dataMigration, dataMigrationSize]);
+    if (!tier || !delivery) return null;
+    return serviceCheckoutTotalCents({
+      tier,
+      supportTier: SupportTier.EMAIL,
+      migration: null,
+      deliveryMethod: delivery,
+      hddRemoval,
+    });
+  }, [tier, delivery, hddRemoval]);
 
-  async function loadCompatibility() {
-    setCompatLoading(true);
-    setCompat(null);
-    try {
-      const res = await fetch("/api/compatibility", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ make, model }),
-      });
-      const data = (await res.json()) as CompatApi;
-      setCompat(data);
-    } finally {
-      setCompatLoading(false);
-    }
-  }
+  const hddExtraCents =
+    tier != null
+      ? hddRemovalAddonCents(tier, hddRemoval)
+      : 0;
 
-  function reasonLabel(r: string): string {
-    if (REASON_KEYS.has(r)) {
-      return wReasons(r as never);
-    }
-    return r;
+  function closeFullscreen() {
+    clearWizardHash();
   }
 
   async function startCheckout() {
-    if (!tier || !delivery || !support) return;
+    if (!tier || !delivery) return;
     setCheckoutError(null);
     setCheckoutLoading(true);
     try {
@@ -160,19 +138,11 @@ export function OrderWizard({ locale }: { locale: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tier,
-          supportTier: support,
           deliveryMethod: delivery,
-          computerMake: make || null,
-          computerModel: model || null,
-          customerName,
-          customerEmail,
-          customerPhone: customerPhone || null,
-          address: address || null,
-          preferredDate: preferredDate || null,
-          notes: notes || null,
+          hddRemoval,
+          computerDescription: computerDescription.trim(),
+          customerContact: customerContact.trim(),
           locale,
-          dataMigration,
-          dataMigrationSize: dataMigration ? dataMigrationSize : null,
         }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
@@ -194,448 +164,391 @@ export function OrderWizard({ locale }: { locale: string }) {
     }
   }
 
-  const canNextFrom0 = make.trim().length > 0 && model.trim().length > 0;
-  const canNextFrom1 = compat != null && !compatLoading;
-  const canNextFrom2 =
-    tier != null && (!dataMigration || dataMigrationSize != null);
-  const canNextFrom3 = delivery != null;
-  const canNextFrom4 =
-    support != null &&
-    customerName.trim().length > 0 &&
-    customerEmail.includes("@");
+  const totalSteps = 5;
+  const canNextFrom0 = computerDescription.trim().length >= 3;
+  const canNextFrom1 = tier != null && delivery != null;
+  const canNextFrom2 = true;
+  const canNextFrom3 = hasUsableCustomerContact(
+    parseCustomerContact(customerContact),
+  );
+
+  const stepContentId = `wizard-step-${step}-region`;
+  const stepHint = w(STEP_HINT_KEYS[step]);
+
+  const shellClass = fullMode
+    ? "fixed inset-0 z-[100] flex flex-col bg-canvas shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
+    : "vire-card mx-auto max-w-4xl scroll-mt-28 p-6 md:p-10";
 
   return (
     <section
       data-testid="order-wizard"
-      className="vire-card mx-auto max-w-4xl p-6 md:p-10"
+      id={WIZARD_ANCHOR}
+      className={shellClass}
       aria-labelledby="wizard-title"
     >
-      <h2 id="wizard-title" className="text-3xl font-bold text-ink">
-        {w("title")}
-      </h2>
-      <p className="mt-2 text-lg text-fog">
-        {w("stepIndicator", { current: step + 1, total: 6 })}
-      </p>
-
-      {step === 0 ? (
-        <div className="mt-8 space-y-6">
-          <h3 className="text-2xl font-semibold text-ink">{w("step1Title")}</h3>
-          <div>
-            <label htmlFor="wiz-make" className="mb-2 block font-semibold">
-              {w("step1Make")}
-            </label>
-            <input
-              id="wiz-make"
-              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
-              value={make}
-              onChange={(e) => setMake(e.target.value)}
-              autoComplete="organization"
-            />
+      <div
+        className={`shrink-0 border-b border-edge bg-canvas/95 px-0 py-3 backdrop-blur-md md:py-4 ${
+          fullMode ? "px-4 md:px-6" : ""
+        }`}
+      >
+        <div className="mx-auto flex max-w-4xl flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h2 id="wizard-title" className="text-2xl font-bold text-ink md:text-3xl">
+              {w("title")}
+            </h2>
           </div>
-          <div>
-            <label htmlFor="wiz-model" className="mb-2 block font-semibold">
-              {w("step1Model")}
-            </label>
-            <input
-              id="wiz-model"
-              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              autoComplete="off"
-            />
-          </div>
-          {showSpecsPanel && step === 0 ? (
-            <>
-              <p className="text-sm text-fog">{w("specsHint")}</p>
-              <LaptopSpecsCard
-                insight={specs}
-                loading={specsLoading}
-                labels={{
-                  title: w("specsTitle"),
-                  loading: w("specsLoading"),
-                  empty: w("specsEmpty"),
-                  link: w("specsLink"),
-                }}
-              />
-            </>
-          ) : null}
-        </div>
-      ) : null}
-
-      {step === 1 ? (
-        <div className="mt-8 space-y-6">
-          <h3 className="text-2xl font-semibold text-ink">{w("step2Title")}</h3>
-          {showSpecsPanel ? (
-            <LaptopSpecsCard
-              insight={specs}
-              loading={specsLoading}
-              labels={{
-                title: w("specsTitle"),
-                loading: w("specsLoading"),
-                empty: w("specsEmpty"),
-                link: w("specsLink"),
-              }}
-            />
-          ) : null}
-          {!compat && !compatLoading ? (
+          {fullMode ? (
             <button
               type="button"
-              className="min-h-tap rounded-xl bg-vire-green px-6 py-3 font-semibold text-canvas"
-              onClick={() => void loadCompatibility()}
+              onClick={closeFullscreen}
+              className="min-h-tap shrink-0 rounded-lg border border-em px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-g hover:text-g focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
             >
-              {w("step2Run")}
+              {w("closeWizard")}
             </button>
           ) : null}
-          {compatLoading ? <p className="text-lg">{w("step2Loading")}</p> : null}
-          {compat ? (
-            <div className="rounded-xl border border-edge bg-canvas p-6">
-              <p className="text-xl font-bold text-ink">
-                {compat.status === "compatible"
-                  ? w("step2Compatible")
-                  : compat.status === "borderline"
-                    ? w("step2Borderline")
-                    : w("step2Incompatible")}
-              </p>
-              <p className="mt-2 text-lg text-vire-green">
-                {w("step2Speed")}: {compat.speedGainEstimate}
-              </p>
-              <ul className="mt-4 list-inside list-disc space-y-2 text-lg text-ink">
-                {compat.reasons.map((r) => (
-                  <li key={r}>{reasonLabel(r)}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
         </div>
-      ) : null}
 
-      {step === 2 ? (
-        <div className="mt-8 space-y-4">
-          <h3 className="text-2xl font-semibold text-ink">{w("step3Title")}</h3>
-          <div className="grid gap-4 md:grid-cols-3">
-            {(
-              [
-                ["SSD_BASIC", "tierBasic"],
-                ["SSD_RAM", "tierRam"],
-                ["FULL_SERVICE", "tierFull"],
-              ] as const
-            ).map(([value, labelKey]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => {
-                  setTier(value);
-                }}
-                className={`min-h-tap rounded-2xl border-2 p-6 text-left font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
-                  tier === value
-                    ? "border-vire-green bg-vire-green/10"
-                    : "border-edge bg-card"
-                }`}
-              >
-                {w(labelKey)}
-              </button>
-            ))}
-          </div>
-          {tier ? (
-            <div className="mt-8 rounded-2xl border border-edge bg-card p-6">
-              <p className="text-lg font-semibold text-ink">
-                {w("migrationTitle")}
-              </p>
-              <p className="mt-2 text-fog">{w("migrationHint")}</p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDataMigration(false);
-                    setDataMigrationSize(null);
-                  }}
-                  className={`min-h-tap rounded-xl border-2 px-4 py-2 font-semibold ${
-                    !dataMigration
-                      ? "border-vire-green bg-vire-green/10"
-                      : "border-edge"
-                  }`}
+        <nav
+          aria-label={w("stepperLabel")}
+          className="mx-auto mt-4 max-w-4xl overflow-x-auto pb-1"
+        >
+          <ol className="flex min-w-min items-start gap-0 sm:gap-1">
+            {STEP_NAV_KEYS.map((key, i) => {
+              const active = i === step;
+              const done = i < step;
+              return (
+                <li
+                  key={key}
+                  className="flex items-start"
+                  aria-current={active ? "step" : undefined}
                 >
-                  {w("migrationNo")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDataMigration(true)}
-                  className={`min-h-tap rounded-xl border-2 px-4 py-2 font-semibold ${
-                    dataMigration
-                      ? "border-vire-green bg-vire-green/10"
-                      : "border-edge"
-                  }`}
-                >
-                  {w("migrationYes")}
-                </button>
-              </div>
-              {dataMigration ? (
-                <div className="mt-6 grid gap-3 md:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => setDataMigrationSize("standard")}
-                    className={`min-h-tap rounded-xl border-2 p-4 text-left font-semibold ${
-                      dataMigrationSize === "standard"
-                        ? "border-vire-green bg-vire-green/10"
-                        : "border-edge"
+                  <div
+                    className={`flex flex-col items-center px-1 sm:px-2 ${
+                      active ? "opacity-100" : done ? "opacity-90" : "opacity-45"
                     }`}
                   >
-                    <span className="block">{w("migrationStandard")}</span>
-                    <span className="mt-1 block text-sm font-normal text-fog">
-                      {w("migrationStandardHint", {
-                        price: (DATA_MIGRATION_STANDARD_CENTS / 100).toFixed(0),
-                      })}
+                    <span
+                      className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums sm:size-9 sm:text-sm ${
+                        active
+                          ? "bg-g text-canvas ring-2 ring-g ring-offset-2 ring-offset-canvas"
+                          : done
+                            ? "bg-g/25 text-g"
+                            : "border-2 border-em bg-sunken text-fog"
+                      }`}
+                      aria-hidden
+                    >
+                      {i + 1}
                     </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDataMigrationSize("large")}
-                    className={`min-h-tap rounded-xl border-2 p-4 text-left font-semibold ${
-                      dataMigrationSize === "large"
-                        ? "border-vire-green bg-vire-green/10"
-                        : "border-edge"
-                    }`}
-                  >
-                    <span className="block">{w("migrationLarge")}</span>
-                    <span className="mt-1 block text-sm font-normal text-fog">
-                      {w("migrationLargeHint", {
-                        price: (DATA_MIGRATION_LARGE_CENTS / 100).toFixed(0),
-                      })}
+                    <span className="mt-1.5 hidden max-w-[5.5rem] text-center text-[10px] font-semibold uppercase leading-tight tracking-wide text-fog sm:block sm:max-w-[6.5rem] sm:text-[11px]">
+                      {w(key)}
                     </span>
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-      ) : null}
+                  </div>
+                  {i < STEP_NAV_KEYS.length - 1 ? (
+                    <span
+                      className={`mx-0.5 mt-4 hidden h-0.5 w-4 shrink-0 rounded-full sm:block sm:w-6 md:w-10 ${
+                        done ? "bg-g/50" : "bg-em"
+                      }`}
+                      aria-hidden
+                    />
+                  ) : null}
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
 
-      {step === 3 ? (
-        <div className="mt-8 space-y-4">
-          <h3 className="text-2xl font-semibold text-ink">{w("step4Title")}</h3>
-          <div className="grid gap-4 md:grid-cols-3">
-            {(
-              [
-                ["HOME_PICKUP", "deliveryHome"],
-                ["DROP_OFF", "deliveryDrop"],
-                ["SELF", "deliverySelf"],
-              ] as const
-            ).map(([value, labelKey]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setDelivery(value as DeliveryMethod)}
-                className={`min-h-tap rounded-2xl border-2 p-6 text-left font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green ${
-                  delivery === value
-                    ? "border-vire-green bg-vire-green/10"
-                    : "border-edge bg-card"
-                }`}
-              >
-                {w(labelKey)}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      {step === 4 ? (
-        <div className="mt-8 space-y-6">
-          <h3 className="text-2xl font-semibold text-ink">{w("step5Title")}</h3>
-          <div className="grid gap-3 md:grid-cols-3">
-            {(
-              [
-                ["FULL", "supportFull"],
-                ["EMAIL", "supportEmail"],
-                ["DISCORD_ONLY", "supportDiscord"],
-              ] as const
-            ).map(([value, labelKey]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setSupport(value as SupportTier)}
-                className={`min-h-tap rounded-xl border-2 px-4 py-3 font-semibold ${
-                  support === value
-                    ? "border-vire-green bg-vire-green/10"
-                    : "border-edge"
-                }`}
-              >
-                {w(labelKey)}
-              </button>
-            ))}
-          </div>
-          <div>
-            <label htmlFor="wiz-name" className="mb-2 block font-semibold">
-              {w("customerName")}
-            </label>
-            <input
-              id="wiz-name"
-              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              autoComplete="name"
-            />
-          </div>
-          <div>
-            <label htmlFor="wiz-email" className="mb-2 block font-semibold">
-              {w("customerEmail")}
-            </label>
-            <input
-              id="wiz-email"
-              type="email"
-              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
-              value={customerEmail}
-              onChange={(e) => setCustomerEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-          <div>
-            <label htmlFor="wiz-phone" className="mb-2 block font-semibold">
-              {w("customerPhone")}
-            </label>
-            <input
-              id="wiz-phone"
-              type="tel"
-              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
-              value={customerPhone}
-              onChange={(e) => setCustomerPhone(e.target.value)}
-              autoComplete="tel"
-            />
-          </div>
-          <div>
-            <label htmlFor="wiz-address" className="mb-2 block font-semibold">
-              {w("address")}
-            </label>
-            <textarea
-              id="wiz-address"
-              rows={3}
-              className="w-full rounded-lg border border-em px-4 py-3 text-lg"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="wiz-date" className="mb-2 block font-semibold">
-              {w("preferredDate")}
-            </label>
-            <input
-              id="wiz-date"
-              type="date"
-              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
-              value={preferredDate}
-              onChange={(e) => setPreferredDate(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="wiz-notes" className="mb-2 block font-semibold">
-              {w("notes")}
-            </label>
-            <textarea
-              id="wiz-notes"
-              rows={3}
-              className="w-full rounded-lg border border-em px-4 py-3 text-lg"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </div>
-        </div>
-      ) : null}
-
-      {step === 5 ? (
-        <div className="mt-8 space-y-4 text-lg text-ink">
-          <h3 className="text-2xl font-semibold">{w("step6Title")}</h3>
-          {showSpecsPanel ? (
-            <LaptopSpecsCard
-              insight={specs}
-              loading={specsLoading}
-              labels={{
-                title: w("specsTitle"),
-                loading: w("specsLoading"),
-                empty: w("specsEmpty"),
-                link: w("specsLink"),
-              }}
-            />
-          ) : null}
-          <p>
-            <strong>{w("summaryComputer")}:</strong> {make} {model}
-          </p>
-          <p>
-            <strong>{w("summaryTier")}:</strong> {tier}
-          </p>
-          {dataMigration && dataMigrationSize ? (
-            <p>
-              <strong>{w("summaryMigration")}:</strong>{" "}
-              {dataMigrationSize === "large"
-                ? w("summaryMigrationLarge")
-                : w("summaryMigrationStandard")}
-            </p>
-          ) : null}
-          <p>
-            <strong>{w("summarySupport")}:</strong> {support}
-          </p>
-          <p>
-            <strong>{w("summaryDelivery")}:</strong> {delivery}
-          </p>
-          <p>
-            <strong>{w("summaryContact")}:</strong> {customerName} / {customerEmail}
-          </p>
-          {pricePreview != null ? (
-            <p className="text-2xl font-bold text-vire-green">
-              {w("summaryPrice")}: {(pricePreview / 100).toFixed(2)} €
-            </p>
-          ) : null}
-          {checkoutError ? (
-            <p className="font-semibold text-danger" role="alert">
-              {checkoutError}
-            </p>
-          ) : null}
-          <button
-            type="button"
-            disabled={checkoutLoading}
-            className="min-h-tap w-full rounded-xl bg-vire-green py-4 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60 md:max-w-md"
-            onClick={() => void startCheckout()}
-          >
-            {checkoutLoading ? "…" : w("payCta")}
-          </button>
-        </div>
-      ) : null}
-
-      <div className="mt-10 flex flex-wrap justify-between gap-4">
-        <button
-          type="button"
-          className="min-h-tap rounded-lg border border-em px-6 py-3 font-semibold text-ink disabled:opacity-40"
-          disabled={step === 0}
-          onClick={() => setStep((s) => Math.max(0, s - 1))}
+        <p
+          id={`${stepContentId}-hint`}
+          className="mx-auto mt-3 max-w-4xl rounded-lg border border-g/20 bg-g/[0.06] px-3 py-2 text-sm leading-snug text-ink md:text-base"
         >
-          {w("back")}
-        </button>
-        <button
-          type="button"
-          className="min-h-tap rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas disabled:opacity-40"
-          disabled={
-            (step === 0 && !canNextFrom0) ||
-            (step === 1 && !canNextFrom1) ||
-            (step === 2 && !canNextFrom2) ||
-            (step === 3 && !canNextFrom3) ||
-            (step === 4 && !canNextFrom4) ||
-            step === 5
-          }
-          onClick={() => {
-            if (step === 0 && canNextFrom0) {
-              setStep(1);
-              setCompat(null);
-            } else if (step === 1 && canNextFrom1) setStep(2);
-            else if (step === 2 && canNextFrom2) setStep(3);
-            else if (step === 3 && canNextFrom3) setStep(4);
-            else if (step === 4 && canNextFrom4) setStep(5);
-          }}
-        >
-          {w("next")}
-        </button>
+          <span className="font-semibold text-g" aria-hidden>
+            {w(STEP_NAV_KEYS[step])}.{" "}
+          </span>
+          <span className="sr-only">
+            {w("stepIndicator", { current: step + 1, total: totalSteps })}.{" "}
+          </span>
+          {stepHint}
+        </p>
       </div>
 
-      <p className="mt-6 text-sm text-fog">
-        {t("wizardLegalHint")}
-      </p>
+      <div
+        className={`mx-auto w-full max-w-4xl flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-8 ${
+          fullMode ? "min-h-0" : ""
+        }`}
+      >
+        <div
+          id={stepContentId}
+          role="region"
+          aria-labelledby="wizard-title"
+          aria-describedby={`${stepContentId}-hint`}
+        >
+          {step === 0 ? (
+            <div className="space-y-4">
+              <h3 className="text-2xl font-semibold text-ink">{w("step1Title")}</h3>
+              <div>
+                <label htmlFor="wiz-computer" className="mb-2 block font-semibold">
+                  {w("computerLabel")}
+                </label>
+                <textarea
+                  id="wiz-computer"
+                  rows={4}
+                  className="w-full resize-y rounded-lg border border-em bg-sunken px-4 py-3 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
+                  value={computerDescription}
+                  onChange={(e) => setComputerDescription(e.target.value)}
+                  placeholder={w("computerPlaceholder")}
+                  maxLength={2000}
+                />
+                <p className="mt-2 text-base font-light leading-relaxed text-fog">
+                  {w("computerHint")}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {step === 1 ? (
+            <div className="space-y-10">
+              <div>
+                <h3 className="text-2xl font-semibold text-ink">
+                  {w("step2ServiceTitle")}
+                </h3>
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                  {(
+                    [
+                      ["SSD_BASIC", "tierBasic"],
+                      ["SSD_RAM", "tierRam"],
+                      ["FULL_SERVICE", "tierFull"],
+                    ] as const
+                  ).map(([value, labelKey]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => {
+                        setTier(value);
+                      }}
+                      className={`min-h-tap rounded-2xl border p-6 text-left text-base font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                        tier === value
+                          ? "border-g bg-g/[0.08]"
+                          : "border-edge bg-card hover:border-em"
+                      }`}
+                    >
+                      {w(labelKey)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold text-ink">
+                  {w("step2DeliveryTitle")}
+                </h3>
+                <div className="mt-4 grid gap-2.5 md:grid-cols-3">
+                  {(
+                    [
+                      ["HOME_PICKUP", "deliveryHome", "deliveryHomeSub", "deliveryHomeFee"],
+                      ["DROP_OFF", "deliveryPost", "deliveryPostSub", "deliveryPostFee"],
+                      ["SELF", "deliverySelf", "deliverySelfSub", "deliverySelfFee"],
+                    ] as const
+                  ).map(([value, titleKey, subKey, feeKey]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setDelivery(value as DeliveryMethod)}
+                      className={`min-h-tap rounded-[10px] border bg-sunken p-4 text-center transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                        delivery === value
+                          ? "border-g bg-g/[0.05]"
+                          : "border-edge hover:border-em"
+                      }`}
+                    >
+                      <div className="mb-2 text-2xl text-g" aria-hidden>
+                        {value === "HOME_PICKUP"
+                          ? "🚚"
+                          : value === "DROP_OFF"
+                            ? "📦"
+                            : "🏠"}
+                      </div>
+                      <div className="text-[13px] font-semibold text-ink">
+                        {w(titleKey)}
+                      </div>
+                      <div className="mt-1 text-[11px] font-light leading-snug text-fog">
+                        {w(subKey)}
+                      </div>
+                      <div className="mt-1.5 font-mono text-[10px] text-g">
+                        {w(feeKey)}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {step === 2 ? (
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold text-ink">{w("stepHddTitle")}</h3>
+              <div
+                className="flex gap-3.5 rounded-[10px] border border-amber/25 bg-amber/[0.07] p-4 text-[13px] font-light leading-relaxed text-fog md:p-[18px]"
+                role="note"
+              >
+                <span className="text-xl text-amber" aria-hidden>
+                  ⚠
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-ink">
+                    {w("hddCalloutTitle")}
+                  </p>
+                  <p className="mt-1">{w("hddCalloutBody")}</p>
+                  <p className="mt-2">
+                    <Link
+                      href="/itse"
+                      className="font-medium text-g underline-offset-2 hover:underline"
+                    >
+                      {w("hddGuideLink")}
+                    </Link>
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {(
+                  [
+                    [HddRemovalOption.VIRE_REMOVES, "hddVireDesc"],
+                    [HddRemovalOption.CUSTOMER_REMOVES, "hddSelfDesc"],
+                    [HddRemovalOption.KEEP_IN_DEVICE, "hddKeepDesc"],
+                  ] as const
+                ).map(([value, descKey]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setHddRemoval(value)}
+                    className={`flex w-full items-start gap-3 rounded-[10px] border p-4 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                      hddRemoval === value
+                        ? "border-g bg-g/[0.05]"
+                        : "border-edge bg-sunken hover:border-em"
+                    }`}
+                  >
+                    <span
+                      className={`mt-0.5 inline-flex size-4 shrink-0 rounded-full border-2 ${
+                        hddRemoval === value ? "border-g bg-g" : "border-em"
+                      }`}
+                      aria-hidden
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-ink">
+                        {value === HddRemovalOption.VIRE_REMOVES &&
+                        tier === "FULL_SERVICE"
+                          ? w("hddVireIncluded")
+                          : value === HddRemovalOption.VIRE_REMOVES
+                            ? w("hddVirePaid")
+                            : value === HddRemovalOption.CUSTOMER_REMOVES
+                              ? w("hddSelf")
+                              : w("hddKeep")}
+                      </span>
+                      <span className="mt-1 block text-[13px] font-light text-fog">
+                        {w(descKey)}
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {step === 3 ? (
+            <div className="space-y-4">
+              <h3 className="text-2xl font-semibold text-ink">{w("step4Title")}</h3>
+              <div>
+                <label htmlFor="wiz-contact" className="mb-2 block font-semibold">
+                  {w("contactLabel")}
+                </label>
+                <input
+                  id="wiz-contact"
+                  className="min-h-tap w-full rounded-lg border border-em bg-sunken px-4 text-lg text-ink placeholder:text-dust focus:border-g focus:outline-none"
+                  value={customerContact}
+                  onChange={(e) => setCustomerContact(e.target.value)}
+                  autoComplete="email"
+                  placeholder={w("contactPlaceholder")}
+                />
+                <p className="mt-2 text-base font-light text-fog">
+                  {w("contactHint")}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {step === 4 ? (
+            <div className="space-y-4 text-lg text-ink">
+              <h3 className="text-2xl font-semibold">{w("stepSummaryTitle")}</h3>
+              <p>
+                <strong>{w("summaryComputer")}:</strong>{" "}
+                <span className="whitespace-pre-wrap text-base font-normal">
+                  {computerDescription.trim()}
+                </span>
+              </p>
+              <p>
+                <strong>{w("summaryTier")}:</strong> {tier}
+              </p>
+              <p>
+                <strong>{w("summaryDelivery")}:</strong> {delivery}
+              </p>
+              <p>
+                <strong>{w("summaryHdd")}:</strong> {hddRemoval}
+                {hddExtraCents > 0 ? ` (+${(hddExtraCents / 100).toFixed(0)} €)` : ""}
+              </p>
+              <p>
+                <strong>{w("summaryContact")}:</strong> {customerContact.trim()}
+              </p>
+              {pricePreview != null ? (
+                <p className="text-2xl font-bold text-g">
+                  {w("summaryPrice")}: {(pricePreview / 100).toFixed(2)} €
+                </p>
+              ) : null}
+              {checkoutError ? (
+                <p className="font-semibold text-danger" role="alert">
+                  {checkoutError}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                disabled={checkoutLoading}
+                className="min-h-tap w-full rounded-xl bg-vire-green py-4 text-lg font-semibold text-canvas hover:opacity-[0.85] disabled:opacity-60 md:max-w-md"
+                onClick={() => void startCheckout()}
+              >
+                {checkoutLoading ? "…" : w("payCta")}
+              </button>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="mt-10 flex flex-wrap justify-between gap-4">
+          <button
+            type="button"
+            className="min-h-tap rounded-lg border border-em px-6 py-3 font-semibold text-ink disabled:opacity-40"
+            disabled={step === 0}
+            onClick={() => setStep((s) => Math.max(0, s - 1))}
+          >
+            {w("back")}
+          </button>
+          <button
+            type="button"
+            className="min-h-tap rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas disabled:opacity-40"
+            disabled={
+              (step === 0 && !canNextFrom0) ||
+              (step === 1 && !canNextFrom1) ||
+              (step === 2 && !canNextFrom2) ||
+              (step === 3 && !canNextFrom3) ||
+              step === 4
+            }
+            onClick={() => {
+              if (step === 0 && canNextFrom0) setStep(1);
+              else if (step === 1 && canNextFrom1) setStep(2);
+              else if (step === 2 && canNextFrom2) setStep(3);
+              else if (step === 3 && canNextFrom3) setStep(4);
+            }}
+          >
+            {w("next")}
+          </button>
+        </div>
+
+        <p className="mt-6 text-sm text-fog">{t("wizardLegalHint")}</p>
+      </div>
     </section>
   );
 }

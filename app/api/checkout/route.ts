@@ -1,28 +1,33 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import type { ServiceTier } from "@prisma/client";
-import { DeliveryMethod, SupportTier } from "@prisma/client";
+import {
+  DeliveryMethod,
+  HddRemovalOption,
+  SupportTier,
+} from "@prisma/client";
 import { getRequestId, logApiEvent } from "@/lib/logging/log";
 import { prisma } from "@/lib/db/prisma";
 import { getStripe, stripeConfigured } from "@/lib/billing/stripe";
 import { buildServiceLineItems } from "@/lib/billing/stripe-line-items";
-import { serviceOrderTotalWithMigrationCents } from "@/lib/billing/pricing";
+import {
+  hddRemovalAddonCents,
+  serviceCheckoutTotalCents,
+} from "@/lib/billing/pricing";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 import { getSiteUrl } from "@/lib/site/site-url";
+import {
+  hasUsableCustomerContact,
+  parseCustomerContact,
+} from "@/lib/contact/parse-customer-contact";
 
 const checkoutSchema = z
   .object({
     tier: z.enum(["SSD_BASIC", "SSD_RAM", "FULL_SERVICE"]),
-    supportTier: z.nativeEnum(SupportTier),
     deliveryMethod: z.nativeEnum(DeliveryMethod),
-    computerMake: z.string().max(200).optional().nullable(),
-    computerModel: z.string().max(200).optional().nullable(),
-    customerName: z.string().min(1).max(200),
-    customerEmail: z.string().email().max(320),
-    customerPhone: z.string().max(50).optional().nullable(),
-    address: z.string().max(500).optional().nullable(),
-    preferredDate: z.string().max(40).optional().nullable(),
-    notes: z.string().max(2000).optional().nullable(),
+    hddRemoval: z.nativeEnum(HddRemovalOption),
+    computerDescription: z.string().trim().min(1).max(2000),
+    customerContact: z.string().trim().min(5).max(320),
     locale: z.enum(["fi", "en"]),
     dataMigration: z.boolean().optional(),
     dataMigrationSize: z.enum(["standard", "large"]).optional().nullable(),
@@ -40,6 +45,14 @@ const checkoutSchema = z
         code: z.ZodIssueCode.custom,
         path: ["dataMigrationSize"],
         message: "unexpected_when_disabled",
+      });
+    }
+    const p = parseCustomerContact(val.customerContact);
+    if (!hasUsableCustomerContact(p)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["customerContact"],
+        message: "invalid_contact",
       });
     }
   });
@@ -93,19 +106,16 @@ export async function POST(req: Request) {
   const migration = wantsMigration
     ? { size: data.dataMigrationSize! }
     : null;
-  const priceEur = serviceOrderTotalWithMigrationCents(
-    data.tier,
-    data.supportTier,
+  const supportTier = SupportTier.EMAIL;
+  const priceEur = serviceCheckoutTotalCents({
+    tier: data.tier,
+    supportTier,
     migration,
-  );
-  const preferredDate =
-    data.preferredDate && data.preferredDate.length > 0
-      ? new Date(data.preferredDate)
-      : null;
-  if (preferredDate && Number.isNaN(preferredDate.getTime())) {
-    logApiEvent(requestId, "checkout.invalid_date", {});
-    return NextResponse.json({ error: "invalid_date" }, { status: 400 });
-  }
+    deliveryMethod: data.deliveryMethod,
+    hddRemoval: data.hddRemoval,
+  });
+
+  const parsedContact = parseCustomerContact(data.customerContact);
 
   const baseUrl = getSiteUrl();
 
@@ -113,16 +123,17 @@ export async function POST(req: Request) {
     data: {
       status: "PENDING",
       tier: data.tier as ServiceTier,
-      supportTier: data.supportTier,
+      supportTier,
       deliveryMethod: data.deliveryMethod,
-      computerMake: data.computerMake?.trim() || null,
-      computerModel: data.computerModel?.trim() || null,
-      customerName: data.customerName.trim(),
-      customerEmail: data.customerEmail.trim().toLowerCase(),
-      customerPhone: data.customerPhone?.trim() || null,
-      address: data.address?.trim() || null,
-      preferredDate,
-      notes: data.notes?.trim() || null,
+      hddRemoval: data.hddRemoval,
+      computerMake: null,
+      computerModel: null,
+      customerName: null,
+      customerEmail: parsedContact.email,
+      customerPhone: parsedContact.phone,
+      address: null,
+      preferredDate: null,
+      notes: data.computerDescription.trim(),
       priceEur,
       locale: data.locale,
       dataMigration: migration != null,
@@ -130,17 +141,26 @@ export async function POST(req: Request) {
     },
   });
 
+  const hddCents = hddRemovalAddonCents(
+    data.tier as Exclude<ServiceTier, "B2B">,
+    data.hddRemoval,
+  );
+
   const lineItems = buildServiceLineItems(
     data.tier as Exclude<ServiceTier, "B2B">,
-    data.supportTier,
+    supportTier,
     migration,
     data.locale,
+    {
+      postShip: data.deliveryMethod === "DROP_OFF",
+      hddVireCents: hddCents,
+    },
   );
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      customer_email: order.customerEmail,
+      customer_email: order.customerEmail ?? undefined,
       line_items: lineItems,
       success_url: `${baseUrl}/${data.locale}/palvelu/kiitos?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/${data.locale}/palvelu`,

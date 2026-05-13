@@ -6,6 +6,7 @@ const linkMuted =
 
 export async function Footer() {
   const t = await getTranslations("footer");
+  const tNav = await getTranslations("nav");
   const youtubeUrl = process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_URL?.trim();
   const showYoutube = Boolean(youtubeUrl && youtubeUrl !== "#");
 
@@ -43,8 +44,18 @@ export async function Footer() {
                 </PulseLink>
               </li>
               <li>
-                <PulseLink href="/palvelu" className={`${linkMuted} px-1`}>
-                  {t("orderCta")}
+                <PulseLink href="/care" className={`${linkMuted} px-1`}>
+                  {t("care")}
+                </PulseLink>
+              </li>
+              <li>
+                <PulseLink href="/koneet" className={`${linkMuted} px-1`}>
+                  {t("compatDb")}
+                </PulseLink>
+              </li>
+              <li>
+                <PulseLink href="/vire-for-good" className={`${linkMuted} px-1`}>
+                  {t("forGood")}
                 </PulseLink>
               </li>
             </ul>
@@ -56,12 +67,22 @@ export async function Footer() {
             </p>
             <ul className="flex flex-col gap-1">
               <li>
-                <PulseLink href="/info" className={`${linkMuted} px-1`}>
+                <PulseLink href="/tietoa" className={`${linkMuted} px-1`}>
+                  {tNav("infoHubOverview")}
+                </PulseLink>
+              </li>
+              <li>
+                <PulseLink href="/tietoa/hyodyt" className={`${linkMuted} px-1`}>
+                  {tNav("infoBenefits")}
+                </PulseLink>
+              </li>
+              <li>
+                <PulseLink href="/tietoa/linux" className={`${linkMuted} px-1`}>
                   {t("linuxMint")}
                 </PulseLink>
               </li>
               <li>
-                <PulseLink href="/sovellukset" className={`${linkMuted} px-1`}>
+                <PulseLink href="/tietoa/sovellukset/windows" className={`${linkMuted} px-1`}>
                   {t("apps")}
                 </PulseLink>
               </li>

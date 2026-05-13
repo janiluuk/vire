@@ -207,10 +207,20 @@ function OrderSummary({
         ) : null}
         <dt className="font-semibold text-fog">{t("fieldComputer")}</dt>
         <dd>
-          {[o.computerMake, o.computerModel].filter(Boolean).join(" ") || t("emptyValue")}
+          {[o.computerMake, o.computerModel].filter(Boolean).join(" ") ||
+            o.notes ||
+            t("emptyValue")}
         </dd>
         <dt className="font-semibold text-fog">{t("fieldCustomer")}</dt>
-        <dd>{o.customerName}</dd>
+        <dd>
+          {o.customerName ?? o.customerEmail ?? o.customerPhone ?? t("emptyValue")}
+        </dd>
+        {o.customerEmail ? (
+          <>
+            <dt className="font-semibold text-fog">{t("fieldEmail")}</dt>
+            <dd>{o.customerEmail}</dd>
+          </>
+        ) : null}
         {o.customerPhone ? (
           <>
             <dt className="font-semibold text-fog">{t("fieldPhone")}</dt>

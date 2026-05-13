@@ -2,8 +2,31 @@ import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { prisma } from "@/lib/db/prisma";
 import { getSiteUrl } from "@/lib/site/site-url";
+import { computerModelSlug } from "@/lib/site/computer-model-slug";
 
-const STATIC_PATHS = ["", "/palvelu", "/palvelu/b2b", "/itse", "/sovellukset", "/tuki", "/info", "/about", "/tietosuoja", "/tilaus", "/yhteiso"] as const;
+const STATIC_PATHS = [
+  "",
+  "/palvelu",
+  "/palvelu/b2b",
+  "/itse",
+  "/sovellukset",
+  "/tuki",
+  "/info",
+  "/about",
+  "/tietosuoja",
+  "/tilaus",
+  "/yhteiso",
+  "/tietoa",
+  "/tietoa/hyodyt",
+  "/tietoa/linux",
+  "/tietoa/vakaus",
+  "/tietoa/huolia",
+  "/tietoa/sovellukset/windows",
+  "/tietoa/sovellukset/mac",
+  "/care",
+  "/koneet",
+  "/vire-for-good",
+] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
@@ -39,6 +62,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.65,
       });
     }
+  }
+
+  try {
+    const models = await prisma.computerModel.findMany({
+      select: { make: true, model: true, updatedAt: true },
+    });
+    for (const locale of routing.locales) {
+      for (const m of models) {
+        const slug = computerModelSlug(m.make, m.model);
+        entries.push({
+          url: `${base}/${locale}/koneet/${slug}`,
+          lastModified: m.updatedAt,
+          changeFrequency: "monthly",
+          priority: 0.55,
+        });
+      }
+    }
+  } catch {
+    /* no DB */
   }
 
   return entries;

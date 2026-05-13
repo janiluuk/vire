@@ -3,6 +3,7 @@
     "id": "ms-word",
     "name": "Microsoft Word",
     "category": "toimisto",
+    "sourceOs": "windows",
     "icon": "file-text",
     "alternatives": [
       {
@@ -18,6 +19,7 @@
     "id": "ms-excel",
     "name": "Microsoft Excel",
     "category": "toimisto",
+    "sourceOs": "windows",
     "icon": "table",
     "alternatives": [
       {
@@ -33,6 +35,7 @@
     "id": "chrome",
     "name": "Google Chrome",
     "category": "selain",
+    "sourceOs": "both",
     "icon": "world",
     "alternatives": [
       {
@@ -48,6 +51,7 @@
     "id": "outlook",
     "name": "Microsoft Outlook",
     "category": "sahkoposti",
+    "sourceOs": "windows",
     "icon": "mail",
     "alternatives": [
       {
@@ -63,6 +67,7 @@
     "id": "spotify",
     "name": "Spotify",
     "category": "musiikki",
+    "sourceOs": "both",
     "icon": "music",
     "alternatives": [
       {
@@ -78,6 +83,7 @@
     "id": "photoshop",
     "name": "Adobe Photoshop",
     "category": "kuvat",
+    "sourceOs": "both",
     "icon": "photo",
     "alternatives": [
       {
@@ -93,6 +99,7 @@
     "id": "teams",
     "name": "Microsoft Teams",
     "category": "viestinta",
+    "sourceOs": "windows",
     "icon": "messages",
     "alternatives": [
       {
@@ -108,6 +115,7 @@
     "id": "defender",
     "name": "Windows Defender",
     "category": "tietoturva",
+    "sourceOs": "windows",
     "icon": "shield",
     "alternatives": [
       {
@@ -123,6 +131,7 @@
     "id": "steam",
     "name": "Steam (Windows games)",
     "category": "pelit",
+    "sourceOs": "windows",
     "icon": "device-gamepad",
     "alternatives": [
       {
@@ -138,6 +147,7 @@
     "id": "edge",
     "name": "Microsoft Edge",
     "category": "selain",
+    "sourceOs": "windows",
     "icon": "world",
     "alternatives": [
       {
@@ -153,6 +163,7 @@
     "id": "notepad",
     "name": "Notepad",
     "category": "toimisto",
+    "sourceOs": "windows",
     "icon": "file-text",
     "alternatives": [
       {
@@ -168,6 +179,7 @@
     "id": "vlc",
     "name": "Windows Media Player",
     "category": "musiikki",
+    "sourceOs": "windows",
     "icon": "player-play",
     "alternatives": [
       {
@@ -176,6 +188,54 @@
         "descEn": "Plays almost all media formats.",
         "url": "https://www.videolan.org",
         "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "pages",
+    "name": "Apple Pages",
+    "category": "toimisto",
+    "sourceOs": "mac",
+    "icon": "file-text",
+    "alternatives": [
+      {
+        "name": "LibreOffice Writer",
+        "descFi": "Avoin vaihtoehto .docx- ja tekstitiedostoille.",
+        "descEn": "Open alternative for documents and .docx.",
+        "url": "https://www.libreoffice.org",
+        "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "safari",
+    "name": "Safari",
+    "category": "selain",
+    "sourceOs": "mac",
+    "icon": "world",
+    "alternatives": [
+      {
+        "name": "Firefox",
+        "descFi": "Vankka selain Linuxille ja tietosuojatyökalut.",
+        "descEn": "Solid browser for Linux with privacy tooling.",
+        "url": "https://www.mozilla.org/firefox/",
+        "preinstalled": true
+      }
+    ]
+  },
+  {
+    "id": "imovie",
+    "name": "iMovie",
+    "category": "kuvat",
+    "sourceOs": "mac",
+    "icon": "video",
+    "alternatives": [
+      {
+        "name": "Kdenlive / Shotcut",
+        "descFi": "Ilmaiset videomuokkaustyökalut Linuxille.",
+        "descEn": "Free video editors for Linux.",
+        "url": "https://kdenlive.org",
+        "preinstalled": false
       }
     ]
   }

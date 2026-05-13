@@ -728,16 +728,22 @@ Planned product expansion (Care subscription, `/koneet`, group bookings, donatio
 - [x] Admin dashboard stats: revenue chart, orders per week, model approval rate — 7-day order bars + week revenue + approval %.
 - [x] Rate limiting on API routes (use `@upstash/ratelimit` or simple IP check) — shared `lib/http/rate-limit.ts` on order lookup + Stripe checkout routes.
 - [x] Laptop spec hints from the web — `lib/specs/laptop-specs.ts` + `POST /api/public/laptop-specs`: SearXNG when `SPECS_SEARXNG_BASE_URL` is set + optional local LLM (`SPECS_AI_BASE_URL`, OpenAI-compatible or Ollama). Wired into order wizard (debounced), public order lookup response, and admin order detail.
+- [x] **Info hub** — `/{locale}/tietoa/*` sidebar IA (Linux Mint, stability, common concerns, app alternatives Windows/Mac with `sourceOs` on `data/apps.json`). Legacy `/info` → `/tietoa/linux`, `/sovellukset` → `/tietoa/sovellukset/windows`.
+- [x] **Vire Care landing** — `/{locale}/care` (tiers + post-90-day timeline; Stripe subscription checkout deferred).
+- [x] **Compatibility database (public)** — `/{locale}/koneet` + `/{locale}/koneet/[slug]` backed by `ComputerModel`; sitemap includes model URLs.
+- [x] **Vire for Good** — `/{locale}/vire-for-good` two-field form; email via `VIRE_FOR_GOOD_NOTIFY_EMAIL` or fallback `B2B_QUOTE_NOTIFY_EMAIL`.
+- [ ] **Order-time app bundles** — Optional **curated app packs** the customer selects in the **service order wizard** (and pays for if priced): e.g. **local AI** (LLM + tooling), **media creator** pack, **music production** pack, developer essentials, etc. Requires: Prisma/Stripe fields (or JSON on `Order`), wizard UI + pricing in **`lib/billing`**, fulfillment notes for install scripts, admin order detail showing chosen bundles, transactional copy in **`lib/email`**.
+- [ ] **Portable VM from existing system** — Optional add-on service: create a **portable virtual machine** (or bootable disk image) that captures the **current contents/state of the customer’s machine** before wipe / Linux install (e.g. P2V-style image, OVA/QCOW2, or agreed export format on external storage). Requires: clear **scope & licensing copy** (especially Windows in a VM), **data-handling SLA**, wizard + `Order` fields, priced line item in Stripe, handoff medium (customer USB/NAS vs shipped drive), and admin/fulfillment checklist.
 
 ---
 
 ### Phase 6 — Browser try-Linux (noVNC) `Lab / post-MVP`
 
-**Goal:** On the public **Info** page (`/[locale]/info`), add a subsection where visitors choose **Linux Mint** or **Fedora** and open a **noVNC** session to a disposable / demo desktop on the lab server. Desktop layout and preinstalled apps are intentionally minimal for now; you customize images and VM templates later.
+**Goal:** On the public **Tietoa hub** (`/[locale]/tietoa/linux`) and previously `/[locale]/info`, add a subsection where visitors choose **Linux Mint** or **Fedora** and open a **noVNC** session to a disposable / demo desktop on the lab server. Desktop layout and preinstalled apps are intentionally minimal for now; you customize images and VM templates later.
 
 **UX (site):**
 
-- [x] `/info` — short intro + **“Try Linux in your browser”** subsection with two large choices (Mint | Fedora).
+- [x] `/info` / **`/tietoa/linux`** — short intro + **“Try Linux in your browser”** subsection with two large choices (Mint | Fedora).
 - [x] Each choice opens the noVNC UI in a **new tab** (recommended over embedding: cookies, keyboard capture, and mixed content are simpler).
 - [x] URLs come from env (see below) so production can point at HTTPS on your edge while the lab stays on a private IP.
 
@@ -782,13 +788,15 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 *Short working queue. Reconcile with checkboxes below; edit this list when items ship.*
 
 1. **Content-Security-Policy** — **`ENABLE_CSP_REPORT_ONLY=true`** emits report-only CSP from **`next.config.mjs`**; tighten policy using violation reports (**`docs/operations.md`**). Enforcing CSP with nonces still open.
-2. **E2E** — **Shipped:** order wizard happy path with mocked checkout in **`e2e/wizard-order.spec.ts`** (Playwright fills make/model and contact fields). Admin login: **`e2e/admin-login.spec.ts`**.
+2. **E2E** — **Shipped:** order wizard happy path with mocked checkout in **`e2e/wizard-order.spec.ts`** (five-step flow: computer description, tier + delivery, HDD, contact, pay → **`/palvelu/kiitos`**). Admin login: **`e2e/admin-login.spec.ts`**.
 3. **Synthetic monitoring** — external ping of `/api/health` + one public page — **runbook:** **`docs/operations.md`** (Docker healthcheck already in compose).
 4. **Admin audit trail** — **shipped:** `AdminAuditLog` + order detail log; guides/models mutations logged; extend UI as needed.
 5. **Structured logging** — **shipped:** JSON + request id on checkout, support-contact, Stripe webhook (`lib/logging/log.ts`, **`docs/operations.md`**).
 
 #### Product / UX (still open from earlier phases)
 
+- [ ] **App bundles at checkout** — Customizable **software bundles** selected during the consumer order flow (examples: local AI stack, media creator pack, music pack); persisted on the order, visible in admin, reflected in pricing/notes for fulfillment.
+- [ ] **Portable VM / disk image add-on** — Optional paid step in the order flow: deliver a **VM or image** of the machine’s **pre-service contents** for archival or later use on another host; document format, customer storage, and OS licensing limits in public copy and ops.
 - [x] **Booking embed** on `/tuki` — Calendly iframe when **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** is set.
 - [x] **Discord widget** on `/yhteiso` — **`NEXT_PUBLIC_DISCORD_WIDGET_GUILD_ID`** + Discord widget iframe.
 - [x] **`/tuki` contact form** — `POST /api/public/support-contact`, rate limit, **`SUPPORT_NOTIFY_EMAIL`** + Resend.

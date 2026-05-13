@@ -311,7 +311,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                       href={`/admin/orders/${o.id}`}
                       className="font-medium text-vire-green underline"
                     >
-                      {o.customerName}
+                      {o.customerName ?? o.customerEmail ?? o.customerPhone ?? o.id.slice(0, 8)}
                     </Link>
                     <div className="text-sm text-fog">{o.customerEmail}</div>
                   </td>

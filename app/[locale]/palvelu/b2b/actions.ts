@@ -3,52 +3,38 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { sendB2bQuoteRequestEmail } from "@/lib/email/email";
+import {
+  hasUsableCustomerContact,
+  parseCustomerContact,
+} from "@/lib/contact/parse-customer-contact";
 
 const formSchema = z.object({
-  companyName: z.string().trim().min(1).max(200),
-  contactName: z.string().trim().min(1).max(200),
-  email: z.string().trim().email().max(320),
-  phone: z.string().trim().max(50).optional().transform((s) => s || null),
-  estimatedUnits: z
-    .string()
-    .trim()
-    .max(100)
-    .optional()
-    .transform((s) => s || null),
-  message: z
-    .string()
-    .trim()
-    .max(4000)
-    .optional()
-    .transform((s) => s || null),
+  details: z.string().trim().min(1).max(4000),
+  contact: z.string().trim().min(5).max(320),
   locale: z.enum(["fi", "en"]),
 });
 
 export async function submitB2bQuote(formData: FormData) {
   const raw = {
-    companyName: formData.get("companyName"),
-    contactName: formData.get("contactName"),
-    email: formData.get("email"),
-    phone: formData.get("phone"),
-    estimatedUnits: formData.get("estimatedUnits"),
-    message: formData.get("message"),
+    details: formData.get("details"),
+    contact: formData.get("contact"),
     locale: formData.get("locale"),
   };
 
   const parsed = formSchema.safeParse({
-    companyName: typeof raw.companyName === "string" ? raw.companyName : "",
-    contactName: typeof raw.contactName === "string" ? raw.contactName : "",
-    email: typeof raw.email === "string" ? raw.email : "",
-    phone: typeof raw.phone === "string" ? raw.phone : "",
-    estimatedUnits:
-      typeof raw.estimatedUnits === "string" ? raw.estimatedUnits : "",
-    message: typeof raw.message === "string" ? raw.message : "",
+    details: typeof raw.details === "string" ? raw.details : "",
+    contact: typeof raw.contact === "string" ? raw.contact : "",
     locale: raw.locale === "en" ? "en" : "fi",
   });
 
   const locale = parsed.success ? parsed.data.locale : "fi";
 
   if (!parsed.success) {
+    redirect(`/${locale}/palvelu/b2b?err=validation`);
+  }
+
+  const contact = parseCustomerContact(parsed.data.contact);
+  if (!hasUsableCustomerContact(contact)) {
     redirect(`/${locale}/palvelu/b2b?err=validation`);
   }
 
@@ -60,12 +46,10 @@ export async function submitB2bQuote(formData: FormData) {
 
   const result = await sendB2bQuoteRequestEmail({
     notifyTo,
-    companyName: data.companyName,
-    contactName: data.contactName,
-    email: data.email,
-    phone: data.phone,
-    estimatedUnits: data.estimatedUnits,
-    message: data.message,
+    details: data.details,
+    contactRaw: data.contact.trim(),
+    contactEmail: contact.email,
+    contactPhone: contact.phone,
     locale: data.locale,
   });
 

@@ -21,34 +21,6 @@ test.describe("order wizard (checkout mocked)", () => {
         }),
       });
     });
-
-    await page.route("**/api/public/laptop-specs", async (route) => {
-      if (route.request().method() !== "POST") {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ ok: false }),
-      });
-    });
-
-    await page.route("**/api/compatibility", async (route) => {
-      if (route.request().method() !== "POST") {
-        await route.continue();
-        return;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          status: "compatible",
-          reasons: ["ssd_upgrade_strongly_recommended"],
-          speedGainEstimate: "3–10×",
-        }),
-      });
-    });
   });
 
   test("completes wizard and lands on thank-you (generic without paid Stripe session)", async ({
@@ -63,41 +35,26 @@ test.describe("order wizard (checkout mocked)", () => {
 
     const wizard = page.getByTestId("order-wizard");
 
-    await wizard.locator("#wiz-make").fill("Lenovo");
-    await wizard.locator("#wiz-model").fill("ThinkPad T450");
-    await expect(wizard.locator("#wiz-make")).toHaveValue("Lenovo");
-    await expect(wizard.locator("#wiz-model")).toHaveValue("ThinkPad T450");
+    await wizard.locator("#wiz-computer").fill("Lenovo ThinkPad T450");
+
     await expect(wizard.getByRole("button", { name: "Seuraava" })).toBeEnabled({
       timeout: 15_000,
     });
     await wizard.getByRole("button", { name: "Seuraava" }).click();
-    await expect(wizard.getByText(/Vaihe 2\s*\/\s*6/)).toBeVisible({
-      timeout: 20_000,
-    });
 
     await expect(
-      wizard.getByRole("heading", { name: "Yhteensopivuus", exact: true }),
+      wizard.getByRole("heading", { name: "Palvelu", exact: true }),
     ).toBeVisible({ timeout: 15_000 });
-    const runEstimate = wizard.getByRole("button", { name: "Laske arvio" });
-    await runEstimate.scrollIntoViewIfNeeded();
-    await runEstimate.click();
-    await expect(
-      wizard.getByText("Sopii hyvin päivitykseen", { exact: false }),
-    ).toBeVisible({ timeout: 20_000 });
-    await wizard.getByRole("button", { name: "Seuraava" }).click();
-
     await wizard.getByRole("button", { name: "SSD-perus" }).click();
-    await wizard.getByRole("button", { name: "Ei kiitos" }).click();
-    await wizard.getByRole("button", { name: "Seuraava" }).click();
-
     await wizard.getByRole("button", { name: "Nouto kotoa" }).click();
     await wizard.getByRole("button", { name: "Seuraava" }).click();
 
-    await wizard
-      .getByRole("button", { name: "Täysi tuki (puhelin + sähköposti)" })
-      .click();
-    await wizard.locator("#wiz-name").fill("E2E Testaaja");
-    await wizard.locator("#wiz-email").fill("e2e-wizard@example.com");
+    await expect(
+      wizard.getByRole("heading", { name: /Kiintolevy \(HDD\)/ }),
+    ).toBeVisible({ timeout: 15_000 });
+    await wizard.getByRole("button", { name: "Seuraava" }).click();
+
+    await wizard.locator("#wiz-contact").fill("e2e-wizard@example.com");
     await wizard.getByRole("button", { name: "Seuraava" }).click();
 
     await expect(

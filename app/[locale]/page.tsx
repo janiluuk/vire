@@ -45,7 +45,7 @@ export default async function HomePage() {
             {t("subtitle")}
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link href="/palvelu" className="vire-btn-primary">
+            <Link href="/palvelu#palvelu-tilaa" className="vire-btn-primary">
               {t("ctaService")}
             </Link>
             <Link href="/itse" className="vire-btn-secondary">
@@ -149,6 +149,14 @@ export default async function HomePage() {
           ))}
         </div>
         <p className="pf-note mt-8 max-w-2xl text-pretty">{t("pricingFootnote")}</p>
+        <p className="pf-note mt-3 max-w-2xl text-pretty">
+          <Link
+            href="/vire-for-good"
+            className="text-vire-green underline-offset-2 hover:underline"
+          >
+            {t("pricingForGoodLink")}
+          </Link>
+        </p>
       </section>
 
       <section aria-labelledby="benefits-title">

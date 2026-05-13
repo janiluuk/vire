@@ -43,10 +43,14 @@ export function NavBar({ locale }: { locale: string }) {
   const itseActive = pathname === "/itse" || pathname.startsWith("/itse/");
   const tukiActive = pathname === "/tuki" || pathname.startsWith("/tuki/");
   const infoHubActive =
+    pathname === "/tietoa" ||
+    pathname.startsWith("/tietoa/") ||
     pathname === "/info" ||
     pathname.startsWith("/info/") ||
     pathname === "/sovellukset" ||
     pathname.startsWith("/sovellukset/");
+  const koneetActive =
+    pathname === "/koneet" || pathname.startsWith("/koneet/");
   const aboutHubActive =
     pathname === "/about" ||
     pathname.startsWith("/about/") ||
@@ -56,11 +60,13 @@ export function NavBar({ locale }: { locale: string }) {
     pathname.startsWith("/yhteiso/");
 
   const infoLinks = [
-    { href: "/info", key: "infoLinux" as const },
-    { href: "/info", key: "infoStability" as const },
-    { href: "/info", key: "infoFaq" as const },
-    { href: "/sovellukset", key: "infoAppsWin" as const },
-    { href: "/sovellukset", key: "infoAppsMac" as const },
+    { href: "/tietoa", key: "infoHubOverview" as const },
+    { href: "/tietoa/hyodyt", key: "infoBenefits" as const },
+    { href: "/tietoa/linux", key: "infoLinux" as const },
+    { href: "/tietoa/vakaus", key: "infoStability" as const },
+    { href: "/tietoa/huolia", key: "infoFaq" as const },
+    { href: "/tietoa/sovellukset/windows", key: "infoAppsWin" as const },
+    { href: "/tietoa/sovellukset/mac", key: "infoAppsMac" as const },
   ];
 
   const aboutLinks = [
@@ -92,35 +98,42 @@ export function NavBar({ locale }: { locale: string }) {
               {t("service")}
             </Link>
 
-            <details className="vire-nav-disclosure group relative">
-              <summary
-                className={`${navLinkClass(infoHubActive)} cursor-pointer`}
+            <div className="flex items-stretch">
+              <Link
+                href="/tietoa"
+                onClick={onNavClick}
+                className={`${navLinkClass(infoHubActive)} rounded-r-none pr-2`}
               >
-                <span className="inline-flex items-center gap-1">
-                  {t("infoHub")}
+                {t("infoHub")}
+              </Link>
+              <details className="vire-nav-disclosure group relative">
+                <summary
+                  className={`${navLinkClass(false)} list-none cursor-pointer rounded-l-none border-l border-edge/60 pl-1 pr-2 [&::-webkit-details-marker]:hidden`}
+                  aria-label={t("infoHubSubmenu")}
+                >
                   <span className="text-[10px] opacity-70" aria-hidden>
                     ▾
                   </span>
-                </span>
-              </summary>
-              <ul
-                className="vire-sub-menu flex flex-col absolute left-0 top-full z-50 mt-1 min-w-[200px] rounded-[10px] border border-em bg-card p-2 shadow-none"
-                role="menu"
-              >
-                {infoLinks.map(({ href, key }) => (
-                  <li key={key} role="none">
-                    <Link
-                      role="menuitem"
-                      href={href}
-                      onClick={onNavClick}
-                      className={subMenuLinkClass()}
-                    >
-                      {t(key)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </details>
+                </summary>
+                <ul
+                  className="vire-sub-menu flex flex-col absolute left-0 top-full z-50 mt-1 min-w-[200px] rounded-[10px] border border-em bg-card p-2 shadow-none"
+                  role="menu"
+                >
+                  {infoLinks.map(({ href, key }) => (
+                    <li key={key} role="none">
+                      <Link
+                        role="menuitem"
+                        href={href}
+                        onClick={onNavClick}
+                        className={subMenuLinkClass()}
+                      >
+                        {t(key)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </div>
 
             <Link
               href="/itse"
@@ -128,6 +141,14 @@ export function NavBar({ locale }: { locale: string }) {
               className={navLinkClass(itseActive)}
             >
               {t("diy")}
+            </Link>
+
+            <Link
+              href="/koneet"
+              onClick={onNavClick}
+              className={navLinkClass(koneetActive)}
+            >
+              {t("koneet")}
             </Link>
 
             <details className="vire-nav-disclosure group relative">
@@ -170,7 +191,7 @@ export function NavBar({ locale }: { locale: string }) {
           </nav>
 
           <Link
-            href="/palvelu"
+            href="/palvelu#palvelu-tilaa"
             onClick={onNavClick}
             className="inline-flex min-h-tap shrink-0 items-center justify-center rounded-lg bg-g px-5 py-2.5 text-sm font-bold tracking-tight text-canvas transition-opacity duration-150 hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
           >

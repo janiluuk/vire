@@ -33,6 +33,7 @@ function orderConfirmedMigrationBlock(
 export async function sendOrderConfirmedEmail(params: {
   to: string;
   orderId: string;
+  /** Empty when the customer did not give a name at checkout. */
   customerName: string;
   locale?: string | null;
   dataMigration?: boolean;
@@ -53,10 +54,18 @@ export async function sendOrderConfirmedEmail(params: {
     (params.dataMigrationSize === "standard" || params.dataMigrationSize === "large")
       ? orderConfirmedMigrationBlock(loc, params.dataMigrationSize)
       : "";
+  const greetEn =
+    params.customerName.trim().length > 0
+      ? `Hello ${escapeHtml(params.customerName)},`
+      : "Hello,";
+  const greetFi =
+    params.customerName.trim().length > 0
+      ? `Hei ${escapeHtml(params.customerName)},`
+      : "Hei,";
   const html =
     loc === "en"
-      ? `<p>Hello ${escapeHtml(params.customerName)},</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> has been confirmed and we have received your payment.</p>${migrationExtra}`
-      : `<p>Hei ${escapeHtml(params.customerName)},</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on vahvistettu ja maksu vastaanotettu.</p>${migrationExtra}`;
+      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> has been confirmed and we have received your payment.</p>${migrationExtra}`
+      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on vahvistettu ja maksu vastaanotettu.</p>${migrationExtra}`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,
@@ -103,6 +112,9 @@ export async function sendOrderDoneEmail(params: {
   customerName: string;
   locale?: string | null;
 }): Promise<{ ok: boolean; error?: string }> {
+  if (!params.to.trim()) {
+    return { ok: false, error: "missing_recipient" };
+  }
   const resend = getResend();
   if (!resend) {
     return { ok: false, error: "resend_not_configured" };
@@ -113,10 +125,18 @@ export async function sendOrderDoneEmail(params: {
     loc === "en"
       ? "Your service is complete — Vire"
       : "Palvelu valmis — Vire";
+  const greetEn =
+    params.customerName.trim().length > 0
+      ? `Hello ${escapeHtml(params.customerName)},`
+      : "Hello,";
+  const greetFi =
+    params.customerName.trim().length > 0
+      ? `Hei ${escapeHtml(params.customerName)},`
+      : "Hei,";
   const html =
     loc === "en"
-      ? `<p>Hello ${escapeHtml(params.customerName)},</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> is marked complete. Thank you for choosing Vire!</p>`
-      : `<p>Hei ${escapeHtml(params.customerName)},</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on merkitty valmiiksi. Kiitos kun käytit Vireä!</p>`;
+      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> is marked complete. Thank you for choosing Vire!</p>`
+      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on merkitty valmiiksi. Kiitos kun käytit Vireä!</p>`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,
@@ -129,12 +149,10 @@ export async function sendOrderDoneEmail(params: {
 
 export async function sendB2bQuoteRequestEmail(params: {
   notifyTo: string;
-  companyName: string;
-  contactName: string;
-  email: string;
-  phone: string | null;
-  estimatedUnits: string | null;
-  message: string | null;
+  details: string;
+  contactRaw: string;
+  contactEmail: string | null;
+  contactPhone: string | null;
   locale: "fi" | "en";
 }): Promise<{ ok: boolean; error?: string }> {
   const resend = getResend();
@@ -147,12 +165,10 @@ export async function sendB2bQuoteRequestEmail(params: {
       ? "New B2B quote request — Vire"
       : "Uusi B2B-tarjouspyyntö — Vire";
   const rows = [
-    ["Company", params.companyName],
-    ["Contact", params.contactName],
-    ["Email", params.email],
-    ["Phone", params.phone ?? "—"],
-    ["Volume / scope", params.estimatedUnits ?? "—"],
-    ["Message", params.message ?? "—"],
+    ["Details", params.details],
+    ["Contact (as entered)", params.contactRaw],
+    ["Parsed email", params.contactEmail ?? "—"],
+    ["Parsed phone", params.contactPhone ?? "—"],
     ["Locale", params.locale],
   ] as const;
   const htmlRows = rows
@@ -173,9 +189,10 @@ export async function sendB2bQuoteRequestEmail(params: {
 
 export async function sendSupportContactEmail(params: {
   notifyTo: string;
-  name: string;
-  email: string;
   message: string;
+  contactRaw: string;
+  contactEmail: string | null;
+  contactPhone: string | null;
   locale: "fi" | "en";
 }): Promise<{ ok: boolean; error?: string }> {
   const resend = getResend();
@@ -187,12 +204,57 @@ export async function sendSupportContactEmail(params: {
     params.locale === "en"
       ? "Support message from vire.fi — /tuki"
       : "Tukipyyntö verkkosivulta — /tuki";
+  const who =
+    params.contactEmail != null
+      ? `${escapeHtml(params.contactRaw)} <${escapeHtml(params.contactEmail)}>`
+      : escapeHtml(params.contactRaw);
   const { error } = await resend.emails.send({
     from,
     to: params.notifyTo,
-    replyTo: params.email,
+    replyTo: params.contactEmail ?? undefined,
     subject,
-    html: `<p>${params.locale === "en" ? "From:" : "Lähettäjä:"} ${escapeHtml(params.name)} &lt;${escapeHtml(params.email)}&gt;</p><p>${escapeHtml(params.message)}</p>`,
+    html: `<p>${params.locale === "en" ? "From:" : "Lähettäjä:"} ${who}</p><p>${escapeHtml(params.message)}</p>`,
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function sendVireForGoodApplicationEmail(params: {
+  notifyTo: string;
+  reason: string;
+  contactRaw: string;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  locale: "fi" | "en";
+}): Promise<{ ok: boolean; error?: string }> {
+  const resend = getResend();
+  if (!resend) {
+    return { ok: false, error: "resend_not_configured" };
+  }
+  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const subject =
+    params.locale === "en"
+      ? "Vire for Good — application"
+      : "Vire for Good — hakemus";
+  const rows = [
+    ["Reason", params.reason],
+    ["Contact (as entered)", params.contactRaw],
+    ["Parsed email", params.contactEmail ?? "—"],
+    ["Parsed phone", params.contactPhone ?? "—"],
+    ["Locale", params.locale],
+  ] as const;
+  const htmlRows = rows
+    .map(
+      ([k, v]) =>
+        `<tr><th style="text-align:left;padding:6px 12px 6px 0;vertical-align:top">${escapeHtml(k)}</th><td style="padding:6px 0">${escapeHtml(v)}</td></tr>`,
+    )
+    .join("");
+  const { error } = await resend.emails.send({
+    from,
+    to: params.notifyTo,
+    replyTo: params.contactEmail ?? undefined,
+    subject,
+    html: `<p>${params.locale === "en" ? "Application from vire.fi" : "Hakemus verkkosivulta"}</p><table style="border-collapse:collapse">${htmlRows}</table>`,
   });
   if (error) return { ok: false, error: error.message };
   return { ok: true };

@@ -122,6 +122,10 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
           <dd>{order.deliveryMethod}</dd>
         </div>
         <div>
+          <dt className="font-semibold text-fog">{a.colHdd}</dt>
+          <dd>{order.hddRemoval ?? "—"}</dd>
+        </div>
+        <div>
           <dt className="font-semibold text-fog">{a.colMigration}</dt>
           <dd>
             {order.dataMigration
@@ -136,7 +140,9 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
         <div>
           <dt className="font-semibold text-fog">{a.colComputer}</dt>
           <dd>
-            {order.computerMake} {order.computerModel}
+            {[order.computerMake, order.computerModel].filter(Boolean).join(" ") ||
+              order.notes ||
+              "—"}
           </dd>
         </div>
         {adminSpecs !== undefined ? (
@@ -155,7 +161,9 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
         <div>
           <dt className="font-semibold text-fog">{a.colCustomer}</dt>
           <dd>
-            {order.customerName} · {order.customerEmail}
+            {[order.customerName, order.customerEmail]
+              .filter((x): x is string => Boolean(x && x.trim()))
+              .join(" · ") || "—"}
             {order.customerPhone ? ` · ${order.customerPhone}` : ""}
           </dd>
         </div>

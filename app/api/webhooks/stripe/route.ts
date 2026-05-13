@@ -28,25 +28,31 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         typeof session.amount_total === "number"
           ? session.amount_total
           : order.priceEur;
+      const emailFromSession = session.customer_details?.email?.trim();
       await prisma.order.update({
         where: { id: orderId },
         data: {
           status: "CONFIRMED",
           priceEur: paidCents,
+          customerEmail:
+            emailFromSession?.toLowerCase() ?? order.customerEmail,
         },
       });
-      await sendOrderConfirmedEmail({
-        to: order.customerEmail,
-        orderId: order.id,
-        customerName: order.customerName,
-        locale: order.locale,
-        dataMigration: order.dataMigration,
-        dataMigrationSize:
-          order.dataMigrationSize === "standard" ||
-          order.dataMigrationSize === "large"
-            ? order.dataMigrationSize
-            : null,
-      });
+      const toEmail = emailFromSession ?? order.customerEmail;
+      if (toEmail) {
+        await sendOrderConfirmedEmail({
+          to: toEmail,
+          orderId: order.id,
+          customerName: order.customerName ?? "",
+          locale: order.locale,
+          dataMigration: order.dataMigration,
+          dataMigrationSize:
+            order.dataMigrationSize === "standard" ||
+            order.dataMigrationSize === "large"
+              ? order.dataMigrationSize
+              : null,
+        });
+      }
     }
   }
 

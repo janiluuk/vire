@@ -3,10 +3,13 @@ import { z } from "zod";
 import { sendSupportContactEmail } from "@/lib/email/email";
 import { getRequestId, logApiEvent } from "@/lib/logging/log";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
+import {
+  hasUsableCustomerContact,
+  parseCustomerContact,
+} from "@/lib/contact/parse-customer-contact";
 
 const bodySchema = z.object({
-  name: z.string().trim().min(1).max(200),
-  email: z.string().trim().email().max(320),
+  contact: z.string().trim().min(3).max(320),
   message: z.string().trim().min(1).max(4000),
   locale: z.enum(["fi", "en"]),
 });
@@ -44,6 +47,14 @@ export async function POST(req: Request) {
     });
   }
 
+  const contact = parseCustomerContact(parsed.data.contact);
+  if (!hasUsableCustomerContact(contact)) {
+    logApiEvent(requestId, "support_contact.validation_error", {});
+    return NextResponse.json({ ok: false, code: "invalid_input" } as const, {
+      status: 400,
+    });
+  }
+
   const notifyTo = process.env.SUPPORT_NOTIFY_EMAIL?.trim();
   if (!notifyTo) {
     logApiEvent(requestId, "support_contact.not_configured", {});
@@ -52,12 +63,13 @@ export async function POST(req: Request) {
     });
   }
 
-  const { name, email, message, locale } = parsed.data;
+  const { message, locale } = parsed.data;
   const result = await sendSupportContactEmail({
     notifyTo,
-    name,
-    email,
     message,
+    contactRaw: parsed.data.contact.trim(),
+    contactEmail: contact.email,
+    contactPhone: contact.phone,
     locale,
   });
 

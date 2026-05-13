@@ -12,7 +12,8 @@ export type PublicServiceOrder = {
   deliveryMethod: DeliveryMethod;
   computerMake: string | null;
   computerModel: string | null;
-  customerName: string;
+  customerName: string | null;
+  customerEmail: string | null;
   customerPhone: string | null;
   address: string | null;
   preferredDate: string | null;
@@ -48,6 +49,7 @@ export function toPublicServiceOrder(order: Order): PublicServiceOrder {
     computerMake: order.computerMake,
     computerModel: order.computerModel,
     customerName: order.customerName,
+    customerEmail: order.customerEmail,
     customerPhone: order.customerPhone,
     address: order.address,
     preferredDate: order.preferredDate ? iso(order.preferredDate) : null,

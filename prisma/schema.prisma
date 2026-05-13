@@ -15,10 +15,11 @@ model Order {
   tier             ServiceTier
   supportTier      SupportTier
   deliveryMethod   DeliveryMethod
+  hddRemoval       HddRemovalOption?
   computerMake     String?
   computerModel    String?
-  customerName     String
-  customerEmail    String
+  customerName     String?
+  customerEmail    String?
   customerPhone    String?
   address          String?
   preferredDate    DateTime?
@@ -59,6 +60,12 @@ enum DeliveryMethod {
   HOME_PICKUP
   DROP_OFF
   SELF
+}
+
+enum HddRemovalOption {
+  VIRE_REMOVES
+  CUSTOMER_REMOVES
+  KEEP_IN_DEVICE
 }
 
 model UsbOrder {
