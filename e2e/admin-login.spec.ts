@@ -1,4 +1,13 @@
 import { expect, test } from "@playwright/test";
+import { disconnectPrismaE2e, skipAdminE2eIfNoDatabase } from "./db-availability";
+
+test.beforeAll(async ({ }, testInfo) => {
+  await skipAdminE2eIfNoDatabase(testInfo);
+});
+
+test.afterAll(async () => {
+  await disconnectPrismaE2e();
+});
 
 test("admin login reaches dashboard", async ({ page }) => {
   const email = process.env.ADMIN_EMAIL ?? "admin@vire.fi";

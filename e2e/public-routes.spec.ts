@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("public routes (SSG / static pages)", () => {
   test("IA rewrite /fi/meista shows about content", async ({ page }) => {
     await page.goto("/fi/meista");
-    await expect(page).toHaveURL(/\/fi\/about/);
+    await expect(page).toHaveURL(/\/fi\/meista/);
     await expect(
       page.getByRole("heading", { level: 1, name: /Tietoa meistä/i }),
     ).toBeVisible();
