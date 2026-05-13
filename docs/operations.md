@@ -62,12 +62,22 @@ pg_restore -h localhost -U postgres -d vire_restore --clean --if-exists ./backup
 
 Verify application connectivity and row counts after restore. Run a **restore drill** at least quarterly; keep dumps **encrypted** off-site with documented retention.
 
-## Content-Security-Policy (staging)
+## Content-Security-Policy
 
-Baseline security headers are set in **`next.config.mjs`**. A strict **CSP** with nonces requires coordinated changes (inline scripts, Stripe, Calendly/Discord embeds, analytics). Recommended approach:
+Baseline security headers are set in **`next.config.mjs`**. Directive text is shared from **`content-security-policy.mjs`** (imported by **`next.config.mjs`**) so **report-only** and **enforcing** modes stay aligned.
 
-1. Set **`ENABLE_CSP_REPORT_ONLY=true`** in the environment (see **`next.config.mjs`**) to emit **`Content-Security-Policy-Report-Only`** with a first-pass policy (Stripe / common embeds allowlisted). Collect violations in the browser or via a reporting endpoint.
-2. Tighten **`script-src`** / **`frame-src`** incrementally; keep Stripe and embed allowlists explicit.
-3. Switch to enforcing **`Content-Security-Policy`** when reports are clean.
+### Report-only (staging)
 
-Do not enable a strict enforcing policy in production until third-party domains and Next.js chunks are verified end-to-end.
+1. Set **`ENABLE_CSP_REPORT_ONLY=true`** to emit **`Content-Security-Policy-Report-Only`** (Stripe, embeds, Plausible, fonts, etc. allowlisted; **`script-src`** still includes **`'unsafe-inline'`** / **`'unsafe-eval'`** for Next.js without per-request nonces). Collect violations in the browser or via a reporting endpoint.
+2. Tighten **`script-src`** / **`frame-src`** incrementally as violations allow.
+
+### Enforcing (baseline)
+
+- Set **`ENABLE_CSP_ENFORCE=true`** to send **`Content-Security-Policy`** with the **same** directive string as report-only. Applies to all matched routes in **`next.config.mjs`** (including **`/admin`** and locale pages).
+- You can run **report-only and enforcing together** during rollout: the browser reports on the relaxed policy while the enforcing header blocks (they should use the same rules to avoid confusion — both read **`getContentSecurityPolicyValue()`**).
+
+### Stricter CSP (nonces / no `unsafe-inline`)
+
+Removing **`'unsafe-inline'`** / **`'unsafe-eval'`** from **`script-src`** needs per-request **nonces** (or hashes) for Next.js hydration, **`next/script`**, and any inline bootstrapping, plus verification for **Stripe Checkout**, **Calendly**, **Discord**, and **YouTube** embeds. That is **optional hardening** after baseline enforcing is stable in production — not required for the initial enforcing rollout above.
+
+Do not drop **`unsafe-inline`** / **`unsafe-eval`** from **`script-src`** until third-party domains and Next.js chunks are verified end-to-end with a nonce or hash strategy.
