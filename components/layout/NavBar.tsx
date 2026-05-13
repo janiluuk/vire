@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
@@ -65,18 +65,58 @@ export function NavBar({ locale }: { locale: string }) {
   const pathname = usePathname();
   const onNavClick = () => dispatchBackgroundNavInteraction();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileSheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!mobileOpen) return;
+
+    const returnFocusTo = document.activeElement as HTMLElement | null;
+    const root = mobileSheetRef.current;
+
     function onEsc(e: KeyboardEvent) {
       if (e.key === "Escape") setMobileOpen(false);
     }
     document.addEventListener("keydown", onEsc);
-    const prev = document.body.style.overflow;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    const focusables = () =>
+      root
+        ? Array.from(
+            root.querySelectorAll<HTMLElement>(
+              'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])',
+            ),
+          )
+        : [];
+
+    function onTabTrap(e: KeyboardEvent) {
+      if (e.key !== "Tab" || !root) return;
+      const list = focusables();
+      if (list.length === 0) return;
+      const first = list[0]!;
+      const last = list[list.length - 1]!;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onTabTrap);
+    const raf = requestAnimationFrame(() => {
+      focusables()[0]?.focus();
+    });
+
     return () => {
       document.removeEventListener("keydown", onEsc);
-      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onTabTrap);
+      document.body.style.overflow = prevOverflow;
+      cancelAnimationFrame(raf);
+      returnFocusTo?.focus?.();
     };
   }, [mobileOpen]);
 
@@ -172,6 +212,7 @@ export function NavBar({ locale }: { locale: string }) {
             type="button"
             className="inline-flex min-h-tap min-w-12 items-center justify-center rounded-lg border border-em bg-sunken/80 px-3 py-2 text-ink md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
             aria-expanded={mobileOpen}
+            aria-haspopup="dialog"
             aria-controls="site-mobile-nav"
             onClick={() => setMobileOpen(true)}
           >
@@ -191,11 +232,19 @@ export function NavBar({ locale }: { locale: string }) {
             {t("ctaOrder")}
           </Link>
 
-          <div className="flex gap-1 rounded-lg border border-em bg-sunken/80 p-1">
+          <div
+            className="flex gap-1 rounded-lg border border-em bg-sunken/80 p-1"
+            role="group"
+            aria-label={t("localeSwitcher")}
+          >
             <Link
               href={pathname}
               locale="fi"
               onClick={onNavClick}
+              aria-label={
+                locale === "fi" ? t("localeActiveFi") : t("localeSwitchToFi")
+              }
+              aria-current={locale === "fi" ? true : undefined}
               className={`min-h-tap rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
                 locale === "fi"
                   ? "bg-g text-canvas"
@@ -209,6 +258,10 @@ export function NavBar({ locale }: { locale: string }) {
               href={pathname}
               locale="en"
               onClick={onNavClick}
+              aria-label={
+                locale === "en" ? t("localeActiveEn") : t("localeSwitchToEn")
+              }
+              aria-current={locale === "en" ? true : undefined}
               className={`min-h-tap rounded-md px-3 py-2 text-sm font-semibold tracking-wide transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g ${
                 locale === "en"
                   ? "bg-g text-canvas"
@@ -231,6 +284,7 @@ export function NavBar({ locale }: { locale: string }) {
             onClick={() => setMobileOpen(false)}
           />
           <div
+            ref={mobileSheetRef}
             id="site-mobile-nav"
             role="dialog"
             aria-modal="true"
@@ -310,7 +364,11 @@ export function NavBar({ locale }: { locale: string }) {
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fog">
                 {tPal("language")}
               </p>
-              <div className="flex gap-1 rounded-lg border border-em bg-sunken/80 p-1">
+              <div
+                className="flex gap-1 rounded-lg border border-em bg-sunken/80 p-1"
+                role="group"
+                aria-label={t("localeSwitcher")}
+              >
                 <Link
                   href={pathname}
                   locale="fi"
@@ -318,6 +376,10 @@ export function NavBar({ locale }: { locale: string }) {
                     setMobileOpen(false);
                     onNavClick();
                   }}
+                  aria-label={
+                    locale === "fi" ? t("localeActiveFi") : t("localeSwitchToFi")
+                  }
+                  aria-current={locale === "fi" ? true : undefined}
                   className={`min-h-tap flex-1 rounded-md py-2 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
                     locale === "fi" ? "bg-g text-canvas" : "text-fog hover:text-ink"
                   }`}
@@ -332,6 +394,10 @@ export function NavBar({ locale }: { locale: string }) {
                     setMobileOpen(false);
                     onNavClick();
                   }}
+                  aria-label={
+                    locale === "en" ? t("localeActiveEn") : t("localeSwitchToEn")
+                  }
+                  aria-current={locale === "en" ? true : undefined}
                   className={`min-h-tap flex-1 rounded-md py-2 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
                     locale === "en" ? "bg-g text-canvas" : "text-fog hover:text-ink"
                   }`}

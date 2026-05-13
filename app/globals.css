@@ -20,7 +20,8 @@
   --border2: rgba(255, 213, 74, 0.28);
   --text: #f3f4f6;
   --muted: #c9ced6;
-  --dim: #8a93a2;
+  /* Slightly lifted vs legacy #8a93a2 for WCAG contrast on charcoal (Phase 9) */
+  --dim: #9aa4b3;
   --danger: #ff6b6b;
   --status-pending: #ffb800;
   --status-progress: #6495ed;
@@ -183,6 +184,12 @@
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 25%, transparent);
   }
 
+  summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+
   h1,
   h2,
   h3 {
@@ -202,6 +209,12 @@ body {
   font-size: var(--text-body);
   line-height: var(--leading-relaxed);
   font-weight: 300;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition-duration: 0.01ms;
+  }
 }
 
 @layer components {
@@ -672,5 +685,12 @@ body {
   .sparkki-cv-section {
     content-visibility: auto;
     contain-intrinsic-size: auto 220px;
+  }
+
+  /* Phase 9 — override Tailwind scroll-smooth when user prefers reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto !important;
+    }
   }
 }

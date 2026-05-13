@@ -2,6 +2,12 @@
   "nav": {
     "brand": "Sparkki",
     "skipToContent": "Siirry sisältöön",
+    "mainLandmark": "Pääsisältö",
+    "localeSwitcher": "Sivuston kieli",
+    "localeActiveFi": "Suomi — käytössä",
+    "localeSwitchToFi": "Vaihda sivusto suomeksi",
+    "localeActiveEn": "Englanti — käytössä",
+    "localeSwitchToEn": "Vaihda sivusto englanniksi",
     "mainNav": "Päävalikko",
     "service": "Palvelu",
     "diy": "Tee itse",

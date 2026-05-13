@@ -58,6 +58,7 @@ export default async function LocaleLayout({
         <main
           id="content"
           lang={locale}
+          aria-label={t("mainLandmark")}
           className="flex min-h-0 flex-1 flex-col"
         >
           <LocaleMainMotion>{children}</LocaleMainMotion>

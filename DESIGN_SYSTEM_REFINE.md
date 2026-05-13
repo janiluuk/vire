@@ -336,12 +336,12 @@ Reduce cognitive overload.
 
 ## Tasks
 
-- [ ] Add visible focus states
-- [ ] Improve contrast ratios
-- [ ] Add keyboard traversal
-- [ ] Add reduced motion mode
-- [ ] Improve semantic HTML
-- [ ] Add ARIA labels
+- [x] Add visible focus states (global `:focus-visible`; **`summary:focus-visible`** ring for FAQ accordions)
+- [x] Improve contrast ratios (lighter **`--dim`** / `dust` / placeholders on charcoal)
+- [x] Add keyboard traversal (mobile menu **Tab trap** + initial focus + **focus return** on close; wizard / palette already trapped)
+- [x] Add reduced motion mode (`scroll-behavior: auto` on `html`; strip **body theme** transition; existing component-level `prefers-reduced-motion` rules kept)
+- [x] Improve semantic HTML (`<main aria-label>` landmark; locale **`role="group"`**; menu button **`aria-haspopup="dialog"`**)
+- [x] Add ARIA labels (FI/EN **`aria-label`** + **`aria-current`**; admin locale group label)
 
 ---
 

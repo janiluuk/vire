@@ -2,6 +2,12 @@
   "nav": {
     "brand": "Sparkki",
     "skipToContent": "Skip to content",
+    "mainLandmark": "Main content",
+    "localeSwitcher": "Site language",
+    "localeActiveFi": "Finnish — current",
+    "localeSwitchToFi": "Switch site to Finnish",
+    "localeActiveEn": "English — current",
+    "localeSwitchToEn": "Switch site to English",
     "mainNav": "Main navigation",
     "service": "Service",
     "diy": "DIY",
