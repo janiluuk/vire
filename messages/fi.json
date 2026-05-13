@@ -1,6 +1,6 @@
 {
   "nav": {
-    "brand": "Vire",
+    "brand": "Sparkki",
     "skipToContent": "Siirry sisältöön",
     "mainNav": "Päävalikko",
     "service": "Palvelu",
@@ -24,7 +24,7 @@
     "serviceSubNav": "Palvelu — välilehdet",
     "serviceTabOverview": "Yleiskatsaus",
     "serviceTabB2b": "Yritykset",
-    "serviceTabCare": "Vire Care",
+    "serviceTabCare": "Sparkki Care",
     "serviceTabTrack": "Seuranta"
   },
   "deliveryStrip": {
@@ -52,7 +52,7 @@
   },
   "info": {
     "title": "Tietoa",
-    "intro": "Lyhyt katsaus Vireen ja mahdollisuus kokeilla Linuxia selaimessa ennen päätöstä.",
+    "intro": "Lyhyt katsaus Sparkkiin ja mahdollisuus kokeilla Linuxia selaimessa ennen päätöstä.",
     "tryLinuxTitle": "Kokeile Linuxia selaimessa",
     "tryLinuxIntro": "Valitse Linux Mint tai Fedora. Avautuu uuteen välilehteen noVNC-yhteydellä laboratorio­palvelimelle. Tämä on demoympäristö: älä syötä arkaluonteisia tietoja.",
     "mintTitle": "Linux Mint",
@@ -157,10 +157,10 @@
     },
     "hyodyt": {
       "metaTitle": "Hyödyt — Tietoa",
-      "metaDescription": "Vanha rauta toimii kevyesti, ilmainen käyttöjärjestelmä ja avoin pinorakenne, turvallisuus ja yksityisyys — sekä Viren suomalainen palvelu.",
+      "metaDescription": "Vanha rauta toimii kevyesti, ilmainen käyttöjärjestelmä ja avoin pinorakenne, turvallisuus ja yksityisyys — sekä Sparkkin suomalainen palvelu.",
       "eyebrow": "Tietoa",
       "title": "Miksi tämä polku kannattaa",
-      "intro": "Lyhyt katsaus siihen, mitä saat, kun Viren kautta uudistat vanhemman tietokoneen Linuxilla — pelkkää nopeutta enemmän.",
+      "intro": "Lyhyt katsaus siihen, mitä saat, kun Sparkkin kautta uudistat vanhemman tietokoneen Linuxilla — pelkkää nopeutta enemmän.",
       "highlightsTitle": "Perusteluja lyhyesti",
       "highlightsIntro": "Kolme teemaa, joita kuulemme usein — vanha kone, hankintamalli ja oma hallintasi.",
       "hwHighlightTitle": "Vanha rauta voi kulkea kevyesti ja nopeasti",
@@ -169,7 +169,7 @@
       "hwHighlightP2": "Vähemmän taustapalveluita ja mainospainetta — kapasiteetti jää sinun tehtävillesi eikä kulu turhaan taustalla.",
       "hwHighlightP3": "Moni 5–10 vuoden ikäinen kannettava tai pöytäkone riittää edelleen selaamiseen, toimistoon, kouluun ja videopuheluihin.",
       "freeHighlightTitle": "Käyttöjärjestelmä ja avoin ohjelma — ei vuosilisenssiä",
-      "freeHighlightLead": "Työpöytä-Linux ja suuri osa ohjelmista ovat ilmaisia käyttää: maksat Virelle palvelusta ja mahdollisista osista — et toistuvaa käyttöjärjestelmälisenssiä.",
+      "freeHighlightLead": "Työpöytä-Linux ja suuri osa ohjelmista ovat ilmaisia käyttää: maksat Sparkkille palvelusta ja mahdollisista osista — et toistuvaa käyttöjärjestelmälisenssiä.",
       "freeHighlightP1": "Ei pakollista Microsoft- tai Apple-tiliä käyttöjärjestelmän käyttöön tässä pinossa.",
       "freeHighlightP2": "Läpinäkyvä lähdekoodi ja yhteisöjen sekä yritysten ylläpitämä ekosysteemi — päivitykset ovat seurattavissa.",
       "freeHighlightP3": "Voit asentaa pitkälti saman pinon uudestaan tuleviin koneisiin ilman uutta \"OS-maksua\".",
@@ -257,7 +257,7 @@
         },
         "q6": {
           "question": "Mitä jos jokin menee pieleen?",
-          "answer": "Sisältyvä sähköpostituki ja yhteisö auttavat. Vire Care tarjoaa jatkuvan tuen halutessasi myöhemmin."
+          "answer": "Sisältyvä sähköpostituki ja yhteisö auttavat. Sparkki Care tarjoaa jatkuvan tuen halutessasi myöhemmin."
         }
       }
     },
@@ -276,9 +276,9 @@
     }
   },
   "care": {
-    "metaTitle": "Vire Care — jatkuva tuki",
+    "metaTitle": "Sparkki Care — jatkuva tuki",
     "metaDescription": "Tilaus ja etusimat 90 päivän jälkeen: etäapu, prioriteetti ja terveystarkastukset.",
-    "title": "Vire Care",
+    "title": "Sparkki Care",
     "intro": "Kun mukana tuleva 90 päivän sähköpostituki päättyy, Care jatkaa tukea ja pitää järjestelmän mukavana pitkään.",
     "eyebrow": "Tilaus",
     "tierBasic": "Perus",
@@ -323,7 +323,7 @@
   },
   "koneet": {
     "metaTitle": "Yhteensopivuus — tarkistetut mallit",
-    "metaDescription": "Hae kannettavia ja pöytäkoneita, joita olemme arvioineet Vire-palvelulle.",
+    "metaDescription": "Hae kannettavia ja pöytäkoneita, joita olemme arvioineet Sparkki-palvelulle.",
     "title": "Yhteensopivuus",
     "intro": "Lista malleista, joita olemme tarkistaneet tai jonossa. Tilanne päivittyy sitä mukaa kun tarkistamme lisää.",
     "searchLabel": "Haku",
@@ -343,9 +343,9 @@
     "compatShort": "Yhteensopivuus"
   },
   "forGood": {
-    "metaTitle": "Vire for Good — alennettu hinta",
+    "metaTitle": "Sparkki for Good — alennettu hinta",
     "metaDescription": "Hae alennettua hintaa, jos kuulut tukiryhmään. Ei maksa mitään ennen kuin vahvistamme.",
-    "title": "Vire for Good",
+    "title": "Sparkki for Good",
     "intro": "Tarjoamme alennetun hinnan valituille ryhmille. Kerro lyhyesti tilanteesi — emme vaadi virallista todistusta etukäteen.",
     "bannerLead": "Alennettu SSD-palvelu hyväksytyille hakijoille.",
     "priceWasBasic": "149 €",
@@ -376,7 +376,7 @@
   },
   "about": {
     "title": "Tietoa meistä",
-    "intro": "Vire on pieni suomalainen yritys. Uusiokäytämme kannettavia ja pöytäkoneita: SSD, muistin lisäys ja Linux-asennukset — kotiin ja yrityksille.",
+    "intro": "Sparkki on pieni suomalainen yritys. Uusiokäytämme kannettavia ja pöytäkoneita: SSD, muistin lisäys ja Linux-asennukset — kotiin ja yrityksille.",
     "companyTitle": "Yritys",
     "companyName": "Nouhaus",
     "businessIdLabel": "Y-tunnus",
@@ -464,7 +464,7 @@
     "backToHub": "Etsi toinen tilaus"
   },
   "footer": {
-    "brand": "Vire",
+    "brand": "Sparkki",
     "tagline": "Vanhoista tietokoneista nopeita ja kestäviä — SSD, RAM ja Linux.",
     "colService": "Palvelu",
     "colLearn": "Tietoa",
@@ -473,9 +473,9 @@
     "pricing": "Hinnat",
     "b2b": "Yritysmyynti",
     "orderCta": "Tilaa",
-    "care": "Vire Care",
+    "care": "Sparkki Care",
     "compatDb": "Koneet",
-    "forGood": "Vire for Good",
+    "forGood": "Sparkki for Good",
     "linuxMint": "Linux Mintistä",
     "apps": "Sovellukset",
     "diy": "Tee itse",
@@ -497,7 +497,7 @@
     "support": "Tukeen"
   },
   "globalError": {
-    "title": "Vire — virhe",
+    "title": "Sparkki — virhe",
     "description": "Sovelluksessa tapahtui odottamaton virhe. Päivitä sivu tai yritä myöhemmin uudelleen.",
     "retry": "Yritä uudelleen",
     "homeFi": "Siirry suomenkieliselle etusivulle",
@@ -510,10 +510,10 @@
   },
   "privacy": {
     "title": "Tietosuoja",
-    "metaDescription": "Miten Vire käsittelee henkilötietoja verkkosivustolla ja tilauksissa.",
+    "metaDescription": "Miten Sparkki käsittelee henkilötietoja verkkosivustolla ja tilauksissa.",
     "intro": "Tämä on lyhyt yhteenveto asiakkaille. Täydennä yrityskohtaiset tiedot ja linkitä tarvittaessa erilliseen rekisteriselosteeseen.",
     "section1Title": "Rekisterinpitäjä",
-    "section1Body": "Vire Oy. Yhteystiedot: ks. sivu Meistä.",
+    "section1Body": "Sparkki Oy. Yhteystiedot: ks. sivu Meistä.",
     "section2Title": "Mitä tietoja keräämme",
     "section2Body": "Tilauslomakkeet: nimi, sähköposti, puhelin ja osoite toimitusta varten. Maksut käsittelee Stripe; emme tallenna korttitietoja palvelimillamme.",
     "section3Title": "Analytiikka",
@@ -549,7 +549,7 @@
     "tierNoteRam": "HDD-poisto +€20 tai itse",
     "tierNoteFull": "HDD-poisto sisältyy",
     "pricingFootnote": "Vanha kiintolevy (HDD) hidastaa käynnistystä — SSD ja kevyt Linux tuovat ison hyödyn. Tarkat paketit ja valinnainen tiedonsiirto: sivu Palvelu.",
-    "pricingForGoodLink": "Tukiryhmälle? Hae alennettu hinta (Vire for Good).",
+    "pricingForGoodLink": "Tukiryhmälle? Hae alennettu hinta (Sparkki for Good).",
     "benefitCo2": "Vähemmän elektroniikkajätettä",
     "benefitCost": "Säästät uutta konetta ostamalla",
     "benefitApps": "Ilmaiset, turvalliset sovellukset",
@@ -648,10 +648,10 @@
       "deliverySelfFee": "Helsinki · +0 €",
       "stepHddTitle": "Kiintolevy (HDD)",
       "hddCalloutTitle": "Tärkeä valinta",
-      "hddCalloutBody": "Suosittelemme että vanha HDD poistetaan, jotta SSD saa tilaa ja lämpökuorma pysyy kurissa. Voit tehdä itse tai valita Viren tekemän poiston (ei veloita täysi palvelu -paketissa).",
+      "hddCalloutBody": "Suosittelemme että vanha HDD poistetaan, jotta SSD saa tilaa ja lämpökuorma pysyy kurissa. Voit tehdä itse tai valita Sparkkin tekemän poiston (ei veloita täysi palvelu -paketissa).",
       "hddGuideLink": "Katso ohje Tee itse -osiosta",
-      "hddVirePaid": "Vire poistaa HDD:n puolestani (+20 €)",
-      "hddVireIncluded": "Vire poistaa HDD:n puolestani (sisältyy pakettiin)",
+      "hddVirePaid": "Sparkki poistaa HDD:n puolestani (+20 €)",
+      "hddVireIncluded": "Sparkki poistaa HDD:n puolestani (sisältyy pakettiin)",
       "hddSelf": "Poistan HDD:n itse (+0 €)",
       "hddVireDesc": "Suositeltu — ammattilainen irrottaa levyn asennuksen yhteydessä.",
       "hddSelfDesc": "Säästä euroja — noudata irrotusohjetta huolellisesti.",
@@ -676,7 +676,7 @@
       "vmHandoffShippedSummary": "Sovittu toimitus-/palautusmedia",
       "vmLegalToggle": "Laajuus, lisenssit ja tietojen käsittely — lue ennen tilausta",
       "vmLegalP1": "Palvelun tarkoitus on tuottaa yksi tai useampi käyttökelpoinen levykuva tai virtuaalikoneen levytiedosto (esim. OVA, QCOW2 tai muu erikseen sovittu formaatti) tyypillisesti Windows-järjestelmästä, ennen kuin asennamme Linuxin. Järjestelmän täydellinen pino (piilotetut OEM-osiot, BitLocker, eri firmware-tilat) ei välttämättä tallennu sellaisenaan.",
-      "vmLegalP2": "Kaupallisen käyttöjärjestelmän (esim. Windows) käyttö virtuaalikoneessa tai siirrettynä toiseen koneeseen kuuluu ohjelmiston lisenssiehtoihin ja Microsoftin tai muiden toimittajien sääntöihin. Vire ei myönnä käyttöoikeuksia; vastuullinen on asiakas.",
+      "vmLegalP2": "Kaupallisen käyttöjärjestelmän (esim. Windows) käyttö virtuaalikoneessa tai siirrettynä toiseen koneeseen kuuluu ohjelmiston lisenssiehtoihin ja Microsoftin tai muiden toimittajien sääntöihin. Sparkki ei myönnä käyttöoikeuksia; vastuullinen on asiakas.",
       "vmLegalP3": "Kuva voi sisältää henkilötietoja ja arkaluonteista materiaalia. Säilytämme työvälineitä vain toteutuksen vaatiman ajan; asiakas vastaa luovutetun median talteenpidosta ja hävityksestä omassa hallussaan.",
       "vmLegalP4": "Jos kone ei käynnisty tavanomaisesti tai levy on salattu, kuvan laatu tai toteutettavuus voi olla rajoitettu — kerromme tästä ennen työn aloitusta.",
       "vmLegalPrivacyBefore": "Henkilötietojen käsittely:",
@@ -856,7 +856,7 @@
     "usbOrdersIntro": "Maksetut ja odottavat Linux-USB-tilaukset.",
     "usbOrdersEmpty": "Ei USB-tilauksia.",
     "careSubscriptions": "Care-tilaukset",
-    "careSubscriptionsIntro": "Stripe-kuukausitilaukset (Vire Care Basic).",
+    "careSubscriptionsIntro": "Stripe-kuukausitilaukset (Sparkki Care Basic).",
     "careSubscriptionsEmpty": "Ei Care-tilauksia.",
     "careColEmail": "Sähköposti",
     "careColName": "Nimi",

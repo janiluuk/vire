@@ -4,6 +4,29 @@
 
 ---
 
+## Phase 1 — implementation log (in progress)
+
+Shipped in codebase (incremental):
+
+- [x] **Public brand strings** — UI copy, emails, and `package.json` name → **Sparkki** (email addresses such as `@vire.fi` unchanged until DNS/mailbox moves).
+- [x] **Color palette** — `app/globals.css` tokens aligned with suggested charcoal + `#FFD54A` / `#FFB800` accent; status success → `#78E08F`.
+- [x] **Typography** — body UI font → **Inter** (display stays **Syne**); mono unchanged (DM Mono) for Phase 2 refinement.
+- [x] **3D / canvas accents** — wireframe colours match new accent.
+- [x] **Daytime theme** — night/day lerp bases updated to new neutrals.
+- [x] **App icon** — `app/icon.svg` (spark mark on charcoal).
+- [x] **Web manifest** — `app/manifest.ts` (`name` / `short_name` Sparkki).
+- [x] **Health API** — `service: "sparkki"`.
+- [x] **Nav event** — `sparkki-bg-navigate` (was `vire-bg-navigate`).
+
+Follow-ups (later phases or ops):
+
+- [ ] Sweep **ROADMAP.md**, **FEATURES.md**, **DESIGN_SYSTEM.md** for legacy “Vire” product naming.
+- [ ] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects.
+- [ ] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients.
+- [ ] **Phase 2+** — spacing/motion tokens, `vire-*` CSS class aliases → `sparkki-*`, Framer Motion, etc.
+
+---
+
 # Brand Rename
 
 ## Old Name

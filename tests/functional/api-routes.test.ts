@@ -9,7 +9,7 @@ describe("API route handlers", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(body.service).toBe("vire");
+    expect(body.service).toBe("sparkki");
   });
 
   it("POST /api/checkout returns 503 without Stripe when body is valid", async () => {

@@ -3,18 +3,19 @@
  * Evening hours darken toward the baseline night palette.
  */
 
+/** Sparkki matte charcoal — aligned with `app/globals.css` :root */
 const NIGHT = {
-  bg: [8, 12, 10] as const,
-  bg2: [14, 20, 16] as const,
-  bg3: [20, 28, 24] as const,
-  bg4: [26, 36, 32] as const,
+  bg: [16, 18, 20] as const,
+  bg2: [23, 26, 31] as const,
+  bg3: [32, 36, 43] as const,
+  bg4: [42, 48, 57] as const,
 };
 
 const DAY = {
-  bg: [18, 28, 22] as const,
-  bg2: [26, 36, 30] as const,
-  bg3: [32, 44, 38] as const,
-  bg4: [40, 52, 46] as const,
+  bg: [28, 32, 38] as const,
+  bg2: [36, 40, 48] as const,
+  bg3: [44, 50, 58] as const,
+  bg4: [52, 58, 68] as const,
 };
 
 function clamp01(x: number): number {
@@ -59,10 +60,10 @@ export function localHourFraction(now: Date = new Date()): number {
 export function getDaytimeBrightness(now: Date = new Date()): number {
   const h = localHourFraction(now);
   if (h >= 22 || h < 5) return 0.08;
-  if (h < 7.5) return 0.08 + (0.92 * (h - 5) / 2.5);
+  if (h < 7.5) return 0.08 + (0.92 * (h - 5)) / 2.5;
   if (h < 17) return 1;
-  if (h < 20.5) return 1 - (0.9 * (h - 17) / 3.5);
-  if (h < 22) return 0.1 - (0.02 * (h - 20.5) / 1.5);
+  if (h < 20.5) return 1 - (0.9 * (h - 17)) / 3.5;
+  if (h < 22) return 0.1 - (0.02 * (h - 20.5)) / 1.5;
   return 0.08;
 }
 

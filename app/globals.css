@@ -3,33 +3,33 @@
 @tailwind utilities;
 
 :root {
-  /* Brand greens */
-  --g: #1df5a0;
-  --g2: #0bbf78;
-  --g3: #085041;
+  /* Sparkki accent (electric warm yellow) — DESIGN_SYSTEM_REFINE.md */
+  --g: #ffd54a;
+  --g2: #ffb800;
+  --g3: #5c4a12;
 
-  --amber: #f5a623;
+  --amber: #ffb800;
 
-  /* Backgrounds */
-  --bg: #080c0a;
-  --bg2: #0e1410;
-  --bg3: #141c18;
-  --bg4: #1a2420;
+  /* Base surfaces */
+  --bg: #101214;
+  --bg2: #171a1f;
+  --bg3: #20242b;
+  --bg4: #2a3039;
 
-  /* Borders */
-  --border: rgba(29, 245, 160, 0.12);
-  --border2: rgba(29, 245, 160, 0.25);
+  /* Borders (accent-tinted) */
+  --border: rgba(255, 213, 74, 0.14);
+  --border2: rgba(255, 213, 74, 0.28);
 
   /* Text */
-  --text: #e8f2ee;
-  --muted: #7a9a8e;
-  --dim: #3d5248;
+  --text: #f3f4f6;
+  --muted: #c9ced6;
+  --dim: #8a93a2;
 
   --danger: #ff6b6b;
 
-  --status-pending: #f5a623;
+  --status-pending: #ffb800;
   --status-progress: #6495ed;
-  --status-done: #1df5a0;
+  --status-done: #78e08f;
   --status-cancel: #ff6b6b;
 
   /* Bridge for tooling / legacy */
@@ -108,7 +108,7 @@ body {
   }
 
   .vire-btn-secondary:hover {
-    background: rgba(29, 245, 160, 0.05);
+    background: rgba(255, 213, 74, 0.06);
   }
 
   .discord-block {
@@ -242,7 +242,7 @@ body {
     line-height: 1;
     letter-spacing: -2px;
     /* Large text (≥24px): meet ≥3:1 vs canvas for decorative numerals */
-    color: rgba(29, 245, 160, 0.58);
+    color: rgba(255, 213, 74, 0.55);
     margin-bottom: 12px;
   }
 

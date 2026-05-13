@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { usePathname } from "@/i18n/navigation";
-import { VIRE_BG_NAV_EVENT } from "@/lib/site/background-nav";
+import { SPARKKI_BG_NAV_EVENT } from "@/lib/site/background-nav";
 
 type FloatMesh = THREE.Mesh & {
   _vel: THREE.Vector3;
@@ -49,7 +49,7 @@ export function BackgroundCanvas() {
       );
     };
 
-    window.addEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+    window.addEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
     window.addEventListener("hashchange", bumpNavEnergy);
 
     const renderer = new THREE.WebGLRenderer({
@@ -83,7 +83,7 @@ export function BackgroundCanvas() {
     if (reducedMotion) {
       const geo = new THREE.IcosahedronGeometry(0.3, 0);
       const mat = new THREE.MeshBasicMaterial({
-        color: 0x1df5a0,
+        color: 0xffd54a,
         wireframe: true,
         transparent: true,
         opacity: 0.12,
@@ -100,7 +100,7 @@ export function BackgroundCanvas() {
 
       return () => {
         window.removeEventListener("resize", onResize);
-        window.removeEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+        window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
         window.removeEventListener("hashchange", bumpNavEnergy);
         meshes.forEach(disposeMesh);
         renderer.dispose();
@@ -113,7 +113,7 @@ export function BackgroundCanvas() {
     for (let i = 0; i < count; i++) {
       const amber = Math.random() < 0.15;
       const mat = new THREE.MeshBasicMaterial({
-        color: amber ? 0xf5a623 : 0x1df5a0,
+        color: amber ? 0xffb800 : 0xffd54a,
         wireframe: true,
         transparent: true,
         opacity: amber
@@ -186,7 +186,7 @@ export function BackgroundCanvas() {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener(VIRE_BG_NAV_EVENT, bumpNavEnergy);
+      window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
       window.removeEventListener("hashchange", bumpNavEnergy);
       meshes.forEach(disposeMesh);
       geometry.dispose();

@@ -1,6 +1,6 @@
 {
   "nav": {
-    "brand": "Vire",
+    "brand": "Sparkki",
     "skipToContent": "Skip to content",
     "mainNav": "Main navigation",
     "service": "Service",
@@ -24,7 +24,7 @@
     "serviceSubNav": "Service — tabs",
     "serviceTabOverview": "Overview",
     "serviceTabB2b": "Business",
-    "serviceTabCare": "Vire Care",
+    "serviceTabCare": "Sparkki Care",
     "serviceTabTrack": "Track order"
   },
   "deliveryStrip": {
@@ -52,7 +52,7 @@
   },
   "info": {
     "title": "About",
-    "intro": "A short overview of Vire and an optional in-browser Linux trial before you decide.",
+    "intro": "A short overview of Sparkki and an optional in-browser Linux trial before you decide.",
     "tryLinuxTitle": "Try Linux in your browser",
     "tryLinuxIntro": "Choose Linux Mint or Fedora. Opens in a new tab via noVNC to the lab server. This is a demo: do not enter sensitive data.",
     "mintTitle": "Linux Mint",
@@ -157,10 +157,10 @@
     },
     "hyodyt": {
       "metaTitle": "Benefits — Learn",
-      "metaDescription": "Older hardware that still feels fast, a license-free OS stack, security and privacy — plus Vire’s Finnish service.",
+      "metaDescription": "Older hardware that still feels fast, a license-free OS stack, security and privacy — plus Sparkki’s Finnish service.",
       "eyebrow": "Learn",
       "title": "Why this path works for you",
-      "intro": "A quick overview of what you gain when you refresh an older computer with Linux through Vire — beyond raw speed.",
+      "intro": "A quick overview of what you gain when you refresh an older computer with Linux through Sparkki — beyond raw speed.",
       "highlightsTitle": "Reasons in short",
       "highlightsIntro": "Three themes we hear about a lot — ageing hardware, how pricing works, and who really controls the machine.",
       "hwHighlightTitle": "Older hardware can still feel quick and light",
@@ -169,7 +169,7 @@
       "hwHighlightP2": "Fewer background services and ads fighting for CPU — capacity stays for your tasks.",
       "hwHighlightP3": "Many laptops and desktops from the last 5–10 years are still perfectly viable for browsing, office work, school, and video calls.",
       "freeHighlightTitle": "The OS and open apps — no yearly license fee",
-      "freeHighlightLead": "Desktop Linux and much of the software around it are free to use: you pay Vire for service (and any parts in your order), not an operating-system subscription.",
+      "freeHighlightLead": "Desktop Linux and much of the software around it are free to use: you pay Sparkki for service (and any parts in your order), not an operating-system subscription.",
       "freeHighlightP1": "No mandatory Microsoft or Apple account just to keep the OS usable in this stack.",
       "freeHighlightP2": "Transparent source-led ecosystem with community and vendor maintenance — security fixes are visible and documented.",
       "freeHighlightP3": "You can largely rebuild the same stack on the next machine without a fresh “OS tax”.",
@@ -257,7 +257,7 @@
         },
         "q6": {
           "question": "What if something goes wrong?",
-          "answer": "Included email support and the community help. Vire Care adds ongoing support when you want it later."
+          "answer": "Included email support and the community help. Sparkki Care adds ongoing support when you want it later."
         }
       }
     },
@@ -276,9 +276,9 @@
     }
   },
   "care": {
-    "metaTitle": "Vire Care — ongoing support",
+    "metaTitle": "Sparkki Care — ongoing support",
     "metaDescription": "After the included 90-day email support: remote help, priority channel, and check-ins.",
-    "title": "Vire Care",
+    "title": "Sparkki Care",
     "intro": "When the included 90 days end, Care keeps you comfortable with Linux for the long term.",
     "eyebrow": "Subscription",
     "tierBasic": "Basic",
@@ -305,7 +305,7 @@
     "subscribeNamePlaceholder": "e.g. Jane Doe",
     "subscribeOrderOptional": "Service order ID (optional)",
     "subscribeOrderPlaceholder": "e.g. clxxxxxxxx",
-    "subscribeOrderHint": "Helps us link support to a previous Vire service order.",
+    "subscribeOrderHint": "Helps us link support to a previous Sparkki service order.",
     "subscribeSubmit": "Continue to payment",
     "subscribeSubmitting": "Redirecting…",
     "subscribeErrorValidation": "Please check your email address.",
@@ -323,7 +323,7 @@
   },
   "koneet": {
     "metaTitle": "Compatibility — checked models",
-    "metaDescription": "Search laptop and desktop models we have assessed for Vire service.",
+    "metaDescription": "Search laptop and desktop models we have assessed for Sparkki service.",
     "title": "Compatibility",
     "intro": "Models we have checked or queued. The list grows as we review more hardware.",
     "searchLabel": "Search",
@@ -343,9 +343,9 @@
     "compatShort": "Compatibility"
   },
   "forGood": {
-    "metaTitle": "Vire for Good — reduced pricing",
+    "metaTitle": "Sparkki for Good — reduced pricing",
     "metaDescription": "Apply for a discount if you belong to a supported group. Nothing is charged until we confirm.",
-    "title": "Vire for Good",
+    "title": "Sparkki for Good",
     "intro": "We offer reduced pricing for selected groups. Briefly describe your situation — no formal proof required up front.",
     "bannerLead": "Reduced SSD service pricing for approved applicants.",
     "priceWasBasic": "€149",
@@ -376,7 +376,7 @@
   },
   "about": {
     "title": "About us",
-    "intro": "Vire is a small Finnish company. We refurbish laptops and desktops with SSD upgrades, extra RAM, and Linux — for homes and businesses.",
+    "intro": "Sparkki is a small Finnish company. We refurbish laptops and desktops with SSD upgrades, extra RAM, and Linux — for homes and businesses.",
     "companyTitle": "Company",
     "companyName": "Nouhaus",
     "businessIdLabel": "Business ID (Y-tunnus)",
@@ -465,7 +465,7 @@
     "backToHub": "Look up another order"
   },
   "footer": {
-    "brand": "Vire",
+    "brand": "Sparkki",
     "tagline": "Turn older computers into fast, durable machines — SSD, RAM, and Linux.",
     "colService": "Service",
     "colLearn": "Learn",
@@ -474,9 +474,9 @@
     "pricing": "Pricing",
     "b2b": "Business sales",
     "orderCta": "Order",
-    "care": "Vire Care",
+    "care": "Sparkki Care",
     "compatDb": "Compatibility",
-    "forGood": "Vire for Good",
+    "forGood": "Sparkki for Good",
     "linuxMint": "Linux Mint",
     "apps": "Apps",
     "diy": "DIY",
@@ -498,7 +498,7 @@
     "support": "Support"
   },
   "globalError": {
-    "title": "Vire — error",
+    "title": "Sparkki — error",
     "description": "An unexpected error occurred. Refresh the page or try again later.",
     "retry": "Try again",
     "homeFi": "Finnish home",
@@ -511,10 +511,10 @@
   },
   "privacy": {
     "title": "Privacy",
-    "metaDescription": "How Vire handles personal data on the website and in orders.",
+    "metaDescription": "How Sparkki handles personal data on the website and in orders.",
     "intro": "This is a short customer-facing summary. Replace with your legal register description where required.",
     "section1Title": "Controller",
-    "section1Body": "Vire Oy. Contact details: see About us.",
+    "section1Body": "Sparkki Oy. Contact details: see About us.",
     "section2Title": "Data we collect",
     "section2Body": "Order forms: name, email, phone, and address for fulfilment. Payments are processed by Stripe; we do not store card numbers on our servers.",
     "section3Title": "Analytics",
@@ -550,7 +550,7 @@
     "tierNoteRam": "HDD removal +€20 or DIY",
     "tierNoteFull": "HDD removal included",
     "pricingFootnote": "A spinning hard drive (HDD) slows boot — an SSD and a light Linux install are where most users feel the win. Exact packages and optional data transfer: Service page.",
-    "pricingForGoodLink": "In a support group? Apply for a discounted price (Vire for Good).",
+    "pricingForGoodLink": "In a support group? Apply for a discounted price (Sparkki for Good).",
     "benefitCo2": "Less e-waste",
     "benefitCost": "Save vs buying new",
     "benefitApps": "Free, safer apps",
@@ -649,10 +649,10 @@
       "deliverySelfFee": "Helsinki · +€0",
       "stepHddTitle": "Hard drive (HDD)",
       "hddCalloutTitle": "Important choice",
-      "hddCalloutBody": "We recommend removing the old HDD so the SSD has room and thermals stay healthy. You can DIY or choose Vire to remove it (no extra charge on the full-service package).",
+      "hddCalloutBody": "We recommend removing the old HDD so the SSD has room and thermals stay healthy. You can DIY or choose Sparkki to remove it (no extra charge on the full-service package).",
       "hddGuideLink": "See the DIY guide under “Tee itse”",
-      "hddVirePaid": "Vire removes the HDD for me (+€20)",
-      "hddVireIncluded": "Vire removes the HDD for me (included in package)",
+      "hddVirePaid": "Sparkki removes the HDD for me (+€20)",
+      "hddVireIncluded": "Sparkki removes the HDD for me (included in package)",
       "hddSelf": "I will remove the HDD myself (+€0)",
       "hddVireDesc": "Recommended — we detach the drive during prep.",
       "hddSelfDesc": "Save money — follow the removal guide carefully.",
@@ -677,7 +677,7 @@
       "vmHandoffShippedSummary": "Agreed ship/return media",
       "vmLegalToggle": "Scope, licensing, and data handling — read before ordering",
       "vmLegalP1": "The service is meant to produce one or more usable disk images or virtual-disk files (e.g. OVA, QCOW2, or another agreed format) from a typical Windows install before we install Linux. A complete bit-identical clone of every hidden OEM partition, BitLocker state, or firmware variation is not guaranteed.",
-      "vmLegalP2": "Running a commercial OS (e.g. Windows) inside a VM or moved to other hardware is governed by software licence terms and vendor rules. Vire does not grant licences; the customer is responsible for compliance.",
+      "vmLegalP2": "Running a commercial OS (e.g. Windows) inside a VM or moved to other hardware is governed by software licence terms and vendor rules. Sparkki does not grant licences; the customer is responsible for compliance.",
       "vmLegalP3": "Images may contain personal or sensitive data. We retain working copies only as long as fulfilment requires; you control retention and disposal of the media we hand back.",
       "vmLegalP4": "If the machine will not boot normally or disks are encrypted, image quality or feasibility may be limited — we will tell you before work starts.",
       "vmLegalPrivacyBefore": "How we process personal data:",
@@ -857,7 +857,7 @@
     "usbOrdersIntro": "Linux USB stick orders (pending and paid).",
     "usbOrdersEmpty": "No USB orders.",
     "careSubscriptions": "Care subscriptions",
-    "careSubscriptionsIntro": "Stripe monthly subscriptions (Vire Care Basic).",
+    "careSubscriptionsIntro": "Stripe monthly subscriptions (Sparkki Care Basic).",
     "careSubscriptionsEmpty": "No Care subscriptions yet.",
     "careColEmail": "Email",
     "careColName": "Name",

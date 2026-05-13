@@ -104,11 +104,11 @@ export async function sendOrderConfirmedEmail(params: {
     return { ok: false, error: "resend_not_configured" };
   }
   const loc = normalizeMailLocale(params.locale);
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     loc === "en"
-      ? "Order confirmed — Vire"
-      : "Tilaus vahvistettu — Vire";
+      ? "Order confirmed — Sparkki"
+      : "Tilaus vahvistettu — Sparkki";
   const migrationExtra =
     params.dataMigration &&
     (params.dataMigrationSize === "standard" || params.dataMigrationSize === "large")
@@ -161,11 +161,11 @@ export async function sendUsbConfirmedEmail(params: {
     return { ok: false, error: "resend_not_configured" };
   }
   const loc = normalizeMailLocale(params.locale);
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     loc === "en"
-      ? "USB order confirmed — Vire"
-      : "USB-tilaus vahvistettu — Vire";
+      ? "USB order confirmed — Sparkki"
+      : "USB-tilaus vahvistettu — Sparkki";
   const html =
     loc === "en"
       ? `<p>Hello ${escapeHtml(params.customerName)},</p><p>Your Linux USB stick order <strong>${escapeHtml(params.orderId)}</strong> is paid. We will ship it to the address you provided.</p>`
@@ -194,11 +194,11 @@ export async function sendOrderDoneEmail(params: {
     return { ok: false, error: "resend_not_configured" };
   }
   const loc = normalizeMailLocale(params.locale);
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     loc === "en"
-      ? "Your service is complete — Vire"
-      : "Palvelu valmis — Vire";
+      ? "Your service is complete — Sparkki"
+      : "Palvelu valmis — Sparkki";
   const greetEn =
     params.customerName.trim().length > 0
       ? `Hello ${escapeHtml(params.customerName)},`
@@ -209,8 +209,8 @@ export async function sendOrderDoneEmail(params: {
       : "Hei,";
   const html =
     loc === "en"
-      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> is marked complete. Thank you for choosing Vire!</p>`
-      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on merkitty valmiiksi. Kiitos kun käytit Vireä!</p>`;
+      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> is marked complete. Thank you for choosing Sparkki!</p>`
+      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on merkitty valmiiksi. Kiitos kun käytit Sparkkiä!</p>`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,
@@ -233,11 +233,11 @@ export async function sendB2bQuoteRequestEmail(params: {
   if (!resend) {
     return { ok: false, error: "resend_not_configured" };
   }
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     params.locale === "en"
-      ? "New B2B quote request — Vire"
-      : "Uusi B2B-tarjouspyyntö — Vire";
+      ? "New B2B quote request — Sparkki"
+      : "Uusi B2B-tarjouspyyntö — Sparkki";
   const rows = [
     ["Details", params.details],
     ["Contact (as entered)", params.contactRaw],
@@ -273,7 +273,7 @@ export async function sendSupportContactEmail(params: {
   if (!resend) {
     return { ok: false, error: "resend_not_configured" };
   }
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     params.locale === "en"
       ? "Support message from vire.fi — /tuki"
@@ -305,11 +305,11 @@ export async function sendVireForGoodApplicationEmail(params: {
   if (!resend) {
     return { ok: false, error: "resend_not_configured" };
   }
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     params.locale === "en"
-      ? "Vire for Good — application"
-      : "Vire for Good — hakemus";
+      ? "Sparkki for Good — application"
+      : "Sparkki for Good — hakemus";
   const rows = [
     ["Reason", params.reason],
     ["Contact (as entered)", params.contactRaw],
@@ -344,11 +344,11 @@ export async function sendCareSubscriptionWelcomeEmail(params: {
     return { ok: false, error: "resend_not_configured" };
   }
   const loc = normalizeMailLocale(params.locale);
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     loc === "en"
-      ? "Welcome to Vire Care"
-      : "Tervetuloa Vire Careen";
+      ? "Welcome to Sparkki Care"
+      : "Tervetuloa Sparkki Careen";
   const greet =
     params.customerName.trim().length > 0
       ? loc === "en"
@@ -360,8 +360,8 @@ export async function sendCareSubscriptionWelcomeEmail(params: {
   const base = getSiteUrl();
   const html =
     loc === "en"
-      ? `<p>${greet}</p><p>Your <strong>Vire Care</strong> subscription is active. You get ongoing remote help, Discord priority, and tips while subscribed.</p><p>Questions? Reply to this email or use our <a href="${base}/en/tuki">support page</a>.</p>`
-      : `<p>${greet}</p><p><strong>Vire Care</strong> -tilauksesi on nyt voimassa. Saat jatkuvaa etäapua, Discord-prioriteetin ja kuukausivinkkejä tilauksen ollessa aktiivinen.</p><p>Kysyttävää? Vastaa tähän viestiin tai käytä <a href="${base}/fi/tuki">tukisivua</a>.</p>`;
+      ? `<p>${greet}</p><p>Your <strong>Sparkki Care</strong> subscription is active. You get ongoing remote help, Discord priority, and tips while subscribed.</p><p>Questions? Reply to this email or use our <a href="${base}/en/tuki">support page</a>.</p>`
+      : `<p>${greet}</p><p><strong>Sparkki Care</strong> -tilauksesi on nyt voimassa. Saat jatkuvaa etäapua, Discord-prioriteetin ja kuukausivinkkejä tilauksen ollessa aktiivinen.</p><p>Kysyttävää? Vastaa tähän viestiin tai käytä <a href="${base}/fi/tuki">tukisivua</a>.</p>`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,
@@ -382,11 +382,11 @@ export async function sendCarePaymentFailedEmail(params: {
     return { ok: false, error: "resend_not_configured" };
   }
   const loc = normalizeMailLocale(params.locale);
-  const from = process.env.RESEND_FROM ?? "Vire <onboarding@resend.dev>";
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     loc === "en"
-      ? "Vire Care — payment issue"
-      : "Vire Care — maksuongelma";
+      ? "Sparkki Care — payment issue"
+      : "Sparkki Care — maksuongelma";
   const greet =
     params.customerName.trim().length > 0
       ? loc === "en"
@@ -397,8 +397,8 @@ export async function sendCarePaymentFailedEmail(params: {
         : "Hei,";
   const html =
     loc === "en"
-      ? `<p>${greet}</p><p>We could not charge your card for <strong>Vire Care</strong>. Please update your payment method in the Stripe billing portal (link in your last receipt) or contact us at tuki@vire.fi.</p>`
-      : `<p>${greet}</p><p>Emme voineet veloittaa <strong>Vire Care</strong> -tilauksesta. Päivitä maksutapa Stripen laskutusportaalissa (linkki edellisessä kuittissa) tai ota yhteyttä: tuki@vire.fi.</p>`;
+      ? `<p>${greet}</p><p>We could not charge your card for <strong>Sparkki Care</strong>. Please update your payment method in the Stripe billing portal (link in your last receipt) or contact us at tuki@vire.fi.</p>`
+      : `<p>${greet}</p><p>Emme voineet veloittaa <strong>Sparkki Care</strong> -tilauksesta. Päivitä maksutapa Stripen laskutusportaalissa (linkki edellisessä kuittissa) tai ota yhteyttä: tuki@vire.fi.</p>`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,

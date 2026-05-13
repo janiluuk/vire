@@ -41,7 +41,7 @@ const config = {
       fontFamily: {
         display: ["var(--font-syne)", "ui-sans-serif", "system-ui", "sans-serif"],
         sans: [
-          "var(--font-dm-sans)",
+          "var(--font-inter)",
           "ui-sans-serif",
           "system-ui",
           "sans-serif",

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Mono, DM_Sans, Syne } from "next/font/google";
+import { DM_Mono, Inter, Syne } from "next/font/google";
 import Script from "next/script";
 import { DaytimeTheme } from "@/components/layout/DaytimeTheme";
 import { getSiteUrl } from "@/lib/site/site-url";
@@ -19,10 +19,10 @@ const dmMono = DM_Mono({
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-dm-sans",
-  weight: ["300", "400", "500"],
+  variable: "--font-inter",
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -30,8 +30,9 @@ const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: "Vire",
-  description: "Vanhojen tietokoneiden uusiokäyttö — SSD, RAM, Linux.",
+  title: "Sparkki",
+  description:
+    "Vanhojen tietokoneiden uusiokäyttö — SSD, RAM, Linux. Nordic-henkinen palvelu.",
 };
 
 export default function RootLayout({
@@ -42,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="fi"
-      className={`${dmSans.variable} ${syne.variable} ${dmMono.variable} scroll-smooth`}
+      className={`${inter.variable} ${syne.variable} ${dmMono.variable} scroll-smooth`}
     >
       <body className="min-h-dvh bg-canvas font-sans font-light text-lg text-ink antialiased">
         <DaytimeTheme />

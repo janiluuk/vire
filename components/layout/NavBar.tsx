@@ -6,11 +6,11 @@ import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
 
 function BrandMark({ name }: { name: string }) {
   const lower = name.toLowerCase();
-  if (lower === "vire") {
+  if (lower === "sparkki") {
     return (
       <span className="font-display text-2xl font-extrabold tracking-tight">
-        <span className="text-g">Vi</span>
-        <span className="text-ink">re</span>
+        <span className="text-g">Spark</span>
+        <span className="text-ink">ki</span>
       </span>
     );
   }
@@ -56,7 +56,7 @@ export function NavBar({ locale }: { locale: string }) {
     pathname.startsWith("/yhteiso/");
 
   return (
-    <header className="sticky top-0 z-30 border-b border-edge bg-[rgba(8,12,10,0.92)] backdrop-blur-xl">
+    <header className="sticky top-0 z-30 border-b border-edge bg-[rgba(16,18,20,0.92)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-4 px-6 py-4 sm:px-12 sm:py-5">
         <Link
           href="/"
