@@ -1731,11 +1731,12 @@ Make the product feel alive and premium.
 - [x] Add page transitions (`LocaleMainMotion` + `.sparkki-page-enter` on locale routes)
 - [x] Add stagger animations (Phase 13 — **`.sparkki-stagger-children`** on home step / pricing / benefits)
 - [x] **Phase 14 — Inputs:** inline validation + readable error copy + mobile input sizing (see Phase 3 → Inputs)
+- [x] **Phase 17 — Contextual transitions:** hub-internal navigations use `sparkki-context-enter` (`LocaleMainMotion` + `spark-context-enter` keyframes)
 - [x] Add skeleton loaders (utility `.sparkki-skeleton` in `globals.css`; wire where needed)
 - [x] Add smooth hover interpolation (token durations/easing on buttons, cards, nav tabs)
 - [x] Add animated navigation indicators (nav tab transitions)
 - [x] Add spring physics for panels (`.sparkki-wizard-full` uses `--ease-spring`)
-- [ ] Add contextual transitions (broader polish — optional follow-up)
+- [x] Add contextual transitions (**Phase 17** — `LocaleMainMotion`: same top path segment uses shorter `sparkki-context-enter`; cross-hub uses `sparkki-page-enter`; see `globals.css`)
 
 ### Recommended Motion
 

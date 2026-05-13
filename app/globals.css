@@ -157,6 +157,18 @@
   }
 }
 
+/* Phase 17 — same-hub / nested route enter (see LocaleMainMotion) */
+@keyframes spark-context-enter {
+  from {
+    opacity: 0.9;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes spark-sheet-up {
   from {
     opacity: 0;
@@ -578,6 +590,17 @@ body {
 
   @media (prefers-reduced-motion: reduce) {
     .sparkki-page-enter {
+      animation: none;
+    }
+  }
+
+  /* Phase 17 — contextual enter (e.g. /tietoa/linux → /tietoa/vakaus) */
+  .sparkki-context-enter {
+    animation: spark-context-enter var(--duration-base) var(--ease-out-soft) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-context-enter {
       animation: none;
     }
   }
