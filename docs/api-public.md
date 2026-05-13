@@ -2,7 +2,7 @@
 
 Base URL: `NEXT_PUBLIC_SITE_URL` (e.g. `https://vire.fi`). Locale-prefixed pages live under `/fi/...` and `/en/...`; JSON APIs below are **not** locale-prefixed unless noted.
 
-All public JSON routes respond with `Content-Type: application/json`. Prefer `POST` + JSON bodies unless stated otherwise.
+All public JSON routes respond with `Content-Type: application/json` unless stated otherwise (**`POST /api/csp-report`** returns **204** with an empty body). Prefer `POST` + JSON bodies unless stated otherwise.
 
 ---
 
@@ -17,6 +17,29 @@ All public JSON routes respond with `Content-Type: application/json`. Prefer `PO
 ```
 
 Used by Docker Compose `web` healthcheck and synthetic monitors.
+
+---
+
+## CSP violation reports
+
+### `POST /api/csp-report`
+
+Browser-generated **Content Security Policy** violation reports when the active CSP includes **`report-uri`** pointing at this origin (see **`content-security-policy.mjs`** and **`docs/operations.md`**).
+
+**Request**
+
+- Method: **POST**
+- **`Content-Type`:** `application/csp-report` or `application/json`
+- Body: JSON object, typically `{ "csp-report": { ... } }` per [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only#violation_report_syntax).
+
+**Response**
+
+- **204** — accepted (empty body).
+- **400** — malformed JSON.
+- **413** — body too large (> 64 KiB).
+- **429** — rate limited (per client IP).
+
+Logs **`csp_report.violation`** (and rate-limit events) via structured logging in production.
 
 ---
 

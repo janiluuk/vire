@@ -1,11 +1,30 @@
 /**
  * Single source of truth for CSP directive string (report-only + enforcing).
- * Imported by next.config.mjs and middleware.ts.
+ * Imported by next.config.mjs.
  *
- * @see docs/operations.md — staging with report-only; production enforcing via ENABLE_CSP_ENFORCE.
+ * When `CSP_REPORT_BASE_URL` or `NEXT_PUBLIC_SITE_URL` is a valid http(s) origin,
+ * appends `report-uri` so browsers can POST violation reports to `/api/csp-report`.
+ *
+ * @see docs/operations.md — CSP rollout, report-only, enforcing, reporting.
  */
+
+function cspReportUriSuffix() {
+  const raw =
+    process.env.CSP_REPORT_BASE_URL?.trim() ||
+    process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return "";
+  try {
+    const href = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const u = new URL(href);
+    const origin = `${u.protocol}//${u.host}`;
+    return ` report-uri ${origin}/api/csp-report`;
+  } catch {
+    return "";
+  }
+}
+
 export function getContentSecurityPolicyValue() {
-  return [
+  const core = [
     "default-src 'self'",
     "base-uri 'self'",
     "object-src 'none'",
@@ -18,4 +37,5 @@ export function getContentSecurityPolicyValue() {
     "worker-src 'self' blob:",
     "form-action 'self' https://checkout.stripe.com",
   ].join("; ");
+  return `${core}${cspReportUriSuffix()}`;
 }

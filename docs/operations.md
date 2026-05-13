@@ -76,6 +76,13 @@ Baseline security headers are set in **`next.config.mjs`**. Directive text is sh
 - Set **`ENABLE_CSP_ENFORCE=true`** to send **`Content-Security-Policy`** with the **same** directive string as report-only. Applies to all matched routes in **`next.config.mjs`** (including **`/admin`** and locale pages).
 - You can run **report-only and enforcing together** during rollout: the browser reports on the relaxed policy while the enforcing header blocks (they should use the same rules to avoid confusion — both read **`getContentSecurityPolicyValue()`**).
 
+### Report collection (`report-uri`)
+
+When **`CSP_REPORT_BASE_URL`** or **`NEXT_PUBLIC_SITE_URL`** is set to a valid **`http(s):`** origin, **`content-security-policy.mjs`** appends **`report-uri {origin}/api/csp-report`**. Browsers then POST [CSP violation reports](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP#violation_report_syntax) to **`POST /api/csp-report`**, which returns **204**, rate-limits by IP, and logs **`csp_report.violation`** (summary fields) via **`logApiEvent`**.
+
+- Use **`CSP_REPORT_BASE_URL`** if the reporting origin must differ from **`NEXT_PUBLIC_SITE_URL`**.
+- **`report-uri`** is widely supported but legacy; **`report-to`** + **`Reporting-Endpoints`** is a possible follow-up.
+
 ### Stricter CSP (nonces / no `unsafe-inline`)
 
 Removing **`'unsafe-inline'`** / **`'unsafe-eval'`** from **`script-src`** needs per-request **nonces** (or hashes) for Next.js hydration, **`next/script`**, and any inline bootstrapping, plus verification for **Stripe Checkout**, **Calendly**, **Discord**, and **YouTube** embeds. That is **optional hardening** after baseline enforcing is stable in production — not required for the initial enforcing rollout above.

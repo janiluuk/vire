@@ -6,7 +6,7 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 /**
  * Staging CSP (report-only). Same directives as enforcing mode; see content-security-policy.mjs.
  * Set ENABLE_CSP_REPORT_ONLY=true to emit Content-Security-Policy-Report-Only.
- * Set ENABLE_CSP_ENFORCE=true (middleware) for enforcing Content-Security-Policy on HTML navigations.
+ * Set ENABLE_CSP_ENFORCE=true to emit enforcing Content-Security-Policy.
  */
 
 /** @type {import('next').NextConfig} */
