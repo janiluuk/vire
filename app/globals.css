@@ -202,6 +202,18 @@
   }
 }
 
+@keyframes spark-stagger-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @layer base {
   :focus-visible {
     outline: 2px solid var(--color-accent);
@@ -805,6 +817,68 @@ body {
   @media (prefers-reduced-motion: reduce) {
     .sparkki-pressable:active {
       transform: none;
+    }
+  }
+
+  /* Phase 13 — stagger direct children (home lists / cards; respects reduced motion) */
+  .sparkki-stagger-children > * {
+    opacity: 0;
+    animation: spark-stagger-rise 0.42s var(--ease-out-soft) both;
+  }
+
+  .sparkki-stagger-children > *:nth-child(1) {
+    animation-delay: 0.04s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(3) {
+    animation-delay: 0.16s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(4) {
+    animation-delay: 0.22s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(5) {
+    animation-delay: 0.28s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(6) {
+    animation-delay: 0.34s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(7) {
+    animation-delay: 0.4s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(8) {
+    animation-delay: 0.46s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(9) {
+    animation-delay: 0.52s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(10) {
+    animation-delay: 0.58s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(11) {
+    animation-delay: 0.64s;
+  }
+
+  .sparkki-stagger-children > *:nth-child(12) {
+    animation-delay: 0.7s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sparkki-stagger-children > * {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
     }
   }
 }

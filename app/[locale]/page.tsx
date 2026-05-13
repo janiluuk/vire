@@ -76,7 +76,7 @@ export default async function HomePage() {
         >
           {t("stepsTitle")}
         </h2>
-        <div className="step-strip mt-8" role="list">
+        <div className="step-strip sparkki-stagger-children mt-8" role="list">
           {(
             [
               { step: "step1" as const, icon: "step1Icon" as const },
@@ -102,7 +102,7 @@ export default async function HomePage() {
         >
           {t("pricingTitle")}
         </h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <div className="sparkki-stagger-children mt-8 grid gap-6 md:grid-cols-3">
           {(
             [
               {
@@ -163,7 +163,7 @@ export default async function HomePage() {
         <h2 id="benefits-title" className="sr-only">
           Benefits
         </h2>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="sparkki-stagger-children grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {(
             [
               "benefitCo2",

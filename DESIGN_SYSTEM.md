@@ -1729,7 +1729,7 @@ Make the product feel alive and premium.
 ### Tasks
 
 - [x] Add page transitions (`LocaleMainMotion` + `.sparkki-page-enter` on locale routes)
-- [ ] Add stagger animations
+- [x] Add stagger animations (Phase 13 — **`.sparkki-stagger-children`** on home step / pricing / benefits)
 - [x] Add skeleton loaders (utility `.sparkki-skeleton` in `globals.css`; wire where needed)
 - [x] Add smooth hover interpolation (token durations/easing on buttons, cards, nav tabs)
 - [x] Add animated navigation indicators (nav tab transitions)
@@ -1859,6 +1859,18 @@ Make repeat navigation faster without adding a permanent sidebar.
 - [x] Persist recent locale-free paths (+ hash) in **`localStorage`** (`sparkki-palette-recent-v1`, max 6) via **`lib/site/palette-recent-routes.ts`**
 - [x] Record on **`usePathname`** updates + **`hashchange`** (skip `/admin`)
 - [x] Show **Recently opened** + **All pages** sections in **`CommandPalette`** when the filter is empty; dedupe catalog rows already listed under recent
+
+---
+
+## PHASE 13 — Staggered list motion
+
+### Goal
+Give structured home content a calm sequential entrance (Phase 4 motion backlog).
+
+### Tasks
+
+- [x] Add **`spark-stagger-rise`** keyframes + **`.sparkki-stagger-children`** utility in **`app/globals.css`** (nth-child delays, **`prefers-reduced-motion`** → no animation)
+- [x] Apply on home **step strip**, **pricing** grid, and **benefits** grid (`app/[locale]/page.tsx`)
 
 ---
 
