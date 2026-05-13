@@ -52,6 +52,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # So `next build` can reach Postgres on the host-mapped port during `docker compose build web`
+      # (see docs/repository-layout.md § Known sharp edges — ROADMAP review backlog #6).
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
+      args:
+        DATABASE_URL: ${DATABASE_URL_BUILD:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@host.docker.internal:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-vire}}
     ports:
       - "${APP_PORT:-1337}:3000"
     environment:

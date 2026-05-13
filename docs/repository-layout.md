@@ -13,7 +13,7 @@ Where code and assets live, and where to add new work. **Next.js App Router** ru
 | **`messages/`** | `fi.json` / `en.json` — all user-facing copy (public + admin namespaces). |
 | **`content/`** | MDX guides + frontmatter (source for DIY content). |
 | **`prisma/`** | Schema, migrations, seed. |
-| **`scripts/`** | Deploy (`lab-stack-up.sh`), tooling (`docs-screenshots.ts`), etc. |
+| **`scripts/`** | Deploy (`lab-stack-up.sh`), Docker web build helper (`docker-build-web.sh`), tooling (`docs-screenshots.ts`), etc. |
 | **`e2e/`** | Playwright specs. |
 | **`tests/`** | Vitest unit + functional tests. |
 | **`docs/`** | Operations, API notes, site catalog, screenshots, **this file**. |

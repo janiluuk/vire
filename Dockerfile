@@ -13,6 +13,7 @@ RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /v
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Overridden by docker-compose `build.args.DATABASE_URL` (default reaches host-mapped db via host.docker.internal).
 ARG DATABASE_URL=postgresql://postgres:password@localhost:5432/vire
 ENV DATABASE_URL=$DATABASE_URL
 # Public site origin + Calendly (inlined at build; see docs/calendly-booking.md)
