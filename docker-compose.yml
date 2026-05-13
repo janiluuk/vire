@@ -1,4 +1,4 @@
-# Vire stack
+# Sparkki stack (Compose service names / default DB still use `vire` where historical)
 #
 # Local stack: Postgres, Prisma migrate, Next.js (`web`).
 #   docker compose up -d --build

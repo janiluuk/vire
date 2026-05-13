@@ -36,7 +36,7 @@ Prioritised product specs (11 features: data migration add-on, Sparkki Care, `/k
 
 ## Design principles
 
-**Visual design:** **`DESIGN_SYSTEM.md`** is the contract for every screen — read it before building or restyling UI. Prefer existing patterns (`vire-*` classes, semantic Tailwind from **`tailwind.config.ts`**, tokens from **`app/globals.css`**).
+**Visual design:** **`DESIGN_SYSTEM.md`** is the contract for every screen — read it before building or restyling UI. Prefer existing patterns (**`sparkki-*`** primitives, semantic Tailwind from **`tailwind.config.ts`**, tokens from **`app/globals.css`**); legacy **`vire-*`** CSS aliases remain for gradual migration.
 
 **UX and accessibility (non-negotiable):**
 
@@ -807,14 +807,16 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 - [x] **Site catalog & sitemap** — **`docs/site-pages.md`** (screenshots + page purposes), **`docs/sitemap-routes.md`**, expanded **`app/sitemap.ts`** static paths, **`docs/phases-implementation-notes.md`**, **`docs/screenshots/`** + **`npm run docs:screenshots`**.
 
+**On `main` (rolling, not exhaustive):** Shared CSP in **`content-security-policy.mjs`** with optional **`ENABLE_CSP_REPORT_ONLY`** and **`ENABLE_CSP_ENFORCE`** (**`next.config.mjs`**); browser violations may POST to **`/api/csp-report`** when **`report-uri`** is present (requires **`NEXT_PUBLIC_SITE_URL`** or **`CSP_REPORT_BASE_URL`**). Public API reference: **`docs/api-public.md`**. Ops detail: **`docs/operations.md`** § Content-Security-Policy.
+
 **Design guardrails (ongoing):** Ship UI against **`DESIGN_SYSTEM.md`**; treat **`docs/site-pages.md`** and **`npm run docs:screenshots`** as regression references when navigation or layout changes. When **`FEATURES.md`** items add screens, extend the design system first if new patterns are needed, then implement.
 
-1. **Content-Security-Policy** — **`ENABLE_CSP_REPORT_ONLY=true`** / **`ENABLE_CSP_ENFORCE=true`** (shared **`content-security-policy.mjs`**; see **`docs/operations.md`**). Optional **`report-uri`** to **`POST /api/csp-report`** when **`CSP_REPORT_BASE_URL`** or **`NEXT_PUBLIC_SITE_URL`** is set. **Stricter `script-src` without `unsafe-inline` / `unsafe-eval`** (nonces or hashes) remains optional hardening after baseline is verified in production.
+1. **Content-Security-Policy** — **Shipped (baseline):** shared directives, report-only and/or enforcing headers, optional **`report-uri`** + **`POST /api/csp-report`** (see **`docs/operations.md`**). **Still optional:** **`script-src`** without **`'unsafe-inline'`** / **`'unsafe-eval'`** using per-request nonces or hashes, after production validation.
 2. **E2E + a11y** — **shipped:** smoke, locale, wizard (mocked checkout), admin login + orders, public routes + **`/meista`**, support + order lookup + experience pages, **axe-core** (**`e2e/a11y-axe.spec.ts`**), **Lighthouse CI** (informational) — see **`e2e/*.spec.ts`**, **`lighthouserc.json`**. Playwright **`webServer`** runs **`prisma migrate deploy`** before **`node server.js`** so the e2e DB matches the Prisma client.
 3. **Synthetic monitoring** — **shipped in repo:** optional scheduled workflow **`synthetic-monitoring.yml`** when **`SYNTHETIC_MONITORING_BASE_URL`** is set — see **`docs/operations.md`**. External Uptime Kuma / Grafana still recommended.
 4. **Admin audit trail** — **shipped:** `AdminAuditLog` + order detail log; guides/models mutations logged; extend UI as needed.
 5. **Structured logging** — **shipped:** JSON + request id on checkout, support-contact, Stripe webhook (`lib/logging/log.ts`, **`docs/operations.md`**).
-6. **Production image build + Prisma** — `next build` may invoke Prisma on static routes; Docker `docker compose build` logs connection errors when no DB is reachable at `DATABASE_URL`. Mitigations: pass a build-time DB URL, use `docker compose` build with `db` profile, or move DB-bound SSG to **`dynamic = 'force-dynamic'`** / client fetch. Documented in **`docs/repository-layout.md`** § Known sharp edges.
+6. **Production image build + Prisma** — **`next build`** may call Prisma; the **`web`** Dockerfile defaults **`DATABASE_URL`** to **`localhost:5432`**, which is **not** reachable from inside the build container, so **`docker compose build`** can log connection errors unless you override **`DATABASE_URL`**. **Mitigations:** with **`db`** up and the port published on the host, pass **`--build-arg DATABASE_URL=postgresql://USER:PASS@host.docker.internal:PORT/DB`** to **`docker compose build web`** (on Linux, ensure **`host.docker.internal`** resolves for builds — Docker BuildKit **`host-gateway`**). Or refactor DB-bound SSG to **`dynamic = 'force-dynamic'`** / client fetch. **Documented:** **`docs/repository-layout.md`** § Known sharp edges; **`README.md`** § App in Docker.
 7. **Dependency patch cadence + `npm audit`** — Stay on the latest validated **Next.js 14.2.x**; run **`npm run security:audit:prod`** before releases. The advisory database may still flag **Next** while the installed patch is fixed — cross-check [Next.js security advisories](https://github.com/vercel/next.js/security). Dev-only chains (**Lighthouse CLI**, **eslint-config-next → glob**) may remain reported until upstream releases land.
 
 #### Product / UX (still open from earlier phases)
@@ -862,7 +864,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 - [x] **`apps/vire-checker` LAN + spec/AI docs** — see `apps/vire-checker/README.md` (server-side env, Docker/LAN reachability, curl example, future Tauri HTTP scope).
 - [x] **`apps/vire-checker` optional “fetch specs” UI** — **`VITE_SPARKKI_API_BASE`** (or legacy **`VITE_VIRE_API_BASE`**) enables **Hae speksit verkosta** → `POST /api/public/laptop-specs` (see **`apps/vire-checker/README.md`**).
 - [x] **Dependency / secret hygiene** — **`npm audit`** in CI (informational / non-blocking); pre-commit secret scan (gitleaks) optional.
-- [x] **`docs/repository-layout.md`** — Folder conventions; hub tabs under **`components/navigation/`**; Prisma-at-build caveat for Docker images.
+- [x] **`docs/repository-layout.md`** — Folder conventions; hub tabs under **`components/navigation/`**; Prisma-at-build caveat for Docker images (**`--build-arg DATABASE_URL`** / **`host.docker.internal`**; see § Known sharp edges).
 - [x] **Stripe webhook + order lookup API tests** — **`tests/functional/stripe-webhook.test.ts`** (signature / config paths); **`tests/functional/order-lookup.test.ts`** (validation + 404).
 
 ---
@@ -872,7 +874,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 These apply to every coding session on this project.
 
 1. **Read this file first.** Before writing any code, confirm you know which phase you're working on. For post-launch product expansion, also read **`FEATURES.md`** and follow its priority table unless instructed otherwise.
-2. **Read `DESIGN_SYSTEM.md` for all UI/CSS.** Before adding or changing layouts, colours, typography, or components, align with that file and existing primitives (`vire-card`, semantic Tailwind). Do not introduce light-theme or generic gray-scale layouts unless **`DESIGN_SYSTEM.md`** is updated first.
+2. **Read `DESIGN_SYSTEM.md` for all UI/CSS.** Before adding or changing layouts, colours, typography, or components, align with that file and existing primitives (**`sparkki-*`** / **`vire-*`** aliases, semantic Tailwind). Do not introduce light-theme or generic gray-scale layouts unless **`DESIGN_SYSTEM.md`** is updated first.
 3. **Prisma is the DB layer.** Never write raw SQL. Always use `prisma.model.findMany()` etc.
 4. **Server components by default.** Only add `'use client'` when the component needs browser APIs or event handlers.
 5. **All text goes through next-intl.** No hardcoded Finnish or English strings in JSX. Use `const t = useTranslations('namespace')`.

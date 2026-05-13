@@ -64,7 +64,9 @@ Verify application connectivity and row counts after restore. Run a **restore dr
 
 ## Content-Security-Policy
 
-Baseline security headers are set in **`next.config.mjs`**. Directive text is shared from **`content-security-policy.mjs`** (imported by **`next.config.mjs`**) so **report-only** and **enforcing** modes stay aligned.
+**Current setup (repo):** **`content-security-policy.mjs`** holds one directive string. **`next.config.mjs`** may send **`Content-Security-Policy-Report-Only`** when **`ENABLE_CSP_REPORT_ONLY=true`**, and/or **`Content-Security-Policy`** when **`ENABLE_CSP_ENFORCE=true`**. If **`NEXT_PUBLIC_SITE_URL`** or **`CSP_REPORT_BASE_URL`** is set, the policy appends **`report-uri …/api/csp-report`**; browsers POST reports to **`POST /api/csp-report`** (see **`docs/api-public.md`**).
+
+Baseline security headers are also set in **`next.config.mjs`** (non-CSP headers). Report-only and enforcing CSP modes use the **same** directive builder so they stay aligned.
 
 ### Report-only (staging)
 
