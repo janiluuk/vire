@@ -583,6 +583,35 @@
     "backupsP2": "Luovutuksen yhteydessä saat vaiheittaiset kirjalliset ohjeet tiedostojen tai tilannekuvan palautukseen suomeksi tai englanniksi tilauksen mukaan — mukaan lukien mitä tehdä, jos järjestelmä ei käynnisty normaalisti (esim. live-USB:n avulla).",
     "b2bBanner": "Tarvitsetko useita koneita tai yritysmyyntiä?",
     "b2bCta": "Pyydä tarjous",
+    "components": {
+      "title": "Komponentit — mitä asennamme",
+      "intro": "Käytämme uusia, merkkisiä SSD- ja muistimoduleja. Alla tyypilliset mallit ja mitat; lopullisen valinnan teemme koneen ja emolevyn yhteensopivuuden mukaan. Linkki avaa Verkkokauppa.comin haun vastaavalle tuotteelle (hinta voi vaihdella).",
+      "reassurance": "Komponentit ovat uusia ja valmistajien normaalin kuluttajatakuun piirissä. Jos laite vaatii erikoisemman moduulin, kerromme siitä ennen työn aloitusta.",
+      "specCapacity": "Kapasiteetti",
+      "specInterface": "Liitäntä / tyyppi",
+      "specRead": "Luku",
+      "specWrite": "Kirjoitus",
+      "specClock": "Kello",
+      "specWarranty": "Takuu",
+      "shopCta": "Katso tuote Verkkokauppa.comissa ↗",
+      "items": {
+        "ssdSata": {
+          "eyebrow": "SATA SSD",
+          "lead": "Tyypillinen päivitys, kun koneessa on 2,5\" SATA-paikka.",
+          "warranty": "5 v (Samsung)"
+        },
+        "ssdNvme": {
+          "eyebrow": "NVMe SSD",
+          "lead": "Nopeampi levy, kun emolevy tukee M.2 NVMe -asennusta.",
+          "warranty": "5 v (Samsung)"
+        },
+        "ram8gb": {
+          "eyebrow": "Lisämuisti",
+          "lead": "DDR4-muisti, SODIMM tai DIMM riippuen koneesta — tarkka moduuli valitaan yhteensopivuuden mukaan.",
+          "warranty": "Valmistajatakuu (Kingston)"
+        }
+      }
+    },
     "wizardLegalHint": "Jatkamalla hyväksyt tilauksen ehdot ja henkilötietojen käsittelyn tilauksen toteuttamiseksi.",
     "wizard": {
       "title": "Tilaus",

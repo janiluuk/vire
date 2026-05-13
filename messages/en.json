@@ -584,6 +584,35 @@
     "backupsP2": "With handoff you receive written step-by-step instructions for restoring files or rolling back a snapshot, in Finnish or English to match your order — including what to do if the system will not boot normally (for example using a live USB).",
     "b2bBanner": "Need several machines or a business quote?",
     "b2bCta": "Request a quote",
+    "components": {
+      "title": "Parts — what we install",
+      "intro": "We use new brand-name SSDs and memory modules. Below are typical models and specs; the final choice depends on what your machine and motherboard support. The link opens a Verkkokauppa.com search for a matching product (retail price may vary).",
+      "reassurance": "Components are new and covered by the manufacturer’s standard consumer warranty. If your device needs a less common module, we tell you before work begins.",
+      "specCapacity": "Capacity",
+      "specInterface": "Interface / type",
+      "specRead": "Read",
+      "specWrite": "Write",
+      "specClock": "Clock",
+      "specWarranty": "Warranty",
+      "shopCta": "View product at Verkkokauppa.com ↗",
+      "items": {
+        "ssdSata": {
+          "eyebrow": "SATA SSD",
+          "lead": "Typical upgrade when the machine has a 2.5\" SATA bay.",
+          "warranty": "5 yr (Samsung)"
+        },
+        "ssdNvme": {
+          "eyebrow": "NVMe SSD",
+          "lead": "Faster storage when the board supports M.2 NVMe.",
+          "warranty": "5 yr (Samsung)"
+        },
+        "ram8gb": {
+          "eyebrow": "Extra RAM",
+          "lead": "DDR4 module, SODIMM or DIMM depending on the chassis — we pick a compatible kit.",
+          "warranty": "Manufacturer warranty (Kingston)"
+        }
+      }
+    },
     "wizardLegalHint": "By continuing you accept the order terms and processing of personal data to fulfill the order.",
     "wizard": {
       "title": "Order",

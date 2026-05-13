@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "id": "ssdSata",
+      "brand": "Samsung",
+      "model": "870 EVO",
+      "capacity": "500 GB",
+      "interface": "SATA III",
+      "readSpeed": "560 MB/s",
+      "writeSpeed": "530 MB/s",
+      "shopUrl": "https://www.verkkokauppa.com/fi/search?q=samsung+870+evo+500gb"
+    },
+    {
+      "id": "ssdNvme",
+      "brand": "Samsung",
+      "model": "980",
+      "capacity": "500 GB",
+      "interface": "NVMe PCIe 3.0",
+      "readSpeed": "3500 MB/s",
+      "writeSpeed": "3000 MB/s",
+      "shopUrl": "https://www.verkkokauppa.com/fi/search?q=samsung+980+nvme+500gb"
+    },
+    {
+      "id": "ram8gb",
+      "brand": "Kingston",
+      "model": "ValueRAM",
+      "capacity": "8 GB",
+      "interface": "DDR4 (SODIMM / DIMM per device)",
+      "readSpeed": "3200 MHz",
+      "writeSpeed": "",
+      "shopUrl": "https://www.verkkokauppa.com/fi/search?q=kingston+valueram+ddr4+8gb+3200"
+    }
+  ]
+}

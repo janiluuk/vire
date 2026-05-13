@@ -33,6 +33,17 @@ test.describe("key public journeys", () => {
     ).toBeVisible();
   });
 
+  test("Service page lists component transparency section", async ({ page }) => {
+    await page.goto("/fi/palvelu", { waitUntil: "domcontentloaded" });
+    await expect(
+      page.getByRole("heading", {
+        level: 2,
+        name: /Komponentit — mitä asennamme/i,
+      }),
+    ).toBeVisible();
+    await expect(page.locator("#komponentit")).toBeVisible();
+  });
+
   test("compatibility search page and empty-query state", async ({ page }) => {
     await page.goto("/fi/koneet", { waitUntil: "domcontentloaded" });
     await expect(
