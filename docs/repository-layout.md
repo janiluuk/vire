@@ -36,7 +36,9 @@ Spec / planning docs at repo root: **`ROADMAP.md`**, **`FEATURES.md`**, **`DESIG
 
 ## Known sharp edges
 
-1. **`next build` and Prisma** — Some static pages call Prisma during the build. If `DATABASE_URL` is unset or points at a DB that is not reachable from the **Docker build** container (e.g. `localhost:5432` with no DB), you may see Prisma errors in build logs; the build can still complete when pages degrade gracefully. For reproducible image builds, point `DATABASE_URL` at a reachable DB during `docker compose build`, or refactor data-heavy SSG to dynamic routes. Tracked in **`ROADMAP.md`** (review backlog).
+1. **`next build` and Prisma** — Some static pages call Prisma during the build. The **`web`** image Dockerfile defaults **`DATABASE_URL`** to **`postgresql://…@localhost:5432/…`**, which does **not** reach Postgres on the host from **inside** the build container, so you may see Prisma connection errors in build logs (the build can still complete when pages degrade gracefully). **Workaround:** start **`db`** (`docker compose up -d db`), then build with an explicit URL to the **host-mapped** port, e.g.  
+   `docker compose build web --build-arg DATABASE_URL=postgresql://postgres:YOUR_PASS@host.docker.internal:5432/YOUR_DB`  
+   On Linux, if **`host.docker.internal`** is missing for **`docker compose build`**, use BuildKit’s host gateway or pass a URL that resolves from the build environment. **Alternative:** move DB-bound pages to **`dynamic = 'force-dynamic'`** or client fetch. Tracked in **`ROADMAP.md`** (review backlog § 6).
 2. **`npm audit` and overrides** — **`package.json`** declares **`overrides.cookie`** so patched **cookie** wins where npm can dedupe (next-auth / @auth). Run **`npm run security:audit:prod`** for release checks; see **`docs/operations.md`**.
 3. **`@/*` imports** — TypeScript path alias maps to the repo root (`tsconfig.json`). Prefer `@/components/...`, `@/lib/...` over deep relatives.
 
