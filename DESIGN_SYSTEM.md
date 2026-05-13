@@ -1801,8 +1801,8 @@ Reduce cognitive overload.
 ### Tasks
 
 - [x] Remove layout shifts (order wizard **skeleton** with stable `min-height` + `orderWizardLoading` label while chunk loads)
-- [x] Optimize rerenders (**Phase 18** — `React.memo` + stable `useCallback` on `NavBar` + `CommandPalette` list rows; profile deeper surfaces if still hot)
-- [ ] Add optimistic UI (deferred — pick a concrete mutation flow when product asks for it)
+- [x] Optimize rerenders (**Phase 18** — `React.memo` + stable `useCallback` on `NavBar`, `CommandPalette` list rows, and **`ServiceHubTabs`** tab links; profile deeper surfaces if still hot)
+- [x] Add optimistic UI (**Phase 19** — admin guides list: **`GuidePublishToggle`** applies the switch immediately and rolls back on server error; `aria-busy` while the transition is in flight)
 - [x] Add route prefetching (`RoutePrefetchWarmup` idle-time `router.prefetch` for top destinations)
 - [x] Improve animation performance (footer **`content-visibility: auto`** for cheaper scroll painting)
 - [x] Reduce bundle size (Three.js **code-split** via `BackgroundCanvasDynamic` `next/dynamic` + `ssr: false`)

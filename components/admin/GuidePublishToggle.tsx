@@ -41,6 +41,7 @@ export function GuidePublishToggle({
         type="button"
         role="switch"
         aria-checked={on}
+        aria-busy={pending}
         disabled={pending}
         onClick={() => void toggle()}
         className={`relative h-8 w-14 shrink-0 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vire-green ${

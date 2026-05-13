@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
@@ -42,30 +43,50 @@ function isActive(
   }
 }
 
+const ServiceHubTab = memo(function ServiceHubTab({
+  href,
+  label,
+  active,
+  onNavClick,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  onNavClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onNavClick}
+      className={tabClass(active)}
+      aria-current={active ? "page" : undefined}
+    >
+      {label}
+    </Link>
+  );
+});
+
 export function ServiceHubTabs() {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const onNavClick = () => dispatchBackgroundNavInteraction();
+  const onNavClick = useCallback(() => {
+    dispatchBackgroundNavInteraction();
+  }, []);
 
   return (
     <nav
       aria-label={t("serviceSubNav")}
       className="flex flex-wrap gap-1 border-b border-edge bg-raised px-4 pt-1 sm:px-6"
     >
-      {TABS.map(({ href, key, match }) => {
-        const active = isActive(pathname, match);
-        return (
-          <Link
-            key={href}
-            href={href}
-            onClick={onNavClick}
-            className={tabClass(active)}
-            aria-current={active ? "page" : undefined}
-          >
-            {t(key)}
-          </Link>
-        );
-      })}
+      {TABS.map(({ href, key, match }) => (
+        <ServiceHubTab
+          key={href}
+          href={href}
+          label={t(key)}
+          active={isActive(pathname, match)}
+          onNavClick={onNavClick}
+        />
+      ))}
     </nav>
   );
 }
