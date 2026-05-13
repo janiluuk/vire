@@ -96,6 +96,26 @@ model StripeProcessedEvent {
   createdAt DateTime @default(now())
 }
 
+/// Imported retail-style laptop listings (reference only — not Sparkki compatibility verdicts).
+model LaptopReferenceSpec {
+  id                String  @id @default(cuid())
+  manufacturer      String
+  modelName         String
+  category          String?
+  screenSize        String?
+  screenDetail      String?
+  cpu               String?
+  ram               String?
+  storage           String?
+  gpu               String?
+  operatingSystem   String?
+  osVersion         String?
+  weight            String?
+  priceEuros        String?
+
+  @@index([manufacturer, modelName])
+}
+
 /// Anonymous compatibility runs from POST /api/compatibility (wizard, /koneet, etc.) for aggregate stats.
 model CompatibilityCheck {
   id                  String   @id @default(cuid())

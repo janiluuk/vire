@@ -6,6 +6,7 @@ import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
 
 type CardLabels = {
   title: string;
+  referenceTitle: string;
   loading: string;
   empty: string;
   link: string;
@@ -21,8 +22,9 @@ type FormLabels = {
 export function LaptopSpecsTestPanel(props: {
   formLabels: FormLabels;
   cardLabels: CardLabels;
+  locale?: "fi" | "en";
 }) {
-  const { formLabels, cardLabels } = props;
+  const { formLabels, cardLabels, locale = "fi" } = props;
   const [make, setMake] = useState("");
   const [model, setModel] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,19 +34,24 @@ export function LaptopSpecsTestPanel(props: {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!make.trim() && !model.trim()) {
+      setError(`${formLabels.errorPrefix}: need_make_or_model`);
+      return;
+    }
     setLoading(true);
     setInsight(null);
     try {
       const res = await fetch("/api/public/laptop-specs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ make, model }),
+        body: JSON.stringify({ make, model, locale }),
       });
       let json: {
         ok?: boolean;
         code?: string;
         summary?: string | null;
         specUrl?: string | null;
+        referenceSummary?: string | null;
       };
       try {
         json = (await res.json()) as typeof json;
@@ -64,6 +71,7 @@ export function LaptopSpecsTestPanel(props: {
         setInsight({
           summary: json.summary ?? null,
           specUrl: json.specUrl ?? null,
+          referenceSummary: json.referenceSummary ?? null,
         });
       } else {
         setError(`${formLabels.errorPrefix}: ${json.code ?? "unknown"}`);
@@ -85,7 +93,6 @@ export function LaptopSpecsTestPanel(props: {
           <label className="block text-lg">
             <span className="font-semibold text-ink">{formLabels.make}</span>
             <input
-              required
               data-testid="admin-laptop-specs-make"
               value={make}
               onChange={(e) => setMake(e.target.value)}
@@ -96,7 +103,6 @@ export function LaptopSpecsTestPanel(props: {
           <label className="block text-lg">
             <span className="font-semibold text-ink">{formLabels.model}</span>
             <input
-              required
               data-testid="admin-laptop-specs-model"
               value={model}
               onChange={(e) => setModel(e.target.value)}

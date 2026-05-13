@@ -6,12 +6,13 @@
 #   ./scripts/lab-stack-up.sh --no-cache
 #   RSYNC_DELETE=1 ./scripts/lab-stack-up.sh
 #
-# Remote: always runs `docker compose down` first so old containers are removed,
-# then `docker compose build` and `docker compose up -d`.
+# Remote: tears down the old stack first, then rsync, then build + up.
+# If the desired port is still bound after teardown, increments until a free one is found.
 # Env (defaults suit 192.168.2.100 lab):
 #   LAB_HOST / DEPLOY_HOST     — default 192.168.2.100
 #   LAB_PATH / DEPLOY_PATH     — default /srv/sparkki
-#   LAB_USER / DEPLOY_USER     — default $USER, fallback root
+#   LAB_USER / DEPLOY_USER     — default root
+#   APP_PORT                   — desired host port (default 1337); auto-increments if taken
 #   RSYNC_DELETE=1             — rsync --delete (careful)
 #
 # `.env` is synced from this repo root when it exists locally (override secrets per
@@ -32,7 +33,7 @@ done
 
 HOST="${LAB_HOST:-${DEPLOY_HOST:-192.168.2.100}}"
 REMOTE_PATH="${LAB_PATH:-${DEPLOY_PATH:-/srv/sparkki}}"
-REMOTE_USER="${LAB_USER:-${DEPLOY_USER:-${USER:-root}}}"
+REMOTE_USER="${LAB_USER:-${DEPLOY_USER:-root}}"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
@@ -42,6 +43,13 @@ if [[ "${RSYNC_DELETE:-}" == "1" ]]; then
   RSYNC_FLAGS+=(--delete)
 fi
 
+# --- 1. Tear down old stack before syncing new code ---
+echo "==> Remote: tear down old stack"
+# shellcheck disable=SC2029
+ssh "${REMOTE_USER}@${HOST}" \
+  "[ -d '${REMOTE_PATH}' ] && cd '${REMOTE_PATH}' && docker compose down --remove-orphans 2>/dev/null || true"
+
+# --- 2. Sync files ---
 echo "==> Sync → ${REMOTE_USER}@${HOST}:${REMOTE_PATH}"
 ssh "${REMOTE_USER}@${HOST}" "mkdir -p '${REMOTE_PATH}'"
 
@@ -55,17 +63,31 @@ rsync "${RSYNC_FLAGS[@]}" \
   --exclude apps/sparkki-checker/src-tauri/target \
   ./ "${REMOTE_USER}@${HOST}:${REMOTE_PATH}/"
 
-# Published port: host APP_PORT in docker-compose (default 1337). Override locally: APP_PORT=8080 ./scripts/lab-stack-up.sh
-REMOTE_PORT="${APP_PORT:-1337}"
+# --- 3. Find a free port on the remote host ---
+DESIRED_PORT="${APP_PORT:-1337}"
+# shellcheck disable=SC2029
+REMOTE_PORT=$(ssh "${REMOTE_USER}@${HOST}" "
+  port=${DESIRED_PORT}
+  while ss -tlnH 2>/dev/null | awk '{print \$4}' | grep -q \":\${port}\$\"; do
+    port=\$((port + 1))
+  done
+  echo \"\$port\"
+")
 
+if [[ "$REMOTE_PORT" != "$DESIRED_PORT" ]]; then
+  echo "  Port ${DESIRED_PORT} is taken → using ${REMOTE_PORT}"
+fi
+
+# --- 4. Build and bring up ---
 BUILD_CMD="docker compose build --pull"
 if [[ -n "$NO_CACHE" ]]; then
   BUILD_CMD+=" --no-cache"
 fi
 
-echo "==> Remote: docker compose down && ${BUILD_CMD} && docker compose up -d"
+echo "==> Remote: ${BUILD_CMD} && docker compose up -d (port ${REMOTE_PORT})"
 # shellcheck disable=SC2029
-ssh "${REMOTE_USER}@${HOST}" "cd '${REMOTE_PATH}' && docker compose down --remove-orphans || true && ${BUILD_CMD} && docker compose up -d"
+ssh "${REMOTE_USER}@${HOST}" \
+  "cd '${REMOTE_PATH}' && APP_PORT=${REMOTE_PORT} ${BUILD_CMD} && APP_PORT=${REMOTE_PORT} docker compose up -d"
 
 BASE_URL="http://${HOST}:${REMOTE_PORT}"
 echo ""
@@ -75,8 +97,9 @@ echo "  Admin:     ${BASE_URL}/admin"
 echo "  Health:    ${BASE_URL}/api/health"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "If the host publishes another port, set APP_PORT when running this script (must match ${REMOTE_PATH}/.env APP_PORT for the printed URL)."
+echo "If the port was auto-selected, persist it in ${REMOTE_PATH}/.env as APP_PORT=${REMOTE_PORT}."
 echo "Ensure ${REMOTE_PATH}/.env (synced if present locally) includes at least:"
+echo "  APP_PORT=${REMOTE_PORT}"
 echo "  NEXTAUTH_URL=${BASE_URL}"
 echo "  NEXT_PUBLIC_SITE_URL=${BASE_URL}"
 echo "  NEXT_PUBLIC_CALENDLY_EMBED_URL=\"https://calendly.com/…\"   # if /tuki booking embed is used"

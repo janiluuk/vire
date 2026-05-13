@@ -2,6 +2,7 @@ import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
 
 type Labels = {
   title: string;
+  referenceTitle: string;
   loading: string;
   empty: string;
   link: string;
@@ -29,7 +30,7 @@ export function LaptopSpecsCard(props: {
     );
   }
 
-  if (!insight || (!insight.summary && !insight.specUrl)) {
+  if (!insight || (!insight.summary && !insight.specUrl && !insight.referenceSummary)) {
     return (
       <section
         data-testid="laptop-specs-card"
@@ -51,6 +52,17 @@ export function LaptopSpecsCard(props: {
       <h3 id="laptop-specs-heading" className="text-lg font-semibold text-ink">
         {labels.title}
       </h3>
+      {insight.referenceSummary ? (
+        <div className="mt-4 rounded-lg border border-em bg-sunken/80 p-4">
+          <h4 className="text-base font-semibold text-ink">{labels.referenceTitle}</h4>
+          <p
+            data-testid="laptop-specs-reference"
+            className="mt-2 whitespace-pre-wrap text-base leading-relaxed text-ink"
+          >
+            {insight.referenceSummary}
+          </p>
+        </div>
+      ) : null}
       {insight.summary ? (
         <p
           data-testid="laptop-specs-summary"

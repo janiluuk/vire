@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { coerceLaptopMakeModelForLookup } from "@/lib/specs/laptop-reference-lookup";
 import { resolveLaptopSpecs } from "@/lib/specs/laptop-specs";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
-const bodySchema = z.object({
-  make: z.string().trim().min(1).max(120),
-  model: z.string().trim().min(1).max(120),
-});
+const bodySchema = z
+  .object({
+    make: z.string().trim().max(120),
+    model: z.string().trim().max(120),
+    locale: z.enum(["fi", "en"]).optional(),
+  })
+  .refine((d) => d.make.length > 0 || d.model.length > 0, {
+    message: "make_or_model_required",
+  });
 
 export async function POST(req: Request) {
   const ip = getClientIpFromHeaders(req.headers);
@@ -35,9 +41,17 @@ export async function POST(req: Request) {
     });
   }
 
-  const { make, model } = parsed.data;
+  const { make, model, locale } = parsed.data;
+  const specIn = coerceLaptopMakeModelForLookup(make, model);
+  if (!specIn) {
+    return NextResponse.json({ ok: false, code: "invalid_input" } as const, {
+      status: 400,
+    });
+  }
   try {
-    const insight = await resolveLaptopSpecs(make, model);
+    const insight = await resolveLaptopSpecs(specIn.make, specIn.model, {
+      locale: locale === "en" ? "en" : "fi",
+    });
     return NextResponse.json({ ok: true, ...insight } as const);
   } catch {
     return NextResponse.json(

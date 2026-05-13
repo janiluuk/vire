@@ -121,10 +121,11 @@ Returns a redacted service or USB order when ID + email match. **429** on rate l
 
 ### `POST /api/public/laptop-specs`
 
-**Body:** `{ "make": string, "model": string }`
+**Body:** `{ "make": string, "model": string, "locale"?: "fi" | "en" }` — `locale` affects the language of the optional **`referenceSummary`** block only.
+
+**Response:** `{ "ok": true, "summary": string | null, "specUrl": string | null, "referenceSummary"?: string | null }` — **`referenceSummary`** comes from the imported **`LaptopReferenceSpec`** retail dataset when a row matches **make + model** (best-effort; not a Sparkki compatibility verdict).
 
 Uses SearXNG / optional LLM (server env). **429** on rate limit.
-
 ---
 
 ## Support contact (`/tuki` form)

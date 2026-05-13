@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LaptopSpecsTestPanel } from "@/components/admin/LaptopSpecsTestPanel";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { getAdminLocale } from "@/lib/admin/get-admin-locale";
 import { getAdminMessages } from "@/lib/admin/get-admin-messages";
 
 export default async function AdminAiTestingPage() {
@@ -51,6 +52,7 @@ export default async function AdminAiTestingPage() {
       </section>
 
       <LaptopSpecsTestPanel
+        locale={getAdminLocale()}
         formLabels={{
           make: a.aiTestingMake,
           model: a.aiTestingModel,
@@ -59,6 +61,7 @@ export default async function AdminAiTestingPage() {
         }}
         cardLabels={{
           title: a.specsTitle,
+          referenceTitle: a.specsReferenceTitle,
           loading: a.specsLoading,
           empty: a.specsEmpty,
           link: a.specsLink,

@@ -6,6 +6,8 @@
 export type LaptopSpecsInsight = {
   summary: string | null;
   specUrl: string | null;
+  /** Retail-style reference specs from imported dataset (not manufacturer-official). */
+  referenceSummary?: string | null;
 };
 
 type SearxResult = { title?: string; url?: string; content?: string };
@@ -13,8 +15,10 @@ type SearxResult = { title?: string; url?: string; content?: string };
 const cache = new Map<string, { exp: number; value: LaptopSpecsInsight }>();
 const CACHE_MS = 1000 * 60 * 60 * 6;
 
-function cacheKey(make: string, model: string) {
-  return `${make.trim().toLowerCase()}|${model.trim().toLowerCase()}`;
+function cacheKey(make: string, model: string, locale: string) {
+  const mk = make.trim().toLowerCase();
+  const md = model.trim().toLowerCase();
+  return `${mk || "_"}|${md || "_"}|${locale}`;
 }
 
 function pickSpecUrlFromResults(results: SearxResult[]): string | null {
@@ -261,28 +265,48 @@ async function runLlm(
 export async function resolveLaptopSpecs(
   make: string,
   model: string,
+  options?: { locale?: "fi" | "en" },
 ): Promise<LaptopSpecsInsight> {
   const m = make.trim();
   const mo = model.trim();
-  if (!m || !mo) return { summary: null, specUrl: null };
+  if (!m && !mo) return { summary: null, specUrl: null };
 
   if (process.env.SPECS_LOOKUP_ENABLED === "false") {
     return { summary: null, specUrl: null };
   }
 
-  const key = cacheKey(m, mo);
+  const locale = options?.locale === "en" ? "en" : "fi";
+
+  const key = cacheKey(m, mo, locale);
   const hit = cache.get(key);
   if (hit && hit.exp > Date.now()) return hit.value;
 
-  const query = `${m} ${mo} laptop specifications review`;
+  let referenceSummary: string | null = null;
+  try {
+    const { lookupLaptopReference } = await import(
+      "@/lib/specs/laptop-reference-lookup"
+    );
+    referenceSummary = await lookupLaptopReference(m, mo, locale);
+  } catch {
+    referenceSummary = null;
+  }
+
+  const query = `${[m, mo].filter(Boolean).join(" ")} laptop specifications review`.trim();
   const results = await searxSearch(query);
   if (results.length === 0) {
-    const empty = { summary: null, specUrl: null };
+    const empty: LaptopSpecsInsight = {
+      summary: null,
+      specUrl: null,
+      referenceSummary,
+    };
     cache.set(key, { exp: Date.now() + CACHE_MS, value: empty });
     return empty;
   }
 
-  let insight: LaptopSpecsInsight = searchOnlyInsight(results, query);
+  let insight: LaptopSpecsInsight = {
+    ...searchOnlyInsight(results, query),
+    referenceSummary,
+  };
 
   try {
     const ai = await runLlm(query, results);
@@ -290,6 +314,7 @@ export async function resolveLaptopSpecs(
       insight = {
         summary: ai.summary ?? insight.summary,
         specUrl: ai.specUrl ?? insight.specUrl,
+        referenceSummary,
       };
     }
   } catch {
