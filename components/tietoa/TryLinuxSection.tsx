@@ -6,7 +6,7 @@ export async function TryLinuxSection() {
   const urls = tryLinuxNovncUrls();
 
   return (
-    <section aria-labelledby="try-linux-title" className="vire-card space-y-6 p-6 sm:p-8">
+    <section aria-labelledby="try-linux-title" className="sparkki-card space-y-6 p-6 sm:p-8">
       <h2 id="try-linux-title" className="text-2xl font-bold text-ink">
         {t("tryLinuxTitle")}
       </h2>

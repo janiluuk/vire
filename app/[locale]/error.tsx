@@ -25,7 +25,7 @@ export default function LocaleError({
         <button
           type="button"
           onClick={() => reset()}
-          className="min-h-tap rounded-lg bg-vire-green px-6 py-3 font-semibold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
+          className="min-h-tap rounded-lg bg-sparkki-green px-6 py-3 font-semibold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
         >
           {t("retry")}
         </button>

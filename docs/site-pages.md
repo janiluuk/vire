@@ -28,11 +28,11 @@ Paths below omit the locale prefix (`/fi/…` and `/en/…` mirror the same stru
 | Example guide | `/itse/tarkista-levy` | Sample MDX guide page (slug varies). |
 | Support | `/tuki` | Contact, Calendly embed when configured. |
 | Compatibility | `/koneet` | Model search + recommendations. |
-| Company | `/meista` | About Vire (rewrites internally to `/about`). |
+| Company | `/meista` | About Sparkki (rewrites internally to `/about`). |
 | Community | `/meista/yhteiso` | Discord / YouTube / guidelines. |
 | Sparkki for Good | `/sparkki-for-good` | Discount application. Legacy `/vire-for-good` redirects. |
-| Vire Care | `/care` | Subscription landing. |
-| Care thank-you | `/care/kiitos` | Post–Vire Care checkout. |
+| Sparkki Care | `/care` | Subscription landing. |
+| Care thank-you | `/care/kiitos` | Post–Sparkki Care checkout. |
 | Privacy | `/tietosuoja` | Privacy policy. |
 | Order lookup | `/tilaus` | Look up order status. |
 
@@ -76,7 +76,7 @@ Paths below omit the locale prefix (`/fi/…` and `/en/…` mirror the same stru
 
 ![Sparkki for Good](./screenshots/public/fi-sparkki-for-good.png)
 
-![Vire Care](./screenshots/public/fi-care.png)
+![Sparkki Care](./screenshots/public/fi-care.png)
 
 ![Care thank-you](./screenshots/public/fi-care-kiitos.png)
 

@@ -87,7 +87,7 @@ export default async function TietoaLinuxPage() {
 
       <section
         aria-labelledby="upgrade-hdd-title"
-        className="vire-card border-g/25 bg-g/[0.04] p-6 sm:p-8"
+        className="sparkki-card border-g/25 bg-g/[0.04] p-6 sm:p-8"
       >
         <h2
           id="upgrade-hdd-title"

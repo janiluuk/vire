@@ -84,7 +84,7 @@ const guides = [
 ] as const;
 
 async function main() {
-  const email = process.env.ADMIN_EMAIL ?? "admin@vire.fi";
+  const email = process.env.ADMIN_EMAIL ?? "admin@sparkki.fi";
   const username = (process.env.ADMIN_USERNAME ?? "admin").trim().toLowerCase();
   const password = process.env.ADMIN_PASSWORD ?? "changeme";
   const passwordHash = await bcrypt.hash(password, 12);

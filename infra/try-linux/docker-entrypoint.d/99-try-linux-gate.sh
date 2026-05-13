@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-# Optional shared gate: set TRY_LINUX_ACCESS_TOKEN (same value as Vire NEXT_PUBLIC_TRY_LINUX_ACCESS_TOKEN).
+# Optional shared gate: set TRY_LINUX_ACCESS_TOKEN (same value as Sparkki NEXT_PUBLIC_TRY_LINUX_ACCESS_TOKEN).
 # Generates /etc/nginx/conf.d/01-gate.conf before nginx loads config.
 GATE_FILE=/etc/nginx/conf.d/01-gate.conf
 if [ -n "${TRY_LINUX_ACCESS_TOKEN:-}" ]; then

@@ -1,7 +1,7 @@
 # Optional TLS terminator (Caddy internal CA). Usage:
 #   docker compose -f docker-compose.yml -f docker-compose.tls.yml --profile tls up -d
 #
-# Then point Vire at https://HOST:8443 (no trailing slash) — trust Caddy's CA in the browser for lab only.
+# Then point Sparkki at https://HOST:8443 (no trailing slash) — trust Caddy's CA in the browser for lab only.
 
 services:
   try-linux-caddy:

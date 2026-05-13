@@ -15,7 +15,7 @@ export default async function AdminCareSubscriptionsPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href="/admin" className="text-vire-green underline">
+        <Link href="/admin" className="text-sparkki-green underline">
           ← {a.dashboard}
         </Link>
         <Link

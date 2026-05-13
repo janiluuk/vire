@@ -1,6 +1,6 @@
 /**
  * Canonical site origin for sitemap, robots, and metadataBase.
- * Set NEXT_PUBLIC_SITE_URL in production (e.g. https://vire.fi).
+ * Set NEXT_PUBLIC_SITE_URL in production (e.g. https://sparkki.fi).
  */
 export function getSiteUrl(): string {
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");

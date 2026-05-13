@@ -20,7 +20,7 @@ After changing **`NEXT_PUBLIC_*`** values, **rebuild** the Next.js app. In **Doc
 
 The repo **`Dockerfile`** builder declares **`ARG NEXT_PUBLIC_SITE_URL`**, **`ARG NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN`**, and **`ARG NEXT_PUBLIC_CALENDLY_EMBED_URL`**. **`docker-compose.override.yml`** adds matching **`web.build.args`**. Set variables in **`.env`** and run **`docker compose build web && docker compose up -d`** (use **`--no-cache`** if they changed and the layer was cached).
 
-**Lab / `192.168.2.100`:** ensure **`/srv/vire/.env`** (or your **`DEPLOY_PATH`**) includes a valid HTTPS Calendly scheduling link **and** a matching site origin, for example:
+**Lab / `192.168.2.100`:** ensure **`/srv/sparkki/.env`** (or your **`DEPLOY_PATH`**) includes a valid HTTPS Calendly scheduling link **and** a matching site origin, for example:
 
 ```bash
 NEXT_PUBLIC_CALENDLY_EMBED_URL="https://calendly.com/your-user/your-event"

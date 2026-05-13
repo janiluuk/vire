@@ -133,29 +133,29 @@ export default async function AdminDashboardPage() {
 
       <p className="mt-8 text-lg text-ink">{a.statsIntro}</p>
       <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <li className="vire-card rounded-2xl p-5">
+        <li className="sparkki-card rounded-2xl p-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statOpenOrders}</p>
           <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink">{openOrders}</p>
           <p className="mt-1 text-sm text-fog">{a.statOpenOrdersHint}</p>
         </li>
-        <li className="vire-card rounded-2xl p-5">
+        <li className="sparkki-card rounded-2xl p-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statTodayOrders}</p>
           <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink">{ordersToday}</p>
         </li>
-        <li className="vire-card rounded-2xl p-5">
+        <li className="sparkki-card rounded-2xl p-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statTodayRevenue}</p>
           <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink">
             {revenueStr} {a.statEur}
           </p>
         </li>
-        <li className="vire-card rounded-2xl p-5">
+        <li className="sparkki-card rounded-2xl p-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statModelsUnchecked}</p>
           <p className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink">{modelsUnchecked}</p>
         </li>
       </ul>
 
       <ul className="mt-6 grid gap-4 lg:grid-cols-2">
-        <li className="vire-card rounded-2xl p-5 lg:col-span-2">
+        <li className="sparkki-card rounded-2xl p-5 lg:col-span-2">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statWeekOrders}</p>
           <p className="mt-1 text-sm text-fog">{a.statWeekOrdersHint}</p>
           <div className="mt-6 flex h-44 gap-2 sm:gap-3" role="img" aria-label={a.statWeekOrdersHint}>
@@ -170,7 +170,7 @@ export default async function AdminDashboardPage() {
                 <div key={key} className="flex min-h-0 min-w-0 flex-1 flex-col justify-end gap-1">
                   <span className="text-center text-sm font-semibold text-ink">{orders}</span>
                   <div
-                    className="w-full max-w-[3rem] self-center rounded-t-md bg-vire-green/80 sm:max-w-none"
+                    className="w-full max-w-[3rem] self-center rounded-t-md bg-sparkki-green/80 sm:max-w-none"
                     style={{ height: hPx }}
                   />
                   <span
@@ -187,7 +187,7 @@ export default async function AdminDashboardPage() {
             <span className="font-semibold">{a.statWeekRevenue}:</span> {weekRevenueStr} {a.statEur}
           </p>
         </li>
-        <li className="vire-card rounded-2xl p-5">
+        <li className="sparkki-card rounded-2xl p-5">
           <p className="text-sm font-semibold uppercase tracking-wide text-fog">{a.statModelApproval}</p>
           {approvalPct === null ? (
             <p className="mt-3 text-lg text-fog">{a.statModelApprovalEmpty}</p>

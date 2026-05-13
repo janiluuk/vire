@@ -13,7 +13,7 @@ export default async function AdminGuidesPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <Link href="/admin" className="text-vire-green underline">
+      <Link href="/admin" className="text-sparkki-green underline">
         ← {a.dashboard}
       </Link>
       <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
@@ -23,13 +23,13 @@ export default async function AdminGuidesPage() {
         </div>
         <Link
           href="/admin/guides/new"
-          className="min-h-tap rounded-xl bg-vire-green px-5 py-3 font-semibold text-canvas hover:opacity-[0.85]"
+          className="min-h-tap rounded-xl bg-sparkki-green px-5 py-3 font-semibold text-canvas hover:opacity-[0.85]"
         >
           {a.guidesNew}
         </Link>
       </div>
 
-      <div className="vire-card mt-8 overflow-x-auto">
+      <div className="sparkki-card mt-8 overflow-x-auto">
         <table className="min-w-full text-left text-lg">
           <thead className="border-b border-edge bg-canvas">
             <tr>
@@ -50,7 +50,7 @@ export default async function AdminGuidesPage() {
               guides.map((g) => (
                 <tr key={g.id} className="border-b border-edge hover:bg-canvas/80">
                   <td className="px-4 py-3">
-                    <Link href={`/admin/guides/${g.slug}`} className="font-medium text-vire-green underline">
+                    <Link href={`/admin/guides/${g.slug}`} className="font-medium text-sparkki-green underline">
                       {g.titleFi}
                     </Link>
                   </td>

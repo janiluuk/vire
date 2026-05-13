@@ -1,6 +1,6 @@
 # Try-Linux lab proxy (noVNC + websockify)
 
-Deploy this folder on a machine that can reach your VNC/websockify backends (default lab host **`192.168.2.100`**). The Vire **Info** page links here via `NEXT_PUBLIC_TRY_LINUX_PROXY_BASE`.
+Deploy this folder on a machine that can reach your VNC/websockify backends (default lab host **`192.168.2.100`**). The Sparkki **Info** page links here via `NEXT_PUBLIC_TRY_LINUX_PROXY_BASE`.
 
 ## Architecture
 
@@ -31,7 +31,7 @@ Browser  --HTTPS/WSS-->  [nginx :8080]  --HTTP/WS-->  websockify :6080 / :6081  
 
    Paths to noVNC assets vary by distro (`/usr/share/novnc`, `/usr/share/novnc/utils/websockify`, Snap, etc.).
 
-5. Set Vire env:
+5. Set Sparkki env:
 
    ```bash
    NEXT_PUBLIC_TRY_LINUX_PROXY_BASE="http://YOUR_PROXY_HOST:8080"
@@ -51,7 +51,7 @@ If nginx runs **in Docker** on the same Linux host as websockify on **127.0.0.1:
 ## Customizing Mint / Fedora later
 
 - Replace VM images, autologin, panel layout, and pinned apps on the **guest** side.
-- Keep **websockify ports** and nginx **location prefixes** stable (`/try/mint/`, `/try/fedora/`) so the Vire app does not need changes.
+- Keep **websockify ports** and nginx **location prefixes** stable (`/try/mint/`, `/try/fedora/`) so the Sparkki app does not need changes.
 
 ## TLS (built-in lab profile)
 
@@ -62,13 +62,13 @@ docker compose -f docker-compose.yml -f docker-compose.tls.yml --profile tls up 
 ```
 
 - Caddy listens on **`HTTPS_PORT`** (default **8443**) and reverse-proxies to **nginx:80**.
-- Point Vire at **`https://YOUR_HOST:8443`** (no trailing slash) and trust Caddy’s root in the browser for lab use.
+- Point Sparkki at **`https://YOUR_HOST:8443`** (no trailing slash) and trust Caddy’s root in the browser for lab use.
 - For a public hostname, replace `tls internal` in **`Caddyfile`** with your ACME / DNS challenge setup (Caddy docs).
 
 ## Optional access gate (shared token)
 
 1. Set **`TRY_LINUX_ACCESS_TOKEN`** in **`infra/try-linux/.env`** (same machine as `docker compose`).
-2. Set **`NEXT_PUBLIC_TRY_LINUX_ACCESS_TOKEN`** in Vire to the **same value** (public env — lab gate only).
+2. Set **`NEXT_PUBLIC_TRY_LINUX_ACCESS_TOKEN`** in Sparkki to the **same value** (public env — lab gate only).
 3. nginx returns **403** for `/try/*` unless the request includes **`?access_token=...`** (the Info page appends this automatically when the env is set).
 
 Use a long random string (letters, digits, `_`, `-`). Avoid `"` and `\` in the token.

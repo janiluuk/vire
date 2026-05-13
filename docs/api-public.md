@@ -55,7 +55,7 @@ Creates a **service** `Order` row and a Stripe Checkout Session. Requires Stripe
 | --- | --- | --- |
 | `tier` | enum | `SSD_BASIC`, `SSD_RAM`, `FULL_SERVICE` |
 | `deliveryMethod` | enum | Prisma `DeliveryMethod` |
-| `hddRemoval` | enum | `VIRE_REMOVES`, `CUSTOMER_REMOVES`, `KEEP_IN_DEVICE` |
+| `hddRemoval` | enum | `SPARKKI_REMOVES`, `CUSTOMER_REMOVES`, `KEEP_IN_DEVICE` |
 | `computerDescription` | string | free-text “what computer” (stored on `Order.notes` intake) |
 | `customerContact` | string | **phone or email** (parsed server-side) |
 | `locale` | `"fi"` \| `"en"` | stored on order; used for transactional email |
@@ -156,4 +156,4 @@ Requires `SUPPORT_NOTIFY_EMAIL` and Resend. **503** if not configured. **429** o
 
 ## Versioning
 
-No URL version prefix (`/v1`). Breaking changes should be coordinated with the Sparkki web app and any external clients (e.g. `apps/vire-checker`).
+No URL version prefix (`/v1`). Breaking changes should be coordinated with the Sparkki web app and any external clients (e.g. `apps/sparkki-checker`).

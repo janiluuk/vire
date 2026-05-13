@@ -96,7 +96,7 @@ export function UsbOrderForm({ locale }: { locale: string }) {
       <button
         type="submit"
         disabled={!ok || loading}
-        className="min-h-tap rounded-xl bg-vire-green px-6 py-3 font-semibold text-canvas disabled:opacity-50"
+        className="min-h-tap rounded-xl bg-sparkki-green px-6 py-3 font-semibold text-canvas disabled:opacity-50"
       >
         {loading ? "…" : t("usbSubmit")}
       </button>

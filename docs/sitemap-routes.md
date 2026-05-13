@@ -23,7 +23,7 @@
 | `/tietoa/huolia` | Common concerns |
 | `/tietoa/sovellukset/windows` | Apps Windows |
 | `/tietoa/sovellukset/mac` | Apps Mac |
-| `/care` | Vire Care |
+| `/care` | Sparkki Care |
 | `/care/kiitos` | Care thank-you |
 | `/koneet` | Compatibility search |
 | `/sparkki-for-good` | Social discount |

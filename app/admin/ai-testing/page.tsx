@@ -13,7 +13,7 @@ export default async function AdminAiTestingPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/admin" className="text-vire-green underline">
+      <Link href="/admin" className="text-sparkki-green underline">
         ← {a.dashboard}
       </Link>
       <h1 className="mt-6 font-display text-3xl font-extrabold tracking-tight text-ink">

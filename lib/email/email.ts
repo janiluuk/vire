@@ -276,7 +276,7 @@ export async function sendSupportContactEmail(params: {
   const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
   const subject =
     params.locale === "en"
-      ? "Support message from vire.fi — /tuki"
+      ? "Support message from sparkki.fi — /tuki"
       : "Tukipyyntö verkkosivulta — /tuki";
   const who =
     params.contactEmail != null
@@ -293,7 +293,7 @@ export async function sendSupportContactEmail(params: {
   return { ok: true };
 }
 
-export async function sendVireForGoodApplicationEmail(params: {
+export async function sendSparkkiForGoodApplicationEmail(params: {
   notifyTo: string;
   reason: string;
   contactRaw: string;
@@ -328,7 +328,7 @@ export async function sendVireForGoodApplicationEmail(params: {
     to: params.notifyTo,
     replyTo: params.contactEmail ?? undefined,
     subject,
-    html: `<p>${params.locale === "en" ? "Application from vire.fi" : "Hakemus verkkosivulta"}</p><table style="border-collapse:collapse">${htmlRows}</table>`,
+    html: `<p>${params.locale === "en" ? "Application from sparkki.fi" : "Hakemus verkkosivulta (sparkki.fi)"}</p><table style="border-collapse:collapse">${htmlRows}</table>`,
   });
   if (error) return { ok: false, error: error.message };
   return { ok: true };
@@ -397,8 +397,8 @@ export async function sendCarePaymentFailedEmail(params: {
         : "Hei,";
   const html =
     loc === "en"
-      ? `<p>${greet}</p><p>We could not charge your card for <strong>Sparkki Care</strong>. Please update your payment method in the Stripe billing portal (link in your last receipt) or contact us at tuki@vire.fi.</p>`
-      : `<p>${greet}</p><p>Emme voineet veloittaa <strong>Sparkki Care</strong> -tilauksesta. Päivitä maksutapa Stripen laskutusportaalissa (linkki edellisessä kuittissa) tai ota yhteyttä: tuki@vire.fi.</p>`;
+      ? `<p>${greet}</p><p>We could not charge your card for <strong>Sparkki Care</strong>. Please update your payment method in the Stripe billing portal (link in your last receipt) or contact us at tuki@sparkki.fi.</p>`
+      : `<p>${greet}</p><p>Emme voineet veloittaa <strong>Sparkki Care</strong> -tilauksesta. Päivitä maksutapa Stripen laskutusportaalissa (linkki edellisessä kuittissa) tai ota yhteyttä: tuki@sparkki.fi.</p>`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,

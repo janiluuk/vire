@@ -15,7 +15,7 @@ const baseOrder = {
   customerName: "Test User",
   customerEmail: "test@example.com",
   customerPhone: null,
-  hddRemoval: "VIRE_REMOVES" as const,
+  hddRemoval: "SPARKKI_REMOVES" as const,
   address: null,
   preferredDate: null,
   notes: null,

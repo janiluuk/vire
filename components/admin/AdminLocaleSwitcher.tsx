@@ -21,7 +21,7 @@ export function AdminLocaleSwitcher({ current }: { current: "fi" | "en" }) {
           aria-pressed={current === "fi"}
           disabled={current === "fi"}
           onClick={() => void setAdminLocale("fi", pathname)}
-          className="min-h-tap min-w-[3rem] rounded-md px-3 py-1 font-semibold disabled:bg-vire-green disabled:text-canvas"
+          className="min-h-tap min-w-[3rem] rounded-md px-3 py-1 font-semibold disabled:bg-sparkki-green disabled:text-canvas"
         >
           {t("adminLocaleFi")}
         </button>
@@ -30,7 +30,7 @@ export function AdminLocaleSwitcher({ current }: { current: "fi" | "en" }) {
           aria-pressed={current === "en"}
           disabled={current === "en"}
           onClick={() => void setAdminLocale("en", pathname)}
-          className="min-h-tap min-w-[3rem] rounded-md px-3 py-1 font-semibold disabled:bg-vire-green disabled:text-canvas"
+          className="min-h-tap min-w-[3rem] rounded-md px-3 py-1 font-semibold disabled:bg-sparkki-green disabled:text-canvas"
         >
           {t("adminLocaleEn")}
         </button>

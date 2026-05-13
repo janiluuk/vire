@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { POST as stripeWebhookPost } from "@/app/api/webhooks/stripe/route";
 
 function testWebhookSecret() {
-  return `whsec_${Buffer.from("vire_test_webhook_secret_32b").toString("base64")}`;
+  return `whsec_${Buffer.from("sparkki_test_webhook_secret_32b").toString("base64")}`;
 }
 
 describe("POST /api/webhooks/stripe", () => {

@@ -11,7 +11,7 @@ PNG captures of public (Finnish + sample English) and **admin** pages for **QA a
 ```bash
 # optional: override URL or admin credentials
 export DOCS_SCREENSHOT_BASE_URL=http://127.0.0.1:1337
-export ADMIN_EMAIL=admin@vire.fi
+export ADMIN_EMAIL=admin@sparkki.fi
 export ADMIN_PASSWORD=changeme
 
 npm run docs:screenshots

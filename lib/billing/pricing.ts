@@ -45,8 +45,8 @@ export const DATA_MIGRATION_LARGE_CENTS = 50_00;
 /** Postitus (DROP_OFF) — EUR cents. */
 export const DELIVERY_POST_CENTS = 15_00;
 
-/** HDD removal by Vire — EUR cents (waived when tier already includes it). */
-export const HDD_REMOVAL_VIRE_CENTS = 20_00;
+/** HDD removal by Sparkki — EUR cents (waived when tier already includes it). */
+export const HDD_REMOVAL_SPARKKI_CENTS = 20_00;
 
 export function deliveryAddonCents(method: DeliveryMethod): number {
   return method === "DROP_OFF" ? DELIVERY_POST_CENTS : 0;
@@ -56,9 +56,9 @@ export function hddRemovalAddonCents(
   tier: Exclude<ServiceTier, "B2B">,
   option: HddRemovalOption,
 ): number {
-  if (option !== "VIRE_REMOVES") return 0;
+  if (option !== "SPARKKI_REMOVES") return 0;
   if (tier === "FULL_SERVICE") return 0;
-  return HDD_REMOVAL_VIRE_CENTS;
+  return HDD_REMOVAL_SPARKKI_CENTS;
 }
 
 export function dataMigrationAddonCents(

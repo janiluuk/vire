@@ -348,7 +348,6 @@ body {
     padding-bottom: var(--space-2);
   }
 
-  .vire-card,
   .sparkki-card {
     border-radius: var(--radius-lg);
     padding: var(--space-card-padding);
@@ -361,7 +360,6 @@ body {
     backdrop-filter: blur(var(--blur-md));
   }
 
-  .vire-card:hover,
   .sparkki-card:hover {
     @apply border-em;
     box-shadow: var(--shadow-md);
@@ -369,17 +367,15 @@ body {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .vire-card:hover,
     .sparkki-card:hover {
       transform: none;
     }
   }
 
-  .vire-card-hover {
-    @apply vire-card;
+  .sparkki-card-hover {
+    @apply sparkki-card;
   }
 
-  .vire-hero,
   .sparkki-hero {
     position: relative;
     overflow: hidden;
@@ -392,25 +388,21 @@ body {
   }
 
   @media (min-width: 640px) {
-    .vire-hero,
     .sparkki-hero {
       padding: var(--space-16) var(--space-10);
     }
   }
 
-  .vire-hero-inner,
   .sparkki-hero-inner {
     @apply relative z-10;
   }
 
-  .vire-eyebrow,
   .sparkki-eyebrow {
     margin-bottom: var(--space-5);
     @apply flex items-center gap-2.5 font-mono font-normal uppercase tracking-[0.15em] text-g;
     font-size: var(--text-xs);
   }
 
-  .vire-eyebrow::before,
   .sparkki-eyebrow::before {
     content: "";
     display: inline-block;
@@ -419,7 +411,6 @@ body {
     background: var(--color-accent);
   }
 
-  .vire-btn-primary,
   .sparkki-btn-primary {
     border-radius: var(--radius-md);
     @apply relative inline-flex min-h-tap min-w-[200px] items-center justify-center bg-g px-7 py-3.5 font-bold tracking-tight text-canvas;
@@ -429,21 +420,18 @@ body {
       box-shadow var(--duration-hover) var(--ease-out-soft);
   }
 
-  .vire-btn-primary:hover,
   .sparkki-btn-primary:hover {
     opacity: 0.95;
     box-shadow: var(--shadow-glow-accent);
     transform: translateY(-2px);
   }
 
-  .vire-btn-primary:active,
   .sparkki-btn-primary:active {
     transform: translateY(0) scale(0.98);
     box-shadow: var(--shadow-xs);
     transition-duration: var(--duration-instant);
   }
 
-  .vire-btn-primary:disabled,
   .sparkki-btn-primary:disabled {
     transform: none;
     opacity: 0.55;
@@ -470,9 +458,7 @@ body {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .vire-btn-primary:hover,
     .sparkki-btn-primary:hover,
-    .vire-btn-primary:active,
     .sparkki-btn-primary:active {
       transform: none;
     }
@@ -483,12 +469,10 @@ body {
     }
   }
 
-  .vire-btn-primary:focus-visible,
   .sparkki-btn-primary:focus-visible {
     @apply outline outline-2 outline-offset-2 outline-g;
   }
 
-  .vire-btn-secondary,
   .sparkki-btn-secondary {
     border-radius: var(--radius-md);
     @apply inline-flex min-h-tap min-w-[200px] items-center justify-center border border-em bg-transparent px-7 py-3.5 font-normal text-fog;
@@ -498,7 +482,6 @@ body {
       border-color var(--duration-base) var(--ease-standard);
   }
 
-  .vire-btn-secondary:hover,
   .sparkki-btn-secondary:hover {
     background: var(--overlay-accent-hover);
     @apply text-ink;
@@ -506,23 +489,19 @@ body {
     box-shadow: var(--shadow-xs);
   }
 
-  .vire-btn-secondary:active,
   .sparkki-btn-secondary:active {
     transform: translateY(0) scale(0.99);
     transition-duration: var(--duration-instant);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .vire-btn-secondary:hover,
     .sparkki-btn-secondary:hover,
-    .vire-btn-secondary:active,
     .sparkki-btn-secondary:active {
       transform: none;
       box-shadow: none;
     }
   }
 
-  .vire-btn-secondary:focus-visible,
   .sparkki-btn-secondary:focus-visible {
     @apply outline outline-2 outline-offset-2 outline-g;
   }

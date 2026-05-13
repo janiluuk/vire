@@ -12,7 +12,7 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  /** DESIGN_SYSTEM.md — public URLs `/meista` match Vire IA while pages stay under existing segments */
+  /** DESIGN_SYSTEM.md — public URLs `/meista` match Sparkki IA while pages stay under existing segments */
   async rewrites() {
     return {
       beforeFiles: [

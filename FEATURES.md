@@ -92,18 +92,18 @@ A customer who subscribes to Sparkki Care has a lifetime value of €94.80/year 
 1. 75 days after order completion (15 days before support expires), Sparkki sends an automated email: "Tukesi päättyy 15 päivän kuluttua. Jatka Sparkki Care -tilauksella."
 2. Email links to `/care` — a dedicated landing page explaining the subscription.
 3. Customer clicks "Tilaa Sparkki Care" → Stripe subscription checkout (monthly, cancel anytime).
-4. On successful subscription: customer record updated, care dashboard unlocked at `/oma-vire`.
+4. On successful subscription: customer record updated, care dashboard unlocked at `/oma-sparkki`.
 
 **Ongoing:**
 
 - Monthly: customer receives a newsletter with one Linux Mint tip and a reminder of their subscription benefits.
 - Quarterly: automated "koneesi terveys" (computer health) email with a simple self-assessment checklist.
 - Annually: a 30-min scheduled call offered via Calendly booking link.
-- Anytime: priority #vire-care channel in Discord (invite sent on subscription).
+- Anytime: priority #sparkki-care channel in Discord (invite sent on subscription).
 
 **Cancellation:**
 
-- Cancel anytime via `/oma-vire` dashboard or by emailing tuki@vire.fi.
+- Cancel anytime via `/oma-sparkki` dashboard or by emailing tuki@sparkki.fi.
 - On cancellation: subscription ends at period end, customer notified, downgraded to Discord-only.
 
 ### Database changes
@@ -144,7 +144,7 @@ enum CareStatus {
 ### New pages
 
 - `/care` — landing page: benefits, price, "cancel anytime" reassurance, CTA to subscribe
-- `/oma-vire` — customer dashboard (no login required — access via magic link sent to email):
+- `/oma-sparkki` — customer dashboard (no login required — access via magic link sent to email):
   - Subscription status + next billing date
   - Cancel button (confirms with "Are you sure?" modal)
   - Link to priority Discord channel
@@ -276,11 +276,11 @@ Removes the friction of manual spec entry entirely. The PDF report is a shareabl
 ```
 Tauri app (Rust + web frontend)
   └── reads: CPU, RAM, disk type/size, OS version, screen size
-  └── calls: vire.fi/api/check (POST with specs JSON)
+  └── calls: sparkki.fi/api/check (POST with specs JSON)
   └── receives: compatibility verdict + recommended upgrade
   └── generates: PDF report via html-to-pdf
   └── opens: report in default PDF viewer
-  └── optionally: opens vire.fi/tilaa?model=[...]&ram=[...]&disk=[...] in browser
+  └── optionally: opens sparkki.fi/tilaa?model=[...]&ram=[...]&disk=[...] in browser
 ```
 
 ### Spec collection (per OS)
@@ -309,8 +309,8 @@ The report is generated as HTML then converted to PDF. Include:
    - 🔴 Ei suositeltu — "Koneesi laitteisto ei tue päivitystä täysipainoisesti"
 4. **Estimated improvements table:** Boot time before → after, app launch time, battery impact
 5. **Recommended upgrade:** SSD model, RAM recommendation, estimated total cost
-6. **QR code:** links to `vire.fi/tilaa?ref=report&model=[slug]` — tracked conversion
-7. **Footer:** vire.fi | hei@vire.fi | "Raportti on voimassa 90 päivää"
+6. **QR code:** links to `sparkki.fi/tilaa?ref=report&model=[slug]` — tracked conversion
+7. **Footer:** sparkki.fi | hei@sparkki.fi | "Raportti on voimassa 90 päivää"
 
 ### API route — `/api/check` (POST)
 
@@ -359,7 +359,7 @@ model CompatibilityCheck {
 ### Tauri app distribution
 
 - Build for Windows (x64, arm64) and macOS (x64, Apple Silicon)
-- Host installers at `vire.fi/checker/download`
+- Host installers at `sparkki.fi/checker/download`
 - Auto-update via Tauri updater pointing to GitHub releases
 - App is unsigned initially (show install instructions for bypassing Gatekeeper/SmartScreen)
 - Future: code signing certificate (~€200/year) once volume justifies
@@ -541,7 +541,7 @@ VERGOOD-TYO       → -€50 (self-declared unemployed)
 ```prisma
 model Order {
   // ... existing fields ...
-  vireForGood      Boolean @default(false)
+  sparkkiForGood      Boolean @default(false)
   goodTierReason    String? // "spr_referral" | "pensioner" | "unemployed" | "refugee"
   goodTierVerified  Boolean @default(false)
   goodTierDocUrl    String? // uploaded verification document (R2/S3 URL)
@@ -581,7 +581,7 @@ A batch discount booking for 3+ people from the same area who book together. The
 
 1. Customer lands on `/ryhmätilaus` (group booking page)
 2. They enter: their postcode, their email, "I want to organise a group booking"
-3. Sparkki sends them a unique group code + a shareable link: `vire.fi/ryhma/ABC123`
+3. Sparkki sends them a unique group code + a shareable link: `sparkki.fi/ryhma/ABC123`
 4. Organiser shares the link with neighbours/friends
 5. Each participant fills in their machine details at the group link
 6. When 3+ participants have joined: group is confirmed, organiser notified
@@ -684,7 +684,7 @@ Lahjoitettu seuraaville organisaatioille:
   [School name]: X laitetta
 
 Tämä raportti on tarkoitettu yrityksenne ESG-dokumentaatioon.
-Lisätietoja: vire.fi/yritysyhteistyö
+Lisätietoja: sparkki.fi/yritysyhteistyö
 ```
 
 ### DB changes

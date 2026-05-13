@@ -29,7 +29,7 @@ function migrationStripeProduct(
 ): { name: string; description: string } {
   if (receiptLocale === "en") {
     return {
-      name: "Vire — Data transfer (Windows → Linux)",
+      name: "Sparkki — Data transfer (Windows → Linux)",
       description:
         size === "large"
           ? "Large data volume (>100 GB estimated)"
@@ -37,7 +37,7 @@ function migrationStripeProduct(
     };
   }
   return {
-    name: "Vire — Tiedonsiirto (Windows → Linux)",
+    name: "Sparkki — Tiedonsiirto (Windows → Linux)",
     description:
       size === "large"
         ? "Suuri tietomäärä (>100 GB arvio)"
@@ -50,12 +50,12 @@ function deliveryShipStripeProduct(
 ): { name: string; description: string } {
   if (receiptLocale === "en") {
     return {
-      name: "Vire — Shipping (return parcel)",
+      name: "Sparkki — Shipping (return parcel)",
       description: "Postal round trip within Finland",
     };
   }
   return {
-    name: "Vire — Postitus (paluu lähetys)",
+    name: "Sparkki — Postitus (paluu lähetys)",
     description: "Postituksen lisä maksu, koko Suomi",
   };
 }
@@ -65,12 +65,12 @@ function hddRemovalStripeProduct(
 ): { name: string; description: string } {
   if (receiptLocale === "en") {
     return {
-      name: "Vire — HDD removal",
+      name: "Sparkki — HDD removal",
       description: "We remove the old hard drive as part of prep",
     };
   }
   return {
-    name: "Vire — HDD-poisto",
+    name: "Sparkki — HDD-poisto",
     description: "Kiintolevyn irrotus valmistelussa",
   };
 }
@@ -113,13 +113,13 @@ function portableVmStripeProduct(
 ): { name: string; description: string } {
   if (receiptLocale === "en") {
     return {
-      name: "Vire — Portable VM / disk image (pre-install capture)",
+      name: "Sparkki — Portable VM / disk image (pre-install capture)",
       description:
         "Create a virtual-machine or disk image of the system state before Linux install — format agreed in intake. Customer responsible for OS licensing in any VM.",
     };
   }
   return {
-    name: "Vire — Kannettava virtuaalikone / levykuva (ennen asennusta)",
+    name: "Sparkki — Kannettava virtuaalikone / levykuva (ennen asennusta)",
     description:
       "Virtuaalikoneen tai levykuvan laatiminen järjestelmän tilasta ennen Linux-asennusta — muoto sovitaan käynnistyksessä. Käyttöjärjestelmän lisensointi VM:ssä on asiakkaan vastuulla.",
   };
@@ -132,7 +132,7 @@ export function buildServiceLineItems(
   receiptLocale: "fi" | "en" = "fi",
   extras?: {
     postShip?: boolean;
-    hddVireCents?: number;
+    hddSparkkiCents?: number;
     appBundles?: readonly AppBundleId[];
     portableVm?: boolean;
   },
@@ -170,7 +170,7 @@ export function buildServiceLineItems(
   };
 
   const hddCents =
-    typeof extras?.hddVireCents === "number" ? extras.hddVireCents : 0;
+    typeof extras?.hddSparkkiCents === "number" ? extras.hddSparkkiCents : 0;
   const hddMeta = hddRemovalStripeProduct(receiptLocale);
   const hddItem: CheckoutLineItem = {
     quantity: 1,
@@ -222,7 +222,7 @@ export function buildServiceLineItems(
         currency: "eur",
         unit_amount: amount,
         product_data: {
-          name: `Vire — ${tier}`,
+          name: `Sparkki — ${tier}`,
           description: "Tietokoneen uusiokäyttöpalvelu",
         },
       },
@@ -250,7 +250,7 @@ export function buildUsbLineItems(
         currency: "eur",
         unit_amount: amountCents,
         product_data: {
-          name: "Vire — Linux-asennus-USB",
+          name: "Sparkki — Linux-asennus-USB",
         },
       },
     },

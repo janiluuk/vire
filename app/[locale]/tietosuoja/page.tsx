@@ -36,27 +36,27 @@ export default async function PrivacyPage() {
         <p className="mt-4 text-xl leading-relaxed text-ink">{t("intro")}</p>
       </header>
 
-      <section className="vire-card space-y-3 p-6 sm:p-8">
+      <section className="sparkki-card space-y-3 p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-ink">{t("section1Title")}</h2>
         <p className="text-lg leading-relaxed text-ink">{t("section1Body")}</p>
       </section>
 
-      <section className="vire-card space-y-3 p-6 sm:p-8">
+      <section className="sparkki-card space-y-3 p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-ink">{t("section2Title")}</h2>
         <p className="text-lg leading-relaxed text-ink">{t("section2Body")}</p>
       </section>
 
-      <section className="vire-card space-y-3 p-6 sm:p-8">
+      <section className="sparkki-card space-y-3 p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-ink">{t("section3Title")}</h2>
         <p className="text-lg leading-relaxed text-ink">{t("section3Body")}</p>
       </section>
 
-      <section className="vire-card space-y-3 p-6 sm:p-8">
+      <section className="sparkki-card space-y-3 p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-ink">{t("section4Title")}</h2>
         <p className="text-lg leading-relaxed text-ink">{t("section4Body")}</p>
       </section>
 
-      <section className="vire-card space-y-3 p-6 sm:p-8">
+      <section className="sparkki-card space-y-3 p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-ink">{t("section5Title")}</h2>
         <p className="text-lg leading-relaxed text-ink">{t("section5Body")}</p>
       </section>

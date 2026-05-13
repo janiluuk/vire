@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = params;
   const guide = await prisma.guide.findUnique({ where: { slug } });
   if (!guide || !guide.published) {
-    return { title: "Vire" };
+    return { title: "Sparkki" };
   }
   const title =
     locale === "en" && guide.titleEn?.trim() ? guide.titleEn : guide.titleFi;
@@ -56,7 +56,7 @@ export default async function GuidePage({ params }: Props) {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12">
       <header className="border-b border-edge pb-8">
-        <p className="text-sm font-semibold uppercase text-vire-green">
+        <p className="text-sm font-semibold uppercase text-sparkki-green">
           {guide.category}
         </p>
         <h1 className="mt-2 text-4xl font-bold text-ink">{title}</h1>
@@ -80,7 +80,7 @@ export default async function GuidePage({ params }: Props) {
       <p className="mt-12">
         <Link
           href="/itse"
-          className="font-medium text-vire-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vire-green"
+          className="font-medium text-sparkki-green underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sparkki-green"
         >
           ← {t("title")}
         </Link>

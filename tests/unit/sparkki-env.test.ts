@@ -8,7 +8,7 @@ describe("sparkki-env", () => {
 
   it("prefers SPARKKI_FOR_GOOD_NOTIFY_EMAIL over VIRE_", () => {
     vi.stubEnv("SPARKKI_FOR_GOOD_NOTIFY_EMAIL", " sparkki@example.com ");
-    vi.stubEnv("VIRE_FOR_GOOD_NOTIFY_EMAIL", "vire@example.com");
+    vi.stubEnv("VIRE_FOR_GOOD_NOTIFY_EMAIL", "legacy-brand@example.com");
     expect(resolveForGoodNotifyEmail()).toBe("sparkki@example.com");
   });
 

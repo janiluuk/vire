@@ -6,7 +6,7 @@
  *   # or standalone after build + migrate + seed
  *
  *   DOCS_SCREENSHOT_BASE_URL=http://127.0.0.1:1337 \
- *   ADMIN_EMAIL=admin@vire.fi ADMIN_PASSWORD=changeme \
+ *   ADMIN_EMAIL=admin@sparkki.fi ADMIN_PASSWORD=changeme \
  *   npx tsx scripts/docs-screenshots.ts
  */
 import fs from "node:fs";
@@ -21,7 +21,7 @@ const BASE =
   "http://127.0.0.1:1337";
 
 const ADMIN_EMAIL =
-  process.env.ADMIN_EMAIL ?? process.env.ADMIN_LOGIN ?? "admin@vire.fi";
+  process.env.ADMIN_EMAIL ?? process.env.ADMIN_LOGIN ?? "admin@sparkki.fi";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "changeme";
 
 const PUBLIC_FI: { rel: string; file: string }[] = [

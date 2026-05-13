@@ -1,5 +1,5 @@
 # Optional production probes. Set repo variable `SYNTHETIC_MONITORING_BASE_URL`
-# (e.g. https://vire.example.com — no trailing slash) to enable on schedule.
+# (e.g. https://sparkki.example.com — no trailing slash) to enable on schedule.
 name: Synthetic monitoring
 
 on:

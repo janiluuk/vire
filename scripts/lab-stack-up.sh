@@ -10,7 +10,7 @@
 # then `docker compose build` and `docker compose up -d`.
 # Env (defaults suit 192.168.2.100 lab):
 #   LAB_HOST / DEPLOY_HOST     — default 192.168.2.100
-#   LAB_PATH / DEPLOY_PATH     — default /srv/vire
+#   LAB_PATH / DEPLOY_PATH     — default /srv/sparkki
 #   LAB_USER / DEPLOY_USER     — default $USER, fallback root
 #   RSYNC_DELETE=1             — rsync --delete (careful)
 #
@@ -31,7 +31,7 @@ for arg in "$@"; do
 done
 
 HOST="${LAB_HOST:-${DEPLOY_HOST:-192.168.2.100}}"
-REMOTE_PATH="${LAB_PATH:-${DEPLOY_PATH:-/srv/vire}}"
+REMOTE_PATH="${LAB_PATH:-${DEPLOY_PATH:-/srv/sparkki}}"
 REMOTE_USER="${LAB_USER:-${DEPLOY_USER:-${USER:-root}}}"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -51,8 +51,8 @@ rsync "${RSYNC_FLAGS[@]}" \
   --exclude .next \
   --exclude .env.local \
   --exclude '.env.*.local' \
-  --exclude apps/vire-checker/node_modules \
-  --exclude apps/vire-checker/src-tauri/target \
+  --exclude apps/sparkki-checker/node_modules \
+  --exclude apps/sparkki-checker/src-tauri/target \
   ./ "${REMOTE_USER}@${HOST}:${REMOTE_PATH}/"
 
 # Published port: host APP_PORT in docker-compose (default 1337). Override locally: APP_PORT=8080 ./scripts/lab-stack-up.sh

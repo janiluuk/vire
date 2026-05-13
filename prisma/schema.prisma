@@ -73,7 +73,7 @@ enum DeliveryMethod {
 }
 
 enum HddRemovalOption {
-  VIRE_REMOVES
+  SPARKKI_REMOVES
   CUSTOMER_REMOVES
   KEEP_IN_DEVICE
 }
@@ -171,7 +171,7 @@ enum AdminRole {
   EDITOR
 }
 
-/// Vire Care monthly subscription (FEATURES.md #2) — Stripe Billing.
+/// Sparkki Care monthly subscription (FEATURES.md #2) — Stripe Billing.
 model CareSubscription {
   id               String      @id @default(cuid())
   createdAt        DateTime    @default(now())

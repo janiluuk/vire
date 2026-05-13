@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { sendVireForGoodApplicationEmail } from "@/lib/email/email";
+import { sendSparkkiForGoodApplicationEmail } from "@/lib/email/email";
 import {
   hasUsableCustomerContact,
   parseCustomerContact,
@@ -17,7 +17,7 @@ const schema = z.object({
   locale: z.enum(["fi", "en"]),
 });
 
-export async function submitVireForGood(formData: FormData) {
+export async function submitSparkkiForGood(formData: FormData) {
   const raw = {
     reason: formData.get("reason"),
     contact: formData.get("contact"),
@@ -46,7 +46,7 @@ export async function submitVireForGood(formData: FormData) {
     redirect(`/${locale}${FOR_GOOD_PATH}?err=config`);
   }
 
-  const ok = await sendVireForGoodApplicationEmail({
+  const ok = await sendSparkkiForGoodApplicationEmail({
     notifyTo,
     reason: parsed.data.reason,
     contactRaw: parsed.data.contact.trim(),
