@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { BookingCalendarApplet } from "@/components/tuki/BookingCalendarApplet";
 import { SupportContactForm } from "@/components/tuki/SupportContactForm";
-import { normalizeCalendlySchedulingUrl } from "@/lib/site/calendly-url";
+import {
+  normalizeCalendlySchedulingUrl,
+  resolveCalendlyEmbedDomain,
+  withCalendlyInlineEmbedContext,
+} from "@/lib/site/calendly-url";
 import { localePathAlternates } from "@/lib/site/seo";
 
 export async function generateMetadata({
@@ -32,7 +36,13 @@ export async function generateMetadata({
 export default async function TukiPage() {
   const t = await getTranslations("tuki");
   const calendlyRaw = process.env.NEXT_PUBLIC_CALENDLY_EMBED_URL?.trim() ?? "";
-  const calendlyUrl = normalizeCalendlySchedulingUrl(calendlyRaw);
+  const calendlyBase = normalizeCalendlySchedulingUrl(calendlyRaw);
+  const calendlyUrl = calendlyBase
+    ? withCalendlyInlineEmbedContext(
+        calendlyBase,
+        resolveCalendlyEmbedDomain(),
+      )
+    : null;
 
   return (
     <div className="mx-auto max-w-3xl space-y-10 px-4 py-12">

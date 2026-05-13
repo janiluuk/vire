@@ -79,5 +79,6 @@ echo "If the host publishes another port, set APP_PORT when running this script 
 echo "Ensure ${REMOTE_PATH}/.env (synced if present locally) includes at least:"
 echo "  NEXTAUTH_URL=${BASE_URL}"
 echo "  NEXT_PUBLIC_SITE_URL=${BASE_URL}"
+echo "  NEXT_PUBLIC_CALENDLY_EMBED_URL=\"https://calendly.com/…\"   # if /tuki booking embed is used"
 echo "  NEXTAUTH_SECRET=… (32+ chars)"
 echo ""

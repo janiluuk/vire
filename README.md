@@ -62,7 +62,7 @@ export DEPLOY_PATH=/srv/vire
 ./scripts/deploy-lab.sh
 ```
 
-Ensure **`.env`** has **`NEXTAUTH_URL`** and **`NEXT_PUBLIC_SITE_URL`** set to how you reach the host (e.g. `http://192.168.2.100:1337`, not `localhost`) before syncing. For a clean rebuild: `./scripts/deploy-lab.sh --no-cache`.
+Ensure **`.env`** has **`NEXTAUTH_URL`** and **`NEXT_PUBLIC_SITE_URL`** set to how you reach the host (e.g. `http://192.168.2.100:1337`, not `localhost`) before syncing. If you use the Calendly block on **`/tuki`**, set **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** to a live **`https://calendly.com/...`** event link — Docker passes it (and the site URL) as **build args** so the embed gets a valid **`embed_domain`**. For a clean rebuild: `./scripts/deploy-lab.sh --no-cache`.
 
 ### Environment variables
 

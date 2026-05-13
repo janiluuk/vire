@@ -23,3 +23,50 @@ export function normalizeCalendlySchedulingUrl(raw: string): string | null {
   url.hash = "";
   return url.toString();
 }
+
+/**
+ * Hostname Calendly should treat as the embedding origin (`embed_domain` query param).
+ * Prefer explicit **`NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN`** when the public site URL is
+ * behind a proxy or differs from what Calendly must see.
+ */
+export function resolveCalendlyEmbedDomain(): string | null {
+  const explicit = process.env.NEXT_PUBLIC_CALENDLY_EMBED_DOMAIN?.trim();
+  if (explicit) {
+    const noProto = explicit.replace(/^https?:\/\//i, "");
+    const host = noProto.split("/")[0]?.trim();
+    if (!host) return null;
+    return host.replace(/:\d+$/, "");
+  }
+  const site = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!site) return null;
+  try {
+    return new URL(site).hostname || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Adds query params Calendly’s inline widget expects on custom origins. Without
+ * **`embed_domain`**, the widget often shows “This Calendly URL is not valid.”
+ * Preserves existing query keys from **`NEXT_PUBLIC_CALENDLY_EMBED_URL`**.
+ */
+export function withCalendlyInlineEmbedContext(
+  schedulingUrl: string,
+  embedDomain: string | null,
+): string {
+  if (!embedDomain) return schedulingUrl;
+  let url: URL;
+  try {
+    url = new URL(schedulingUrl);
+  } catch {
+    return schedulingUrl;
+  }
+  if (!url.searchParams.has("embed_type")) {
+    url.searchParams.set("embed_type", "Inline");
+  }
+  if (!url.searchParams.has("embed_domain")) {
+    url.searchParams.set("embed_domain", embedDomain);
+  }
+  return url.toString();
+}
