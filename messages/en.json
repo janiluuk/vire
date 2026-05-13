@@ -628,6 +628,7 @@
       }
     },
     "wizardLegalHint": "By continuing you accept the order terms and processing of personal data to fulfill the order.",
+    "orderWizardLoading": "Loading order form…",
     "wizard": {
       "title": "Order",
       "stepIndicator": "Step {current} of {total}",

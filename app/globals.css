@@ -667,4 +667,10 @@ body {
   .pt-safe {
     padding-top: max(0.25rem, env(safe-area-inset-top, 0px));
   }
+
+  /* Phase 8 — skip off-screen layout work while scrolling long footers */
+  .sparkki-cv-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 220px;
+  }
 }

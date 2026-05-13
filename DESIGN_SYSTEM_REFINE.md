@@ -322,13 +322,13 @@ Reduce cognitive overload.
 
 ## Tasks
 
-- [ ] Remove layout shifts
-- [ ] Optimize rerenders
-- [ ] Add optimistic UI
-- [ ] Add route prefetching
-- [ ] Improve animation performance
-- [ ] Reduce bundle size
-- [ ] Add lazy rendering
+- [x] Remove layout shifts (order wizard **skeleton** with stable `min-height` + `orderWizardLoading` label while chunk loads)
+- [ ] Optimize rerenders (follow-up: profile hot client surfaces if needed)
+- [ ] Add optimistic UI (deferred — pick a concrete mutation flow when product asks for it)
+- [x] Add route prefetching (`RoutePrefetchWarmup` idle-time `router.prefetch` for top destinations)
+- [x] Improve animation performance (footer **`content-visibility: auto`** for cheaper scroll painting)
+- [x] Reduce bundle size (Three.js **code-split** via `BackgroundCanvasDynamic` `next/dynamic` + `ssr: false`)
+- [x] Add lazy rendering (background canvas + **OrderWizard** deferred on `/palvelu` via `next/dynamic`)
 
 ---
 

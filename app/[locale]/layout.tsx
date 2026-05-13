@@ -3,10 +3,11 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { BackgroundCanvas } from "@/components/layout/BackgroundCanvas";
+import { BackgroundCanvasDynamic } from "@/components/layout/BackgroundCanvasDynamic";
 import { DeliveryStripGate } from "@/components/layout/DeliveryStripGate";
 import { LocaleMainMotion } from "@/components/layout/LocaleMainMotion";
 import { CommandPalette } from "@/components/layout/CommandPalette";
+import { RoutePrefetchWarmup } from "@/components/layout/RoutePrefetchWarmup";
 import { NavBar } from "@/components/layout/NavBar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -44,7 +45,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <BackgroundCanvas />
+      <BackgroundCanvasDynamic />
       <div className="relative z-10 flex min-h-screen flex-col">
         <a
           href="#content"
@@ -63,6 +64,7 @@ export default async function LocaleLayout({
         </main>
         <Footer />
         <CommandPalette />
+        <RoutePrefetchWarmup />
       </div>
     </NextIntlClientProvider>
   );

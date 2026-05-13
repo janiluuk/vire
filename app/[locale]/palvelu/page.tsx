@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { localePathAlternates } from "@/lib/site/seo";
 import { ComponentSourcingSection } from "@/components/palvelu/ComponentSourcingSection";
-import { OrderWizard } from "@/components/wizard/OrderWizard";
+import { OrderWizardLazy } from "@/components/wizard/OrderWizardLazy";
 
 export async function generateMetadata({
   params: { locale },
@@ -121,7 +121,7 @@ export default async function PalveluPage({
         </Link>
       </section>
 
-      <OrderWizard locale={locale} />
+      <OrderWizardLazy locale={locale} />
     </div>
   );
 }

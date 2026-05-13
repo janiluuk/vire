@@ -627,6 +627,7 @@
       }
     },
     "wizardLegalHint": "Jatkamalla hyväksyt tilauksen ehdot ja henkilötietojen käsittelyn tilauksen toteuttamiseksi.",
+    "orderWizardLoading": "Ladataan tilauslomaketta…",
     "wizard": {
       "title": "Tilaus",
       "stepIndicator": "Vaihe {current} / {total}",
