@@ -62,11 +62,23 @@ test.describe("key public journeys", () => {
   });
 
   test("Sparkki for Good application page", async ({ page }) => {
-    await page.goto("/fi/vire-for-good", { waitUntil: "domcontentloaded" });
+    await page.goto("/fi/sparkki-for-good", { waitUntil: "domcontentloaded" });
     await expect(
       page.getByRole("heading", { level: 1, name: /Sparkki for Good/i }),
     ).toBeVisible();
     await expect(page.getByLabel(/Miksi haet alennusta/i)).toBeVisible();
+  });
+
+  test("legacy /vire-for-good redirects to /sparkki-for-good with query", async ({
+    page,
+  }) => {
+    await page.goto("/fi/vire-for-good?sent=1", {
+      waitUntil: "domcontentloaded",
+    });
+    await expect(page).toHaveURL(/\/fi\/sparkki-for-good\?sent=1$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: /Sparkki for Good/i }),
+    ).toBeVisible();
   });
 
   test("Sparkki Care landing", async ({ page }) => {

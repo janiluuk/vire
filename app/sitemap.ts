@@ -29,7 +29,7 @@ const STATIC_PATHS = [
   "/care",
   "/care/kiitos",
   "/koneet",
-  "/vire-for-good",
+  "/sparkki-for-good",
   "/meista",
   "/meista/yhteiso",
 ] as const;

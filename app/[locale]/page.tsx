@@ -151,7 +151,7 @@ export default async function HomePage() {
         <p className="pf-note mt-8 max-w-2xl text-pretty">{t("pricingFootnote")}</p>
         <p className="pf-note mt-3 max-w-2xl text-pretty">
           <Link
-            href="/vire-for-good"
+            href="/sparkki-for-good"
             className="text-vire-green underline-offset-2 hover:underline"
           >
             {t("pricingForGoodLink")}

@@ -936,7 +936,7 @@ Public site (locale-prefixed in app: `/[locale]/…`; origin from NEXT_PUBLIC_SI
 ├── /care                      Sparkki Care subscription
 ├── /koneet                    Compatibility database
 │   └── /koneet/[slug]         Individual model page
-├── /vire-for-good             Sparkki for Good (social pricing; path unchanged)
+├── /sparkki-for-good          Sparkki for Good (social pricing); `/…/vire-for-good` → 308 redirect
 └── /admin                     Admin panel (protected)
 ```
 
@@ -1317,7 +1317,7 @@ Lives on `/itse` below the USB stick order. Flex row: visual (emoji placeholder)
 
 ## Sparkki for Good tier
 
-Banner component on `/vire-for-good` and linked from pricing cards with a subtle "Hae alennettu hinta" link.
+Banner component on `/sparkki-for-good` and linked from pricing cards with a subtle "Hae alennettu hinta" link.
 
 ```css
 .good-banner {
@@ -1443,7 +1443,7 @@ Removed: phone; separate postcode/city; confirm email field; redundant country f
 
 ---
 
-### Sparkki for Good application (`/vire-for-good`)
+### Sparkki for Good application (`/sparkki-for-good`)
 
 **2 fields. Trust first, document later.**
 
@@ -1509,8 +1509,8 @@ Shipped in codebase:
 
 Follow-ups (later phases or ops):
 
-- [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; technical routes such as `/vire-for-good`, CSS `.vire-*` aliases, `apps/vire-checker`, DB name `vire`, and env `VIRE_*` unchanged until explicit migrations).
-- [ ] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects.
+- [x] Sweep **ROADMAP.md**, **FEATURES.md**, and this **DESIGN_SYSTEM.md** for legacy “Vire” product naming (**Phase 20** — public product name **Sparkki**; CSS `.vire-*` aliases, `apps/vire-checker`, DB name `vire`, and env `VIRE_*` unchanged until explicit migrations).
+- [x] Optional URL rename `/vire-for-good` → `/sparkki-for-good` + redirects (**Phase 22** — canonical **`/{locale}/sparkki-for-good`**; legacy path **308** in **`middleware.ts`**, query string preserved).
 - [x] Replace `app/favicon.ico` with raster favicons derived from spark mark if needed for older clients (**Phase 21** — `app/favicon.ico` + `app/apple-icon.png` from `app/icon.svg`; regenerate **`./scripts/generate-favicons.sh`**).
 - [ ] **Later** — optional Framer Motion for richer choreography; finish renaming `vire-*` usage in TSX to `sparkki-*` where safe. (Phases 3–4 ship CSS + minimal client wiring, no new animation library.)
 

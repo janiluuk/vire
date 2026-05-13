@@ -30,7 +30,7 @@ Paths below omit the locale prefix (`/fi/…` and `/en/…` mirror the same stru
 | Compatibility | `/koneet` | Model search + recommendations. |
 | Company | `/meista` | About Vire (rewrites internally to `/about`). |
 | Community | `/meista/yhteiso` | Discord / YouTube / guidelines. |
-| Vire for Good | `/vire-for-good` | Discount application. |
+| Sparkki for Good | `/sparkki-for-good` | Discount application. Legacy `/vire-for-good` redirects. |
 | Vire Care | `/care` | Subscription landing. |
 | Care thank-you | `/care/kiitos` | Post–Vire Care checkout. |
 | Privacy | `/tietosuoja` | Privacy policy. |
@@ -74,7 +74,7 @@ Paths below omit the locale prefix (`/fi/…` and `/en/…` mirror the same stru
 
 ![Community](./screenshots/public/fi-yhteiso.png)
 
-![Vire for Good](./screenshots/public/fi-vire-for-good.png)
+![Sparkki for Good](./screenshots/public/fi-sparkki-for-good.png)
 
 ![Vire Care](./screenshots/public/fi-care.png)
 

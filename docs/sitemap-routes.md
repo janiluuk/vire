@@ -26,7 +26,7 @@
 | `/care` | Vire Care |
 | `/care/kiitos` | Care thank-you |
 | `/koneet` | Compatibility search |
-| `/vire-for-good` | Social discount |
+| `/sparkki-for-good` | Social discount |
 | `/meista` | About (canonical public URL; rewrites to `about` route) |
 | `/meista/yhteiso` | Community (canonical; rewrites to `yhteiso` route) |
 

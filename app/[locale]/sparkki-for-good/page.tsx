@@ -4,6 +4,8 @@ import { Link } from "@/i18n/navigation";
 import { localePathAlternates } from "@/lib/site/seo";
 import { submitVireForGood } from "./actions";
 
+const FOR_GOOD_PATH = "/sparkki-for-good";
+
 export async function generateMetadata({
   params: { locale },
 }: {
@@ -13,7 +15,7 @@ export async function generateMetadata({
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
-    ...localePathAlternates(locale, "/vire-for-good"),
+    ...localePathAlternates(locale, FOR_GOOD_PATH),
   };
 }
 
@@ -25,7 +27,7 @@ const GROUP_KEYS = [
   "groupSalvation",
 ] as const;
 
-export default async function VireForGoodPage({
+export default async function SparkkiForGoodPage({
   params,
   searchParams,
 }: {

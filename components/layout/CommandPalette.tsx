@@ -122,7 +122,7 @@ export function CommandPalette() {
       { href: "/", label: tPal("home"), group: "more" },
       { href: "/yhteiso", label: tNav("aboutCommunity"), group: "more" },
       { href: "/tietosuoja", label: tPal("privacy"), group: "more" },
-      { href: "/vire-for-good", label: tPal("forGood"), group: "more" },
+      { href: "/sparkki-for-good", label: tPal("forGood"), group: "more" },
     ];
     return [...hubs, ...service, ...more];
   }, [tNav, tPal]);

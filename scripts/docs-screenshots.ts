@@ -43,7 +43,7 @@ const PUBLIC_FI: { rel: string; file: string }[] = [
   { rel: "/fi/koneet", file: "public/fi-koneet.png" },
   { rel: "/fi/meista", file: "public/fi-meista.png" },
   { rel: "/fi/meista/yhteiso", file: "public/fi-yhteiso.png" },
-  { rel: "/fi/vire-for-good", file: "public/fi-vire-for-good.png" },
+  { rel: "/fi/sparkki-for-good", file: "public/fi-sparkki-for-good.png" },
   { rel: "/fi/care", file: "public/fi-care.png" },
   { rel: "/fi/care/kiitos", file: "public/fi-care-kiitos.png" },
   { rel: "/fi/tietosuoja", file: "public/fi-tietosuoja.png" },

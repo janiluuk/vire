@@ -555,7 +555,7 @@ model Order {
 - "Verify" / "Reject" buttons — sends email to customer either way
 - Monthly report: X Sparkki for Good orders, total discount given, NGO source breakdown
 
-**Dedicated page `/vire-for-good`:**
+**Dedicated page `/sparkki-for-good`** (legacy `/vire-for-good` redirects):
 
 - Who qualifies
 - How to apply
