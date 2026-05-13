@@ -4,6 +4,12 @@ import { prisma } from "@/lib/db/prisma";
 import { getStripe } from "@/lib/billing/stripe";
 import { sendOrderConfirmedEmail, sendUsbConfirmedEmail } from "@/lib/email/email";
 
+function parseAppBundleList(json: unknown): string[] {
+  if (json == null) return [];
+  if (!Array.isArray(json)) return [];
+  return json.filter((x): x is string => typeof x === "string");
+}
+
 function isPrismaUniqueViolation(e: unknown): boolean {
   return (
     typeof e === "object" &&
@@ -51,6 +57,8 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
             order.dataMigrationSize === "large"
               ? order.dataMigrationSize
               : null,
+          appBundleIds: parseAppBundleList(order.appBundles),
+          portableVmAddon: order.portableVmAddon,
         });
       }
     }

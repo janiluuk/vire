@@ -33,6 +33,10 @@ model Order {
   dataMigration    Boolean        @default(false)
   dataMigrationSize String?       // "standard" | "large" when dataMigration is true
   dataMigrationNotes String?      // admin: what was migrated / verification
+  /// Optional curated app pack IDs (see `lib/billing/app-bundles.ts`), JSON string array.
+  appBundles       Json?
+  /// Portable VM / disk image of pre-service system (add-on).
+  portableVmAddon  Boolean        @default(false)
 }
 
 enum OrderStatus {

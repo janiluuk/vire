@@ -12,6 +12,41 @@ function getResend(): Resend | null {
   return new Resend(key);
 }
 
+function orderConfirmedExtrasBlock(
+  loc: MailLocale,
+  params: {
+    bundleIds: string[];
+    portableVm: boolean;
+  },
+): string {
+  if (params.bundleIds.length === 0 && !params.portableVm) return "";
+  const bundleLabelsFi: Record<string, string> = {
+    local_ai: "Paikallinen AI -paketti",
+    media_creator: "Media-paketti",
+    music_production: "Musiikintuotanto-paketti",
+    dev_essentials: "Kehittäjäpaketti",
+  };
+  const bundleLabelsEn: Record<string, string> = {
+    local_ai: "Local AI pack",
+    media_creator: "Media creator pack",
+    music_production: "Music production pack",
+    dev_essentials: "Developer essentials pack",
+  };
+  const labels = loc === "en" ? bundleLabelsEn : bundleLabelsFi;
+  const bundlePart =
+    params.bundleIds.length === 0
+      ? ""
+      : loc === "en"
+        ? `<p><strong>Software packs</strong></p><ul>${params.bundleIds.map((id) => `<li>${escapeHtml(labels[id] ?? id)}</li>`).join("")}</ul>`
+        : `<p><strong>Ohjelmistopaketit</strong></p><ul>${params.bundleIds.map((id) => `<li>${escapeHtml(labels[id] ?? id)}</li>`).join("")}</ul>`;
+  const vmPart = params.portableVm
+    ? loc === "en"
+      ? "<p><strong>Portable VM / disk image</strong> is included. We will agree format and medium separately; you are responsible for OS licensing if you run Windows (or similar) in a VM.</p>"
+      : "<p><strong>VM-/levykuvalisä</strong> on tilauksella. Formaatti ja väline sovitaan erikseen; vastaat käyttöjärjestelmän lisensseistä, jos käytät esim. Windowsia virtuaalikoneessa.</p>"
+    : "";
+  return `${bundlePart}${vmPart}`;
+}
+
 function orderConfirmedMigrationBlock(
   loc: MailLocale,
   size: "standard" | "large",
@@ -38,6 +73,8 @@ export async function sendOrderConfirmedEmail(params: {
   locale?: string | null;
   dataMigration?: boolean;
   dataMigrationSize?: "standard" | "large" | null;
+  appBundleIds?: string[] | null;
+  portableVmAddon?: boolean;
 }): Promise<{ ok: boolean; error?: string }> {
   const resend = getResend();
   if (!resend) {
@@ -54,6 +91,11 @@ export async function sendOrderConfirmedEmail(params: {
     (params.dataMigrationSize === "standard" || params.dataMigrationSize === "large")
       ? orderConfirmedMigrationBlock(loc, params.dataMigrationSize)
       : "";
+  const bundleIds = params.appBundleIds?.filter(Boolean) ?? [];
+  const extrasExtra = orderConfirmedExtrasBlock(loc, {
+    bundleIds,
+    portableVm: Boolean(params.portableVmAddon),
+  });
   const greetEn =
     params.customerName.trim().length > 0
       ? `Hello ${escapeHtml(params.customerName)},`
@@ -64,8 +106,8 @@ export async function sendOrderConfirmedEmail(params: {
       : "Hei,";
   const html =
     loc === "en"
-      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> has been confirmed and we have received your payment.</p>${migrationExtra}`
-      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on vahvistettu ja maksu vastaanotettu.</p>${migrationExtra}`;
+      ? `<p>${greetEn}</p><p>Your order <strong>${escapeHtml(params.orderId)}</strong> has been confirmed and we have received your payment.</p>${migrationExtra}${extrasExtra}`
+      : `<p>${greetFi}</p><p>Tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on vahvistettu ja maksu vastaanotettu.</p>${migrationExtra}${extrasExtra}`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,

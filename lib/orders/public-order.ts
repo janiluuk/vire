@@ -21,6 +21,8 @@ export type PublicServiceOrder = {
   priceEur: number;
   dataMigration: boolean;
   dataMigrationSize: string | null;
+  appBundles: string[] | null;
+  portableVmAddon: boolean;
 };
 
 export type PublicUsbOrder = {
@@ -31,6 +33,13 @@ export type PublicUsbOrder = {
   customerName: string;
   address: string;
 };
+
+function parseAppBundlesJson(json: unknown): string[] | null {
+  if (json == null) return null;
+  if (!Array.isArray(json)) return null;
+  const out = json.filter((x): x is string => typeof x === "string");
+  return out.length ? out : null;
+}
 
 function iso(d: Date) {
   return d.toISOString();
@@ -57,6 +66,8 @@ export function toPublicServiceOrder(order: Order): PublicServiceOrder {
     priceEur: order.priceEur,
     dataMigration: order.dataMigration,
     dataMigrationSize: order.dataMigrationSize,
+    appBundles: parseAppBundlesJson(order.appBundles),
+    portableVmAddon: order.portableVmAddon,
   };
 }
 

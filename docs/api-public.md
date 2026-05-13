@@ -41,6 +41,10 @@ Support is always **`EMAIL`** at checkout (90-day email support per product copy
 
 Optional: `dataMigration`, `dataMigrationSize` (`standard` \| `large`) — same validation rules as before.
 
+Optional: `appBundles` — array of catalog ids: `local_ai`, `media_creator`, `music_production`, `dev_essentials` (each at most once; unknown ids rejected).
+
+Optional: `portableVm` — boolean, portable VM / disk image add-on before service (pricing in app; licensing copy on site).
+
 Postitus (`DROP_OFF`) adds **+€15**; HDD removal by Vire adds **+€20** except when `tier` is `FULL_SERVICE` (included).
 
 **Responses**

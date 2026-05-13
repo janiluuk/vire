@@ -6,8 +6,14 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { DeliveryMethod, HddRemovalOption, SupportTier } from "@prisma/client";
 import {
   hddRemovalAddonCents,
+  PORTABLE_VM_ADDON_CENTS,
   serviceCheckoutTotalCents,
 } from "@/lib/billing/pricing";
+import {
+  APP_BUNDLE_CENTS,
+  APP_BUNDLE_IDS,
+  type AppBundleId,
+} from "@/lib/billing/app-bundles";
 import {
   hasUsableCustomerContact,
   parseCustomerContact,
@@ -43,6 +49,21 @@ const STEP_HINT_KEYS = [
 ] as const;
 
 type Tier = "SSD_BASIC" | "SSD_RAM" | "FULL_SERVICE";
+
+type MigrationChoice = "none" | "standard" | "large";
+
+function bundleKeys(id: AppBundleId): { title: string; desc: string } {
+  switch (id) {
+    case "local_ai":
+      return { title: "bundle_local_ai", desc: "bundle_local_aiDesc" };
+    case "media_creator":
+      return { title: "bundle_media_creator", desc: "bundle_media_creatorDesc" };
+    case "music_production":
+      return { title: "bundle_music_production", desc: "bundle_music_productionDesc" };
+    case "dev_essentials":
+      return { title: "bundle_dev_essentials", desc: "bundle_dev_essentialsDesc" };
+  }
+}
 
 function useWizardFullscreen() {
   const pathname = usePathname();
@@ -103,21 +124,42 @@ export function OrderWizard({ locale }: { locale: string }) {
   const [hddRemoval, setHddRemoval] = useState<HddRemovalOption>(
     HddRemovalOption.VIRE_REMOVES,
   );
+  const [migrationChoice, setMigrationChoice] =
+    useState<MigrationChoice>("none");
+  const [selectedBundles, setSelectedBundles] = useState<AppBundleId[]>([]);
+  const [portableVm, setPortableVm] = useState(false);
   const [customerContact, setCustomerContact] = useState("");
 
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const migrationForPricing = useMemo(
+    () =>
+      migrationChoice === "none"
+        ? null
+        : { size: migrationChoice as "standard" | "large" },
+    [migrationChoice],
+  );
 
   const pricePreview = useMemo(() => {
     if (!tier || !delivery) return null;
     return serviceCheckoutTotalCents({
       tier,
       supportTier: SupportTier.EMAIL,
-      migration: null,
+      migration: migrationForPricing,
       deliveryMethod: delivery,
       hddRemoval,
+      appBundleIds: selectedBundles,
+      portableVmAddon: portableVm,
     });
-  }, [tier, delivery, hddRemoval]);
+  }, [
+    tier,
+    delivery,
+    hddRemoval,
+    migrationForPricing,
+    selectedBundles,
+    portableVm,
+  ]);
 
   const hddExtraCents =
     tier != null
@@ -126,6 +168,15 @@ export function OrderWizard({ locale }: { locale: string }) {
 
   function closeFullscreen() {
     clearWizardHash();
+  }
+
+  function toggleBundle(id: AppBundleId) {
+    setSelectedBundles((prev) => {
+      const set = new Set(prev);
+      if (set.has(id)) set.delete(id);
+      else set.add(id);
+      return APP_BUNDLE_IDS.filter((x) => set.has(x));
+    });
   }
 
   async function startCheckout() {
@@ -143,6 +194,10 @@ export function OrderWizard({ locale }: { locale: string }) {
           computerDescription: computerDescription.trim(),
           customerContact: customerContact.trim(),
           locale,
+          dataMigration: migrationForPricing != null,
+          dataMigrationSize: migrationForPricing?.size ?? null,
+          appBundles: selectedBundles,
+          portableVm,
         }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
@@ -448,6 +503,117 @@ export function OrderWizard({ locale }: { locale: string }) {
                   </button>
                 ))}
               </div>
+
+              <div className="border-t border-edge pt-8">
+                <h3 className="text-xl font-semibold text-ink">
+                  {w("migrationSectionTitle")}
+                </h3>
+                <div className="mt-4 space-y-3">
+                  {(
+                    [
+                      ["none", "migrationNone", "migrationNoneSub"] as const,
+                      ["standard", "migrationStandard", "migrationStandardSub"] as const,
+                      ["large", "migrationLarge", "migrationLargeSub"] as const,
+                    ] as const
+                  ).map(([value, titleKey, subKey]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setMigrationChoice(value)}
+                      className={`flex w-full items-start gap-3 rounded-[10px] border p-4 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                        migrationChoice === value
+                          ? "border-g bg-g/[0.05]"
+                          : "border-edge bg-sunken hover:border-em"
+                      }`}
+                    >
+                      <span
+                        className={`mt-0.5 inline-flex size-4 shrink-0 rounded-full border-2 ${
+                          migrationChoice === value ? "border-g bg-g" : "border-em"
+                        }`}
+                        aria-hidden
+                      />
+                      <span>
+                        <span className="block text-sm font-semibold text-ink">
+                          {w(titleKey)}
+                        </span>
+                        <span className="mt-1 block text-[13px] font-light text-fog">
+                          {w(subKey)}
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-edge pt-8">
+                <h3 className="text-xl font-semibold text-ink">
+                  {w("bundlesSectionTitle")}
+                </h3>
+                <p className="mt-2 text-base font-light text-fog">
+                  {w("bundlesSectionLead")}
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {APP_BUNDLE_IDS.map((id) => {
+                    const keys = bundleKeys(id);
+                    const selected = selectedBundles.includes(id);
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => toggleBundle(id)}
+                        className={`min-h-tap rounded-[10px] border p-4 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                          selected
+                            ? "border-g bg-g/[0.06]"
+                            : "border-edge bg-sunken hover:border-em"
+                        }`}
+                      >
+                        <span className="block text-sm font-semibold text-ink">
+                          {w(keys.title)} (+{(APP_BUNDLE_CENTS[id] / 100).toFixed(0)} €)
+                        </span>
+                        <span className="mt-1 block text-[13px] font-light text-fog">
+                          {w(keys.desc)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="border-t border-edge pt-8">
+                <h3 className="text-xl font-semibold text-ink">
+                  {w("portableVmSectionTitle")}
+                </h3>
+                <p className="mt-3 text-[13px] font-light leading-relaxed text-fog">
+                  {w("portableVmLegal")}
+                </p>
+                <button
+                  type="button"
+                  aria-pressed={portableVm}
+                  onClick={() => setPortableVm((v) => !v)}
+                  className={`mt-4 flex w-full items-start gap-3 rounded-[10px] border p-4 text-left transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                    portableVm
+                      ? "border-g bg-g/[0.05]"
+                      : "border-edge bg-sunken hover:border-em"
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 inline-flex size-4 shrink-0 rounded border-2 ${
+                      portableVm ? "border-g bg-g" : "border-em"
+                    }`}
+                    aria-hidden
+                  />
+                  <span className="text-sm font-semibold text-ink">
+                    {w("portableVmToggle")} (+
+                    {(PORTABLE_VM_ADDON_CENTS / 100).toFixed(0)} €)
+                  </span>
+                </button>
+                {portableVm ? (
+                  <p className="mt-2 text-sm font-medium text-g">
+                    {w("portableVmSelected")}
+                  </p>
+                ) : null}
+              </div>
             </div>
           ) : null}
 
@@ -491,6 +657,29 @@ export function OrderWizard({ locale }: { locale: string }) {
               <p>
                 <strong>{w("summaryHdd")}:</strong> {hddRemoval}
                 {hddExtraCents > 0 ? ` (+${(hddExtraCents / 100).toFixed(0)} €)` : ""}
+              </p>
+              <p>
+                <strong>{w("summaryMigration")}:</strong>{" "}
+                {migrationChoice === "none"
+                  ? w("summaryNone")
+                  : migrationChoice === "large"
+                    ? w("migrationLarge")
+                    : w("migrationStandard")}
+              </p>
+              <p>
+                <strong>{w("summaryBundles")}:</strong>{" "}
+                {selectedBundles.length === 0
+                  ? w("summaryNone")
+                  : selectedBundles
+                      .map((id) => {
+                        const k = bundleKeys(id);
+                        return w(k.title);
+                      })
+                      .join(", ")}
+              </p>
+              <p>
+                <strong>{w("summaryPortableVm")}:</strong>{" "}
+                {portableVm ? w("portableVmSelected") : w("summaryNone")}
               </p>
               <p>
                 <strong>{w("summaryContact")}:</strong> {customerContact.trim()}

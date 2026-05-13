@@ -47,6 +47,27 @@ describe("POST /api/checkout validation", () => {
     expect(j.error).toBe("validation_error");
   });
 
+  it("returns 400 when appBundles contains unknown id", async () => {
+    const res = await checkoutPost(
+      new Request("http://localhost/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tier: "SSD_BASIC",
+          deliveryMethod: "SELF",
+          hddRemoval: "VIRE_REMOVES",
+          computerDescription: "Lenovo",
+          customerContact: "a@b.co",
+          locale: "fi",
+          appBundles: ["nope"],
+        }),
+      }),
+    );
+    expect(res.status).toBe(400);
+    const j = (await res.json()) as { error?: string };
+    expect(j.error).toBe("validation_error");
+  });
+
   it("returns 400 when dataMigrationSize is set but dataMigration is false", async () => {
     const res = await checkoutPost(
       new Request("http://localhost/api/checkout", {

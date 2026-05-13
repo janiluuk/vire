@@ -27,6 +27,8 @@ const baseOrder = {
   dataMigration: false,
   dataMigrationSize: null,
   dataMigrationNotes: null,
+  appBundles: null,
+  portableVmAddon: false,
 } satisfies Order;
 
 const baseUsb = {

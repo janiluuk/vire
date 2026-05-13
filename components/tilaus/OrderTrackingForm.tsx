@@ -205,6 +205,24 @@ function OrderSummary({
             </dd>
           </>
         ) : null}
+        {o.appBundles?.length ? (
+          <>
+            <dt className="font-semibold text-fog">{t("fieldAppBundles")}</dt>
+            <dd>
+              {o.appBundles
+                .map((id) =>
+                  t(`bundleId_${id}` as "bundleId_local_ai"),
+                )
+                .join(", ")}
+            </dd>
+          </>
+        ) : null}
+        {o.portableVmAddon ? (
+          <>
+            <dt className="font-semibold text-fog">{t("fieldPortableVm")}</dt>
+            <dd>{t("portableVmIncluded")}</dd>
+          </>
+        ) : null}
         <dt className="font-semibold text-fog">{t("fieldComputer")}</dt>
         <dd>
           {[o.computerMake, o.computerModel].filter(Boolean).join(" ") ||

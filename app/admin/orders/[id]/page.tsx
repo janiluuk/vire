@@ -45,6 +45,17 @@ function auditMetaCell(value: unknown): string {
   }
 }
 
+function adminBundleLine(
+  json: unknown,
+  labelKey: (id: string) => string | undefined,
+): string {
+  if (json == null) return "—";
+  if (!Array.isArray(json)) return "—";
+  const ids = json.filter((x): x is string => typeof x === "string");
+  if (!ids.length) return "—";
+  return ids.map((id) => labelKey(id) ?? id).join(", ");
+}
+
 export default async function AdminOrderDetailPage({ params, searchParams }: Props) {
   await requireAdmin();
   const order = await prisma.order.findUnique({ where: { id: params.id } });
@@ -136,6 +147,18 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
                   : "—"
               : "—"}
           </dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-fog">{a.colAppBundles}</dt>
+          <dd>
+            {adminBundleLine(order.appBundles, (id: string) =>
+              (a as Record<string, string | undefined>)[`bundleId_${id}`],
+            )}
+          </dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-fog">{a.colPortableVm}</dt>
+          <dd>{order.portableVmAddon ? a.portableVmYes : "—"}</dd>
         </div>
         <div>
           <dt className="font-semibold text-fog">{a.colComputer}</dt>

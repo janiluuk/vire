@@ -1,6 +1,11 @@
 import type { ServiceTier, SupportTier } from "@prisma/client";
 import {
+  APP_BUNDLE_CENTS,
+  type AppBundleId,
+} from "./app-bundles";
+import {
   DELIVERY_POST_CENTS,
+  PORTABLE_VM_ADDON_CENTS,
   dataMigrationAddonCents,
   getStripePriceIdForTier,
   serviceOrderTotalCents,
@@ -72,6 +77,75 @@ function hddRemovalStripeProduct(
   };
 }
 
+function portableVmStripeProduct(
+  receiptLocale: "fi" | "en",
+): { name: string; description: string } {
+  if (receiptLocale === "en") {
+    return {
+      name: "Vire — Portable VM / disk image (pre-service)",
+      description:
+        "Capture of machine state before service. Format and medium as agreed; customer responsible for OS licensing in VM use.",
+    };
+  }
+  return {
+    name: "Vire — Siirrettävä VM / levykuva (ennen palvelua)",
+    description:
+      "Koneen tilan tallennus ennen huoltoa. Formaatti ja väline sovitaan; asiakas vastaa VM-käytön käyttöjärjestelmälisensseistä.",
+  };
+}
+
+function appBundleStripeProduct(
+  id: AppBundleId,
+  receiptLocale: "fi" | "en",
+): { name: string; description: string } {
+  if (receiptLocale === "en") {
+    switch (id) {
+      case "local_ai":
+        return {
+          name: "Vire — App pack: Local AI",
+          description: "LLM tools and local inference stack preinstall notes.",
+        };
+      case "media_creator":
+        return {
+          name: "Vire — App pack: Media creator",
+          description: "Video, image, and audio creator tooling.",
+        };
+      case "music_production":
+        return {
+          name: "Vire — App pack: Music production",
+          description: "DAW and plugin setup notes for Linux.",
+        };
+      case "dev_essentials":
+        return {
+          name: "Vire — App pack: Developer essentials",
+          description: "Editors, runtimes, and dev utilities.",
+        };
+    }
+  }
+  switch (id) {
+    case "local_ai":
+      return {
+        name: "Vire — Ohjelmistopaketti: paikallinen AI",
+        description: "LLM-työkalut ja paikallinen inferenssipino; asennusohjeet.",
+      };
+    case "media_creator":
+      return {
+        name: "Vire — Ohjelmistopaketti: media",
+        description: "Video-, kuva- ja äänityökalut.",
+      };
+    case "music_production":
+      return {
+        name: "Vire — Ohjelmistopaketti: musiikintuotanto",
+        description: "DAW ja liitännäiset Linuxille; asennusohjeet.",
+      };
+    case "dev_essentials":
+      return {
+        name: "Vire — Ohjelmistopaketti: kehittäjä",
+        description: "Editorit, ajoaikaympäristöt ja kehitystyökalut.",
+      };
+  }
+}
+
 export function buildServiceLineItems(
   tier: Exclude<ServiceTier, "B2B">,
   supportTier: SupportTier,
@@ -80,6 +154,8 @@ export function buildServiceLineItems(
   extras?: {
     postShip?: boolean;
     hddVireCents?: number;
+    appBundleIds?: AppBundleId[];
+    portableVm?: boolean;
   },
 ): CheckoutLineItem[] {
   const priceId = getStripePriceIdForTier(tier);
@@ -126,11 +202,37 @@ export function buildServiceLineItems(
     },
   };
 
+  const bundleIds = extras?.appBundleIds ?? [];
+  const bundleItems: CheckoutLineItem[] = bundleIds.map((id) => {
+    const meta = appBundleStripeProduct(id, receiptLocale);
+    return {
+      quantity: 1,
+      price_data: {
+        currency: "eur",
+        unit_amount: APP_BUNDLE_CENTS[id],
+        product_data: { name: meta.name, description: meta.description },
+      },
+    };
+  });
+
+  const vmCents = extras?.portableVm ? PORTABLE_VM_ADDON_CENTS : 0;
+  const vmMeta = portableVmStripeProduct(receiptLocale);
+  const vmItem: CheckoutLineItem = {
+    quantity: 1,
+    price_data: {
+      currency: "eur",
+      unit_amount: vmCents,
+      product_data: { name: vmMeta.name, description: vmMeta.description },
+    },
+  };
+
   if (priceId) {
     const items: CheckoutLineItem[] = [{ price: priceId, quantity: 1 }];
     if (migration) items.push(migrationItem);
     if (postCents > 0) items.push(postItem);
     if (hddCents > 0) items.push(hddItem);
+    items.push(...bundleItems);
+    if (vmCents > 0) items.push(vmItem);
     return items;
   }
   const amount = serviceOrderTotalCents(tier, supportTier);
@@ -150,6 +252,8 @@ export function buildServiceLineItems(
   if (migration) items.push(migrationItem);
   if (postCents > 0) items.push(postItem);
   if (hddCents > 0) items.push(hddItem);
+  items.push(...bundleItems);
+  if (vmCents > 0) items.push(vmItem);
   return items;
 }
 

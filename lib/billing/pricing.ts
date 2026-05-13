@@ -4,6 +4,8 @@ import type {
   ServiceTier,
   SupportTier,
 } from "@prisma/client";
+import type { AppBundleId } from "./app-bundles";
+import { appBundlesTotalCents } from "./app-bundles";
 
 /** Default EUR prices in cents when Stripe Price IDs are not set. */
 export const TIER_BASE_CENTS: Record<
@@ -43,6 +45,9 @@ export const DELIVERY_POST_CENTS = 15_00;
 /** HDD removal by Vire — EUR cents (waived when tier already includes it). */
 export const HDD_REMOVAL_VIRE_CENTS = 20_00;
 
+/** Portable VM / disk-image capture add-on (Phase 5), EUR cents. */
+export const PORTABLE_VM_ADDON_CENTS = 79_00;
+
 export function deliveryAddonCents(method: DeliveryMethod): number {
   return method === "DROP_OFF" ? DELIVERY_POST_CENTS : 0;
 }
@@ -79,6 +84,8 @@ export function serviceCheckoutTotalCents(params: {
   migration: { size: "standard" | "large" } | null;
   deliveryMethod: DeliveryMethod;
   hddRemoval: HddRemovalOption;
+  appBundleIds?: readonly AppBundleId[];
+  portableVmAddon?: boolean;
 }): number {
   let total = serviceOrderTotalWithMigrationCents(
     params.tier,
@@ -87,6 +94,8 @@ export function serviceCheckoutTotalCents(params: {
   );
   total += deliveryAddonCents(params.deliveryMethod);
   total += hddRemovalAddonCents(params.tier, params.hddRemoval);
+  total += appBundlesTotalCents(params.appBundleIds ?? []);
+  if (params.portableVmAddon) total += PORTABLE_VM_ADDON_CENTS;
   return total;
 }
 

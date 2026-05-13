@@ -21,6 +21,17 @@ import {
   parseCustomerContact,
 } from "@/lib/contact/parse-customer-contact";
 
+import {
+  normalizeAppBundleIds,
+} from "@/lib/billing/app-bundles";
+
+const appBundleIdSchema = z.enum([
+  "local_ai",
+  "media_creator",
+  "music_production",
+  "dev_essentials",
+]);
+
 const checkoutSchema = z
   .object({
     tier: z.enum(["SSD_BASIC", "SSD_RAM", "FULL_SERVICE"]),
@@ -31,6 +42,8 @@ const checkoutSchema = z
     locale: z.enum(["fi", "en"]),
     dataMigration: z.boolean().optional(),
     dataMigrationSize: z.enum(["standard", "large"]).optional().nullable(),
+    appBundles: z.array(appBundleIdSchema).max(8).optional(),
+    portableVm: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     if (val.dataMigration && !val.dataMigrationSize) {
@@ -106,6 +119,8 @@ export async function POST(req: Request) {
   const migration = wantsMigration
     ? { size: data.dataMigrationSize! }
     : null;
+  const bundleIds = normalizeAppBundleIds(data.appBundles);
+  const portableVm = Boolean(data.portableVm);
   const supportTier = SupportTier.EMAIL;
   const priceEur = serviceCheckoutTotalCents({
     tier: data.tier,
@@ -113,6 +128,8 @@ export async function POST(req: Request) {
     migration,
     deliveryMethod: data.deliveryMethod,
     hddRemoval: data.hddRemoval,
+    appBundleIds: bundleIds,
+    portableVmAddon: portableVm,
   });
 
   const parsedContact = parseCustomerContact(data.customerContact);
@@ -138,6 +155,8 @@ export async function POST(req: Request) {
       locale: data.locale,
       dataMigration: migration != null,
       dataMigrationSize: migration?.size ?? null,
+      ...(bundleIds.length > 0 ? { appBundles: bundleIds } : {}),
+      portableVmAddon: portableVm,
     },
   });
 
@@ -154,6 +173,8 @@ export async function POST(req: Request) {
     {
       postShip: data.deliveryMethod === "DROP_OFF",
       hddVireCents: hddCents,
+      appBundleIds: bundleIds,
+      portableVm: portableVm,
     },
   );
 
