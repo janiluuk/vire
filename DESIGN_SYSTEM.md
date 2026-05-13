@@ -781,11 +781,12 @@ Colour the stat value when it has semantic meaning:
 
 **Behaviour spec:**
 
-- 80–120 `IcosahedronGeometry(0.3, 0)` meshes
-- Random sizes: scale 0.3–1.5 uniform
+- **Mixed icon-inspired wireframes** (procedural, no raster logos): stylized **penguin** (Linux vibe), **four-pane window** grid, **gear** (torus), **gem** (octahedron), **disc** (cylinder), **cube**, **torus knot**, plus **icosahedrons** for fill
+- Count: ~52–86 on desktop, ~22 on narrow viewports (fewer triangles than the old all-icosa field)
+- Random sizes: scale ~0.35–1.5 uniform
 - `MeshBasicMaterial` with `wireframe: true`
-- 85% of meshes: `color: 0x1DF5A0`, `opacity: 0.06–0.18`
-- 15% of meshes: `color: 0xF5A623`, `opacity: 0.05–0.10`
+- ~86% of objects: accent `0xffd54a`, `opacity: 0.06–0.18`
+- ~14% of objects: `0xffb800`, `opacity: 0.05–0.10`
 - Slow drift: velocity `±0.003` units/frame on x and y only, z = 0
 - Slow rotation: `rotation.x += 0.002`, `rotation.y += 0.001` per frame
 - Wrap at canvas edges: reverse velocity when `|position.x| > 22` or `|position.y| > 17`
