@@ -4,7 +4,7 @@ export const alt = "Sparkki";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/** Brand-aligned OG image — dark matte + electric yellow (DESIGN_SYSTEM_REFINE.md). */
+/** Brand-aligned OG image — dark matte + electric yellow (DESIGN_SYSTEM.md). */
 export default function OpenGraphImage({ params }: { params: { locale: string } }) {
   const isEn = params.locale === "en";
   const headline = isEn
