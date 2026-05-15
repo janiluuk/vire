@@ -299,6 +299,7 @@ function OrderSummary({
           insight={laptopSpecs}
           labels={{
             title: t("specsTitle"),
+            referenceTitle: t("specsReferenceTitle"),
             loading: t("specsLoading"),
             empty: t("specsEmpty"),
             link: t("specsLink"),

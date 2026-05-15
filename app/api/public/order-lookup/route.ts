@@ -5,6 +5,7 @@ import {
   toPublicServiceOrder,
   toPublicUsbOrder,
 } from "@/lib/orders/public-order";
+import { coerceLaptopMakeModelForLookup } from "@/lib/specs/laptop-reference-lookup";
 import { resolveLaptopSpecs, withSpecsTimeout } from "@/lib/specs/laptop-specs";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
@@ -51,12 +52,19 @@ export async function POST(req: Request) {
   });
 
   if (service) {
-    const mk = service.computerMake?.trim();
-    const md = service.computerModel?.trim();
+    const specIn = coerceLaptopMakeModelForLookup(
+      service.computerMake,
+      service.computerModel,
+    );
     let laptopSpecs: Awaited<ReturnType<typeof resolveLaptopSpecs>> | undefined;
-    if (mk && md && process.env.SPECS_LOOKUP_ENABLED !== "false") {
+    if (specIn && process.env.SPECS_LOOKUP_ENABLED !== "false") {
       laptopSpecs =
-        (await withSpecsTimeout(resolveLaptopSpecs(mk, md), 14_000)) ?? {
+        (await withSpecsTimeout(
+          resolveLaptopSpecs(specIn.make, specIn.model, {
+            locale: service.locale === "en" ? "en" : "fi",
+          }),
+          14_000,
+        )) ?? {
           summary: null,
           specUrl: null,
         };

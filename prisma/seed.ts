@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -83,6 +85,42 @@ const guides = [
   },
 ] as const;
 
+type RefJsonRow = Record<string, string>;
+
+async function seedLaptopReferenceSpecs() {
+  const existing = await prisma.laptopReferenceSpec.count();
+  if (existing > 0) return;
+
+  const jsonPath = path.join(process.cwd(), "data/reference-laptops.json");
+  const rows = JSON.parse(readFileSync(jsonPath, "utf-8")) as RefJsonRow[];
+  const batchSize = 200;
+  for (let i = 0; i < rows.length; i += batchSize) {
+    const chunk = rows
+      .slice(i, i + batchSize)
+      .map((row) => ({
+        manufacturer: (row["Manufacturer"] ?? "").trim(),
+        modelName: (row["Model Name"] ?? "").trim(),
+        category: (row["Category"] ?? "").trim() || null,
+        screenSize: (row["Screen Size"] ?? "").trim() || null,
+        screenDetail: (row["Screen"] ?? "").trim() || null,
+        cpu: (row["CPU"] ?? "").trim() || null,
+        ram: (row["RAM"] ?? "").trim() || null,
+        storage: (row["Storage"] ?? "").trim() || null,
+        gpu: (row["GPU"] ?? "").trim() || null,
+        operatingSystem: (row["Operating System"] ?? "").trim() || null,
+        osVersion: (row["Operating System Version"] ?? "").trim() || null,
+        weight: (row["Weight"] ?? "").trim() || null,
+        priceEuros: (row["Price (Euros)"] ?? "").trim() || null,
+      }))
+      .filter((r) => r.manufacturer.length > 0 && r.modelName.length > 0);
+    if (chunk.length === 0) continue;
+    await prisma.laptopReferenceSpec.createMany({ data: chunk });
+  }
+  console.log(
+    `Imported ${rows.length} LaptopReferenceSpec rows from data/reference-laptops.json`,
+  );
+}
+
 async function main() {
   const email = process.env.ADMIN_EMAIL ?? "admin@sparkki.fi";
   const username = (process.env.ADMIN_USERNAME ?? "admin").trim().toLowerCase();
@@ -145,6 +183,8 @@ async function main() {
       },
     });
   }
+
+  await seedLaptopReferenceSpecs();
 
   console.log("Seed complete.");
 }

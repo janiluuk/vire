@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LaptopSpecsCard } from "@/components/laptop-specs/LaptopSpecsCard";
+import { coerceLaptopMakeModelForLookup } from "@/lib/specs/laptop-reference-lookup";
 import {
   resolveLaptopSpecs,
   withSpecsTimeout,
@@ -16,6 +17,7 @@ import {
   PORTABLE_VM_HANDOFF_LABEL,
   isPortableVmHandoff,
 } from "@/lib/billing/portable-vm";
+import { getAdminLocale } from "@/lib/admin/get-admin-locale";
 import { getAdminMessages } from "@/lib/admin/get-admin-messages";
 import {
   sendOrderDone,
@@ -67,6 +69,7 @@ function formatPortableVm(order: {
 
 export default async function AdminOrderDetailPage({ params, searchParams }: Props) {
   await requireAdmin();
+  const adminLocale = getAdminLocale();
   const a = getAdminMessages().admin;
   function statusLabel(s: string): string {
     const key = `status_${s}` as keyof typeof a;
@@ -84,12 +87,19 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
 
   const emailFlash = searchParams.email;
 
-  const mk = order.computerMake?.trim();
-  const md = order.computerModel?.trim();
+  const specIn = coerceLaptopMakeModelForLookup(
+    order.computerMake,
+    order.computerModel,
+  );
   let adminSpecs: LaptopSpecsInsight | undefined;
-  if (mk && md && process.env.SPECS_LOOKUP_ENABLED !== "false") {
+  if (specIn && process.env.SPECS_LOOKUP_ENABLED !== "false") {
     adminSpecs =
-      (await withSpecsTimeout(resolveLaptopSpecs(mk, md), 14_000)) ?? {
+      (await withSpecsTimeout(
+        resolveLaptopSpecs(specIn.make, specIn.model, {
+          locale: adminLocale === "en" ? "en" : "fi",
+        }),
+        14_000,
+      )) ?? {
         summary: null,
         specUrl: null,
       };
@@ -185,6 +195,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
               insight={adminSpecs}
               labels={{
                 title: a.specsTitle,
+                referenceTitle: a.specsReferenceTitle,
                 loading: a.specsLoading,
                 empty: a.specsEmpty,
                 link: a.specsLink,

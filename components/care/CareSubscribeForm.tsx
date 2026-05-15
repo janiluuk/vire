@@ -78,7 +78,10 @@ export function CareSubscribeForm({ locale }: Props) {
         {t("subscribeBlurb")}
       </p>
       <div>
-        <label htmlFor="care-contact" className="block text-sm font-semibold text-ink">
+        <label
+          htmlFor="care-contact"
+          className="block font-mono text-[11px] uppercase tracking-[0.12em] text-dust"
+        >
           {t("subscribeContact")}
         </label>
         <input
@@ -86,14 +89,17 @@ export function CareSubscribeForm({ locale }: Props) {
           name="contact"
           type="text"
           autoComplete="email"
-          className="mt-1 w-full rounded-xl border border-edge bg-canvas px-3 py-2 text-lg text-ink"
+          className="sparkki-input mt-2 w-full border border-edge bg-canvas px-4 py-3 text-ink placeholder:text-dust"
           placeholder={t("subscribeContactPlaceholder")}
           value={contact}
           onChange={(e) => setContact(e.target.value)}
         />
       </div>
       <div>
-        <label htmlFor="care-name" className="block text-sm font-semibold text-ink">
+        <label
+          htmlFor="care-name"
+          className="block font-mono text-[11px] uppercase tracking-[0.12em] text-dust"
+        >
           {t("subscribeNameOptional")}
         </label>
         <input
@@ -101,36 +107,39 @@ export function CareSubscribeForm({ locale }: Props) {
           name="name"
           type="text"
           autoComplete="name"
-          className="mt-1 w-full rounded-xl border border-edge bg-canvas px-3 py-2 text-lg text-ink"
+          className="sparkki-input mt-2 w-full border border-edge bg-canvas px-4 py-3 text-ink placeholder:text-dust"
           placeholder={t("subscribeNamePlaceholder")}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div>
-        <label htmlFor="care-order" className="block text-sm font-semibold text-ink">
+        <label
+          htmlFor="care-order"
+          className="block font-mono text-[11px] uppercase tracking-[0.12em] text-dust"
+        >
           {t("subscribeOrderOptional")}
         </label>
         <input
           id="care-order"
           name="orderId"
           type="text"
-          className="mt-1 w-full rounded-xl border border-edge bg-canvas px-3 py-2 text-lg text-ink"
+          className="sparkki-input mt-2 w-full border border-edge bg-canvas px-4 py-3 text-ink placeholder:text-dust"
           placeholder={t("subscribeOrderPlaceholder")}
           value={orderId}
           onChange={(e) => setOrderId(e.target.value)}
         />
-        <p className="mt-1 text-sm text-fog">{t("subscribeOrderHint")}</p>
+        <p className="mt-2 text-sm text-fog">{t("subscribeOrderHint")}</p>
       </div>
       {error ? (
-        <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-ink">
+        <p className="rounded-spark-md border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-ink">
           {error}
         </p>
       ) : null}
       <button
         type="submit"
         disabled={!contactOk || loading}
-        className="inline-flex min-h-tap w-full items-center justify-center rounded-xl bg-g px-6 py-3 font-semibold text-canvas hover:opacity-[0.9] disabled:cursor-not-allowed disabled:opacity-50"
+        className={`sparkki-btn-primary w-full ${loading ? "sparkki-btn-loading" : ""}`.trim()}
       >
         {loading ? t("subscribeSubmitting") : t("subscribeSubmit")}
       </button>
