@@ -4,9 +4,49 @@ function e2eOrigin(): string {
   return process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:1337";
 }
 
+const E2E_COMPUTER_LOOKUP = {
+  ok: true,
+  result: {
+    coerced: { make: "Lenovo", model: "ThinkPad T450" },
+    matches: [
+      {
+        id: "e2e-wizard-match",
+        make: "Lenovo",
+        model: "ThinkPad T450",
+        yearFrom: 2015,
+        yearTo: 2016,
+        compatible: true,
+        verdict: null,
+        ssdSlot: "2.5\" SATA",
+        maxRamGb: 16,
+        status: "APPROVED",
+      },
+    ],
+    reference: null,
+    yearOptions: [2015],
+    needsYearChoice: false,
+    compatibility: {
+      status: "compatible",
+      reasons: [],
+      speedGainEstimate: "2–4×",
+    },
+  },
+} as const;
+
 test.describe("order wizard (checkout mocked)", () => {
   test.beforeEach(async ({ page }) => {
     const origin = e2eOrigin();
+    await page.route("**/api/public/computer-lookup", async (route) => {
+      if (route.request().method() !== "POST") {
+        await route.continue();
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(E2E_COMPUTER_LOOKUP),
+      });
+    });
     await page.route("**/api/checkout", async (route) => {
       if (route.request().method() !== "POST") {
         await route.continue();
@@ -37,10 +77,10 @@ test.describe("order wizard (checkout mocked)", () => {
 
     await wizard.locator("#wiz-computer").fill("Lenovo ThinkPad T450");
 
-    await expect(wizard.getByRole("button", { name: "Seuraava" })).toBeEnabled({
-      timeout: 15_000,
-    });
-    await wizard.getByRole("button", { name: "Seuraava" }).click();
+    const next = wizard.getByRole("button", { name: "Seuraava" });
+    await expect(next).toBeEnabled({ timeout: 15_000 });
+    await next.scrollIntoViewIfNeeded();
+    await next.click();
 
     await expect(
       wizard.getByRole("heading", { name: "Palvelu", exact: true }),

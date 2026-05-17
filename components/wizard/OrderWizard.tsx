@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { parseWizardPrefill } from "@/lib/wizard/wizard-prefill";
 import {
+  isOrderWizardRoute,
   ORDER_WIZARD_HASH,
   ORDER_WIZARD_PATH,
 } from "@/lib/site/order-wizard-path";
@@ -84,7 +85,7 @@ const WIZ_BUNDLE_MSG: Record<AppBundleId, WizardBundleKey> = {
 
 function useWizardFullscreen() {
   const pathname = usePathname();
-  const isOrderPage = pathname === ORDER_WIZARD_PATH;
+  const isOrderPage = isOrderWizardRoute(pathname);
   const [full, setFull] = useState(isOrderPage);
 
   useEffect(() => {
@@ -139,7 +140,7 @@ export function OrderWizard({ locale }: { locale: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const isOrderPage = pathname === ORDER_WIZARD_PATH;
+  const isOrderPage = isOrderWizardRoute(pathname);
   const fullMode = useWizardFullscreen();
   const wizardRef = useRef<HTMLElement>(null);
   const appliedPrefillRef = useRef(false);
