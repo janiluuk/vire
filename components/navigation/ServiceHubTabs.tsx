@@ -4,11 +4,13 @@ import { memo, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
+import { usePrefetchRoute } from "@/lib/site/route-prefetch";
 
 const TABS = [
-  { href: "/palvelu", key: "serviceTabOverview" as const, match: "mainPalvelu" as const },
+  { href: "/", key: "serviceTabOverview" as const, match: "mainPalvelu" as const },
+  { href: "/tilaa", key: "ctaOrder" as const, match: "tilaa" as const },
   { href: "/palvelu/b2b", key: "serviceTabB2b" as const, match: "b2b" as const },
-  { href: "/koneet", key: "koneet" as const, match: "koneet" as const },
+  { href: "/#yhteensopivuus", key: "koneet" as const, match: "koneet" as const },
   { href: "/care", key: "serviceTabCare" as const, match: "care" as const },
   { href: "/tilaus", key: "serviceTabTrack" as const, match: "tilaus" as const },
 ] as const;
@@ -28,12 +30,13 @@ function isActive(
   if (!pathname) return false;
   switch (match) {
     case "mainPalvelu":
-      if (!pathname.startsWith("/palvelu")) return false;
-      return pathname !== "/palvelu/b2b";
+      return pathname === "/";
+    case "tilaa":
+      return pathname === "/tilaa";
     case "b2b":
       return pathname === "/palvelu/b2b";
     case "koneet":
-      return pathname === "/koneet" || pathname.startsWith("/koneet/");
+      return pathname.startsWith("/koneet/");
     case "care":
       return pathname === "/care" || pathname.startsWith("/care/");
     case "tilaus":
@@ -48,16 +51,20 @@ const ServiceHubTab = memo(function ServiceHubTab({
   label,
   active,
   onNavClick,
+  prefetchOnHover,
 }: {
   href: string;
   label: string;
   active: boolean;
   onNavClick: () => void;
+  prefetchOnHover?: () => void;
 }) {
   return (
     <Link
       href={href}
       onClick={onNavClick}
+      onMouseEnter={prefetchOnHover}
+      onFocus={prefetchOnHover}
       className={tabClass(active)}
       aria-current={active ? "page" : undefined}
     >
@@ -69,6 +76,7 @@ const ServiceHubTab = memo(function ServiceHubTab({
 export function ServiceHubTabs() {
   const pathname = usePathname();
   const t = useTranslations("nav");
+  const prefetchOrder = usePrefetchRoute("/tilaa");
   const onNavClick = useCallback(() => {
     dispatchBackgroundNavInteraction();
   }, []);
@@ -85,6 +93,7 @@ export function ServiceHubTabs() {
           label={t(key)}
           active={isActive(pathname, match)}
           onNavClick={onNavClick}
+          prefetchOnHover={href === "/tilaa" ? prefetchOrder : undefined}
         />
       ))}
     </nav>

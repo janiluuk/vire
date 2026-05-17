@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { serviceOrderTotalCents, USB_ORDER_CENTS } from "@/lib/billing/pricing";
 
 describe("serviceOrderTotalCents", () => {
+  it("computes INSTALL_ONLY with FULL support", () => {
+    expect(serviceOrderTotalCents("INSTALL_ONLY", "FULL")).toBe(59_00);
+  });
+
   it("computes SSD_BASIC with FULL support", () => {
     expect(serviceOrderTotalCents("SSD_BASIC", "FULL")).toBe(79_00);
   });

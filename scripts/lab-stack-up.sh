@@ -12,6 +12,7 @@
 #   LAB_HOST / DEPLOY_HOST     — default 192.168.2.100
 #   LAB_PATH / DEPLOY_PATH     — default /srv/sparkki
 #   LAB_USER / DEPLOY_USER     — default root
+#   SSH_PROXY_JUMP             — e.g. pi@sparkki.dudeisland.eu:4322 (GitHub Actions / remote deploy)
 #   APP_PORT                   — desired host port (default 1337); auto-increments if taken
 #   RSYNC_DELETE=1             — rsync --delete (careful)
 #
@@ -34,9 +35,22 @@ done
 HOST="${LAB_HOST:-${DEPLOY_HOST:-192.168.2.100}}"
 REMOTE_PATH="${LAB_PATH:-${DEPLOY_PATH:-/srv/sparkki}}"
 REMOTE_USER="${LAB_USER:-${DEPLOY_USER:-root}}"
+PROXY_JUMP="${SSH_PROXY_JUMP:-}"
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
+
+SSH_COMMON_OPTS=(-o StrictHostKeyChecking=accept-new)
+if [[ -n "$PROXY_JUMP" ]]; then
+  SSH_COMMON_OPTS+=(-J "$PROXY_JUMP")
+fi
+ssh_remote() {
+  ssh "${SSH_COMMON_OPTS[@]}" "$@"
+}
+RSYNC_RSH="ssh"
+for opt in "${SSH_COMMON_OPTS[@]}"; do
+  RSYNC_RSH+=" $(printf '%q' "$opt")"
+done
 
 RSYNC_FLAGS=(-a -z)
 if [[ "${RSYNC_DELETE:-}" == "1" ]]; then
@@ -46,14 +60,15 @@ fi
 # --- 1. Tear down old stack before syncing new code ---
 echo "==> Remote: tear down old stack"
 # shellcheck disable=SC2029
-ssh "${REMOTE_USER}@${HOST}" \
+ssh_remote "${REMOTE_USER}@${HOST}" \
   "[ -d '${REMOTE_PATH}' ] && cd '${REMOTE_PATH}' && docker compose down --remove-orphans 2>/dev/null || true"
 
 # --- 2. Sync files ---
 echo "==> Sync → ${REMOTE_USER}@${HOST}:${REMOTE_PATH}"
-ssh "${REMOTE_USER}@${HOST}" "mkdir -p '${REMOTE_PATH}'"
+ssh_remote "${REMOTE_USER}@${HOST}" "mkdir -p '${REMOTE_PATH}'"
 
 rsync "${RSYNC_FLAGS[@]}" \
+  -e "$RSYNC_RSH" \
   --exclude node_modules \
   --exclude .git \
   --exclude .next \
@@ -66,7 +81,7 @@ rsync "${RSYNC_FLAGS[@]}" \
 # --- 3. Find a free port on the remote host ---
 DESIRED_PORT="${APP_PORT:-1337}"
 # shellcheck disable=SC2029
-REMOTE_PORT=$(ssh "${REMOTE_USER}@${HOST}" "
+REMOTE_PORT=$(ssh_remote "${REMOTE_USER}@${HOST}" "
   port=${DESIRED_PORT}
   while ss -tlnH 2>/dev/null | awk '{print \$4}' | grep -q \":\${port}\$\"; do
     port=\$((port + 1))
@@ -86,7 +101,7 @@ fi
 
 echo "==> Remote: ${BUILD_CMD} && docker compose up -d (port ${REMOTE_PORT})"
 # shellcheck disable=SC2029
-ssh "${REMOTE_USER}@${HOST}" \
+ssh_remote "${REMOTE_USER}@${HOST}" \
   "cd '${REMOTE_PATH}' && APP_PORT=${REMOTE_PORT} ${BUILD_CMD} && APP_PORT=${REMOTE_PORT} docker compose up -d"
 
 BASE_URL="http://${HOST}:${REMOTE_PORT}"

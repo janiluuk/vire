@@ -33,8 +33,8 @@ test.describe("key public journeys", () => {
     ).toBeVisible();
   });
 
-  test("Service page lists component transparency section", async ({ page }) => {
-    await page.goto("/fi/palvelu", { waitUntil: "domcontentloaded" });
+  test("Home lists component transparency section", async ({ page }) => {
+    await page.goto("/fi", { waitUntil: "domcontentloaded" });
     await expect(
       page.getByRole("heading", {
         level: 2,
@@ -44,13 +44,22 @@ test.describe("key public journeys", () => {
     await expect(page.locator("#komponentit")).toBeVisible();
   });
 
-  test("compatibility search page and empty-query state", async ({ page }) => {
-    await page.goto("/fi/koneet", { waitUntil: "domcontentloaded" });
+  test("compatibility checker on home", async ({ page }) => {
+    await page.goto("/fi#yhteensopivuus", { waitUntil: "domcontentloaded" });
     await expect(
-      page.getByRole("heading", { level: 1, name: /Yhteensopivuus|Compatibility/i }),
+      page.getByRole("heading", { level: 2, name: /Yhteensopivuus|Compatibility/i }),
     ).toBeVisible();
-    await expect(page.locator("#koneet-q")).toBeVisible();
-    await expect(page.getByRole("search").getByRole("button")).toBeVisible();
+    await expect(page.getByTestId("home-compatibility-checker")).toBeVisible({
+      timeout: 15_000,
+    });
+    const computer = page.locator("#home-compat-computer");
+    await computer.scrollIntoViewIfNeeded();
+    await expect(computer).toBeVisible();
+    await expect(
+      page.getByRole("button", {
+        name: /Jatka tilaukseen|Continue to order/i,
+      }),
+    ).toBeVisible();
   });
 
   test("DIY hub lists guides section", async ({ page }) => {

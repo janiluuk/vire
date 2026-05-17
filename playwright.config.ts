@@ -48,6 +48,8 @@ export default defineConfig({
       ),
       NEXTAUTH_URL: webOrigin,
       NEXT_PUBLIC_SITE_URL: webOrigin,
+      /** Persist orders in DB during Playwright wizard flows (no Stripe). */
+      CHECKOUT_E2E_BYPASS: "true",
     },
   },
 });

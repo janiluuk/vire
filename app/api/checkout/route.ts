@@ -21,6 +21,7 @@ import {
 } from "@/lib/billing/app-bundles";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 import { getSiteUrl } from "@/lib/site/site-url";
+import { lookupComputerForWizard } from "@/lib/orders/computer-lookup";
 import {
   hasUsableCustomerContact,
   parseCustomerContact,
@@ -28,7 +29,10 @@ import {
 
 const checkoutSchema = z
   .object({
-    tier: z.enum(["SSD_BASIC", "SSD_RAM", "FULL_SERVICE"]),
+    tier: z.enum(["INSTALL_ONLY", "SSD_BASIC", "SSD_RAM", "FULL_SERVICE"]),
+    supportChoice: z.enum(["INCLUDED", "CARE_PLUS", "CARE_PRO"]).optional(),
+    selectedYear: z.number().int().min(1990).max(2030).optional().nullable(),
+    selectedMatchId: z.string().trim().max(64).optional().nullable(),
     deliveryMethod: z.nativeEnum(DeliveryMethod),
     hddRemoval: z.nativeEnum(HddRemovalOption),
     computerDescription: z.string().trim().min(1).max(2000),
@@ -118,21 +122,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
 
-  if (!stripeConfigured() || !getStripe()) {
-    logApiEvent(requestId, "checkout.stripe_not_configured", {});
-    return NextResponse.json(
-      { error: "stripe_not_configured" },
-      { status: 503 },
-    );
-  }
-
-  const stripe = getStripe()!;
-
   const wantsMigration = Boolean(data.dataMigration) && data.dataMigrationSize;
   const migration = wantsMigration
     ? { size: data.dataMigrationSize! }
     : null;
-  const supportTier = SupportTier.EMAIL;
+  const supportTier = SupportTier.FULL;
+  const carePackageInterest =
+    data.supportChoice === "CARE_PLUS"
+      ? "PLUS"
+      : data.supportChoice === "CARE_PRO"
+        ? "PRO"
+        : null;
   const appBundles = normalizeAppBundleIds(data.appBundleIds ?? []);
   const portableVmSelected =
     Boolean(data.portableVmAddon) && data.portableVmHandoff != null;
@@ -151,7 +151,21 @@ export async function POST(req: Request) {
 
   const parsedContact = parseCustomerContact(data.customerContact);
 
-  const baseUrl = getSiteUrl();
+  const lookup = await lookupComputerForWizard(
+    data.computerDescription.trim(),
+    data.locale,
+    {
+      selectedYear: data.selectedYear ?? null,
+      selectedMatchId: data.selectedMatchId ?? null,
+    },
+  );
+
+  const yearNote =
+    data.selectedYear != null ? ` · vuosi: ${data.selectedYear}` : "";
+  const careNote =
+    carePackageInterest != null
+      ? ` · Care-kiinnostus: ${carePackageInterest}`
+      : "";
 
   const order = await prisma.order.create({
     data: {
@@ -160,14 +174,15 @@ export async function POST(req: Request) {
       supportTier,
       deliveryMethod: data.deliveryMethod,
       hddRemoval: data.hddRemoval,
-      computerMake: null,
-      computerModel: null,
+      computerMake: lookup?.coerced.make || null,
+      computerModel: lookup?.coerced.model || null,
+      carePackageInterest,
       customerName: null,
       customerEmail: parsedContact.email,
       customerPhone: parsedContact.phone,
       address: null,
       preferredDate: null,
-      notes: data.computerDescription.trim(),
+      notes: `${data.computerDescription.trim()}${yearNote}${careNote}`,
       priceEur,
       locale: data.locale,
       dataMigration: migration != null,
@@ -177,6 +192,27 @@ export async function POST(req: Request) {
       portableVmHandoff,
     },
   });
+
+  const baseUrl = getSiteUrl();
+
+  if (process.env.CHECKOUT_E2E_BYPASS === "true") {
+    logApiEvent(requestId, "checkout.e2e_bypass", { orderId: order.id });
+    return NextResponse.json({
+      url: `${baseUrl}/${data.locale}/palvelu/kiitos?session_id=e2e_${order.id}`,
+      orderId: order.id,
+    });
+  }
+
+  if (!stripeConfigured() || !getStripe()) {
+    await prisma.order.delete({ where: { id: order.id } }).catch(() => {});
+    logApiEvent(requestId, "checkout.stripe_not_configured", {});
+    return NextResponse.json(
+      { error: "stripe_not_configured" },
+      { status: 503 },
+    );
+  }
+
+  const stripe = getStripe()!;
 
   const hddCents = hddRemovalAddonCents(
     data.tier as Exclude<ServiceTier, "B2B">,
@@ -202,7 +238,7 @@ export async function POST(req: Request) {
       customer_email: order.customerEmail ?? undefined,
       line_items: lineItems,
       success_url: `${baseUrl}/${data.locale}/palvelu/kiitos?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/${data.locale}/palvelu`,
+      cancel_url: `${baseUrl}/${data.locale}`,
       metadata: {
         kind: "service",
         orderId: order.id,

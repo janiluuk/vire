@@ -4,7 +4,7 @@ test.describe("design-system UX flows", () => {
   test("service page exposes the guided flow, migration FAQ, and business branch", async ({
     page,
   }) => {
-    await page.goto("/fi/palvelu", { waitUntil: "domcontentloaded" });
+    await page.goto("/fi", { waitUntil: "domcontentloaded" });
 
     await expect(
       page.getByRole("heading", { level: 1, name: /^Palvelu$/i }),

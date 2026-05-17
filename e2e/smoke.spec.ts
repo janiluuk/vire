@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("home loads with hero and navigation", async ({ page }) => {
   await page.goto("/fi");
   await expect(
-    page.getByRole("heading", { level: 1, name: /toisen elämän/i }),
+    page.getByRole("heading", { level: 1, name: /^Palvelu$|Service/i }),
   ).toBeVisible();
   await expect(
     page.getByRole("navigation", { name: /Päävalikko/i }),
@@ -20,8 +20,8 @@ test("health API", async ({ request }) => {
   expect(json.ok).toBe(true);
 });
 
-test("service page shows order wizard", async ({ page }) => {
-  await page.goto("/fi/palvelu");
+test("home shows order wizard", async ({ page }) => {
+  await page.goto("/fi");
   await expect(
     page.getByRole("heading", { name: /Tilaus|Order/i }),
   ).toBeVisible();
@@ -47,7 +47,7 @@ test("locale switch EN shows English home hero", async ({ page }) => {
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /Your computer deserves a second life|toisen elämän/i,
+      name: /^Palvelu$|Service/i,
     }),
   ).toBeVisible();
 });

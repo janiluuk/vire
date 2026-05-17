@@ -44,7 +44,7 @@ export default async function PalveluB2bPage({
     <div className="mx-auto max-w-2xl space-y-10 px-4 py-12">
       <header>
         <p className="text-sm font-semibold text-g">
-          <Link href="/palvelu" className="hover:underline">
+          <Link href="/" className="hover:underline">
             {t("b2b.backToService")}
           </Link>
         </p>

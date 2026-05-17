@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { ModelCheckStatus } from "@prisma/client";
 import { recordAdminAudit } from "@/lib/admin/admin-audit";
+import { parseComputerModelCsv } from "@/lib/admin/parse-computer-model-csv";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/db/prisma";
 
@@ -122,4 +123,67 @@ export async function updateComputerModel(formData: FormData) {
   revalidatePath("/admin/models");
   revalidatePath(`/admin/models/${id}`);
   redirect(`/admin/models/${id}?saved=1`);
+}
+
+export async function importComputerModelsCsv(formData: FormData) {
+  const session = await requireAdminSession();
+  const csv = String(formData.get("csv") ?? "").trim();
+  if (!csv) {
+    redirect("/admin/models?error=csv_empty");
+  }
+
+  const { rows, errors } = parseComputerModelCsv(csv);
+  if (rows.length === 0) {
+    redirect(
+      `/admin/models?error=csv_parse&detail=${errors[0]?.message ?? "empty"}`,
+    );
+  }
+
+  let created = 0;
+  let skipped = 0;
+  for (const row of rows) {
+    const status =
+      row.compatible === true
+        ? "APPROVED"
+        : row.compatible === false
+          ? "REJECTED"
+          : "UNCHECKED";
+    try {
+      await prisma.computerModel.create({
+        data: {
+          make: row.make,
+          model: row.model,
+          yearFrom: row.yearFrom,
+          yearTo: row.yearTo,
+          compatible: row.compatible,
+          verdict: row.verdict,
+          ssdSlot: row.ssdSlot,
+          maxRamGb: row.maxRamGb,
+          status,
+          ...(row.compatible != null
+            ? {
+                checkedAt: new Date(),
+                checkedBy: session.user?.email ?? session.user?.id ?? "admin",
+              }
+            : {}),
+        },
+      });
+      created++;
+    } catch {
+      skipped++;
+    }
+  }
+
+  await recordAdminAudit({
+    actorEmail: session.user?.email ?? "unknown",
+    action: "model.csv_import",
+    entity: "ComputerModel",
+    entityId: "bulk",
+    metadata: { created, skipped, parseErrors: errors.length },
+  });
+
+  revalidatePath("/admin/models");
+  redirect(
+    `/admin/models?imported=${created}&skipped=${skipped}&parseErrors=${errors.length}`,
+  );
 }

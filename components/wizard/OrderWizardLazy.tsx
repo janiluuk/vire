@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 
 function OrderWizardSkeleton() {
@@ -29,6 +30,19 @@ const OrderWizardClient = dynamic(
   },
 );
 
-export function OrderWizardLazy({ locale }: { locale: string }) {
-  return <OrderWizardClient locale={locale} />;
+export function OrderWizardLazy({
+  locale,
+  fullscreenOnOrderPage = false,
+}: {
+  locale: string;
+  fullscreenOnOrderPage?: boolean;
+}) {
+  return (
+    <Suspense fallback={<OrderWizardSkeleton />}>
+      <OrderWizardClient
+        locale={locale}
+        fullscreenOnOrderPage={fullscreenOnOrderPage}
+      />
+    </Suspense>
+  );
 }

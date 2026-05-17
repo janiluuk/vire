@@ -3,10 +3,11 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 
-const WARM_PATHS = ["/palvelu", "/tietoa", "/tuki", "/itse", "/meista"] as const;
+/** Order wizard first — highest-intent path; CTAs also prefetch on hover via `usePrefetchRouteHandlers`. */
+const WARM_PATHS = ["/tilaa", "/", "/tietoa", "/tuki", "/itse", "/meista"] as const;
 
 /**
- * Phase 8 — warm common navigations after paint (App Router RSC prefetch).
+ * Warm common navigations after paint (App Router RSC prefetch).
  */
 export function RoutePrefetchWarmup() {
   const router = useRouter();

@@ -62,6 +62,8 @@ export DEPLOY_HOST=192.168.2.100
 export DEPLOY_PATH=/srv/sparkki
 # optional: export DEPLOY_USER=root
 ./scripts/deploy-lab.sh
+
+**Production (via jumphost):** `SSH_PROXY_JUMP=pi@sparkki.dudeisland.eu:4322 ./scripts/lab-stack-up.sh` — or use GitHub Actions workflow **`deploy-production.yml`** (see **`docs/operations.md`**).
 ```
 
 Ensure **`.env`** has **`NEXTAUTH_URL`** and **`NEXT_PUBLIC_SITE_URL`** set to how you reach the host (e.g. `http://192.168.2.100:1337`, not `localhost`) before syncing. If you use the Calendly block on **`/tuki`**, set **`NEXT_PUBLIC_CALENDLY_EMBED_URL`** to a live **`https://calendly.com/...`** event link — Docker passes it (and the site URL) as **build args** so the embed gets a valid **`embed_domain`**. For a clean rebuild: `./scripts/deploy-lab.sh --no-cache`.
@@ -92,7 +94,7 @@ See [`.env.example`](./.env.example) for `DATABASE_URL`, auth, Stripe, email, pu
 
 Local compatibility tool using the same pure logic as the site (`lib/specs/compatibility.ts`). Lives in `apps/sparkki-checker/`.
 
-**LAN / SearXNG / local LLM:** spec hints run on the **Sparkki Next.js server** (`lib/specs/laptop-specs.ts`), not inside the desktop app. See **`apps/sparkki-checker/README.md`** for which env vars to set on the server, Docker reachability to e.g. `192.168.2.101:8080`, and optional future Tauri + API wiring.
+**LAN / SearXNG / local LLM:** spec hints run on the **Sparkki Next.js server** (`lib/specs/laptop-specs.ts`), not inside the desktop app. Full setup: **[`docs/model-search.md`](docs/model-search.md)**. Desktop app notes: **`apps/sparkki-checker/README.md`**.
 
 Install [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/) for your OS (on Linux: WebKitGTK, build essentials, etc.), then:
 

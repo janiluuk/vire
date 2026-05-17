@@ -90,3 +90,29 @@ When **`CSP_REPORT_BASE_URL`** or **`NEXT_PUBLIC_SITE_URL`** is set to a valid *
 Removing **`'unsafe-inline'`** / **`'unsafe-eval'`** from **`script-src`** needs per-request **nonces** (or hashes) for Next.js hydration, **`next/script`**, and any inline bootstrapping, plus verification for **Stripe Checkout**, **Calendly**, **Discord**, and **YouTube** embeds. That is **optional hardening** after baseline enforcing is stable in production — not required for the initial enforcing rollout above.
 
 Do not drop **`unsafe-inline`** / **`unsafe-eval`** from **`script-src`** until third-party domains and Next.js chunks are verified end-to-end with a nonce or hash strategy.
+
+## Production deploy (GitHub Actions)
+
+Workflow **`.github/workflows/deploy-production.yml`** rsyncs the repo and runs **`docker compose build && up`** on **`root@192.168.2.100:/srv/sparkki`**, using SSH **ProxyJump** through **`pi@sparkki.dudeisland.eu:4322`**.
+
+| Item | Value |
+|------|--------|
+| Jumphost | `pi@sparkki.dudeisland.eu` port **4322** |
+| Production | `root@192.168.2.100`, path **`/srv/sparkki`** |
+| Secret | **`DEPLOY_SSH_PRIVATE_KEY`** — ed25519 key authorized on **both** hosts |
+| Triggers | Manual **workflow_dispatch**; auto after **CI** succeeds on **`main`** |
+
+Optional repository **variables**: `DEPLOY_JUMP_HOST`, `DEPLOY_JUMP_USER`, `DEPLOY_JUMP_PORT`, `DEPLOY_HOST`, `DEPLOY_PATH`, `DEPLOY_USER`, `DEPLOY_APP_PORT` (defaults match the table).
+
+**One-time key setup** (from a machine that already reaches both hosts):
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/sparkki_github_deploy -N "" -C "github-actions-sparkki-deploy"
+ssh-copy-id -i ~/.ssh/sparkki_github_deploy.pub -p 4322 pi@sparkki.dudeisland.eu
+ssh-copy-id -i ~/.ssh/sparkki_github_deploy.pub -o ProxyJump=pi@sparkki.dudeisland.eu:4322 root@192.168.2.100
+gh secret set DEPLOY_SSH_PRIVATE_KEY < ~/.ssh/sparkki_github_deploy
+```
+
+Local deploy over the same jump host: **`SSH_PROXY_JUMP=pi@sparkki.dudeisland.eu:4322 ./scripts/lab-stack-up.sh`**. Direct LAN deploy (no jump): **`./scripts/lab-stack-up.sh`** (defaults to `192.168.2.100`).
+
+Production **`.env`** lives on the server only; CI does not overwrite it (rsync excludes `.env.local`; root `.env` is not in the git tree).

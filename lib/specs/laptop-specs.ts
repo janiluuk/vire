@@ -1,7 +1,12 @@
 /**
  * Server-only: SearXNG JSON + optional local LLM to summarize laptop specs.
  * Configure via SPECS_* env vars (see .env.example).
+ * Successful lookups are persisted in `LaptopSpecsInternetCache` (see laptop-specs-cache.ts).
  */
+import {
+  readLaptopSpecsInternetCache,
+  writeLaptopSpecsInternetCache,
+} from "@/lib/specs/laptop-specs-cache";
 
 export type LaptopSpecsInsight = {
   summary: string | null;
@@ -291,6 +296,22 @@ export async function resolveLaptopSpecs(
     referenceSummary = null;
   }
 
+  const attachReference = (insight: LaptopSpecsInsight): LaptopSpecsInsight => ({
+    ...insight,
+    referenceSummary,
+  });
+
+  try {
+    const dbCached = await readLaptopSpecsInternetCache(m, mo, locale);
+    if (dbCached) {
+      const merged = attachReference(dbCached);
+      cache.set(key, { exp: Date.now() + CACHE_MS, value: merged });
+      return merged;
+    }
+  } catch {
+    /* continue to live lookup */
+  }
+
   const query = `${[m, mo].filter(Boolean).join(" ")} laptop specifications review`.trim();
   const results = await searxSearch(query);
   if (results.length === 0) {
@@ -300,6 +321,14 @@ export async function resolveLaptopSpecs(
       referenceSummary,
     };
     cache.set(key, { exp: Date.now() + CACHE_MS, value: empty });
+    try {
+      await writeLaptopSpecsInternetCache(m, mo, locale, empty, {
+        searxResultCount: 0,
+        usedLlm: false,
+      });
+    } catch {
+      /* non-fatal */
+    }
     return empty;
   }
 
@@ -308,9 +337,11 @@ export async function resolveLaptopSpecs(
     referenceSummary,
   };
 
+  let usedLlm = false;
   try {
     const ai = await runLlm(query, results);
     if (ai) {
+      usedLlm = true;
       insight = {
         summary: ai.summary ?? insight.summary,
         specUrl: ai.specUrl ?? insight.specUrl,
@@ -322,6 +353,17 @@ export async function resolveLaptopSpecs(
   }
 
   cache.set(key, { exp: Date.now() + CACHE_MS, value: insight });
+  try {
+    await writeLaptopSpecsInternetCache(
+      m,
+      mo,
+      locale,
+      { summary: insight.summary, specUrl: insight.specUrl },
+      { searxResultCount: results.length, usedLlm },
+    );
+  } catch {
+    /* non-fatal */
+  }
   return insight;
 }
 

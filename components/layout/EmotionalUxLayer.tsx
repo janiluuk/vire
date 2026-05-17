@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "@/i18n/navigation";
+import {
+  BG_AMBIENT_PACE_BASE,
+  BG_AMBIENT_PACE_NAV_PEAK,
+  BG_NAV_ENERGY_BUMP,
+  BG_NAV_ENERGY_DECAY,
+  BG_NAV_ENERGY_MAX,
+} from "@/lib/site/background-animation";
 import { SPARKKI_BG_NAV_EVENT } from "@/lib/site/background-nav";
 
 /**
@@ -20,20 +27,37 @@ export function EmotionalUxLayer() {
 
     const root = document.documentElement;
     let e = energyRef.current;
-    e = Math.min(1, e + 0.38);
+    e = Math.min(BG_NAV_ENERGY_MAX, e + BG_NAV_ENERGY_BUMP);
     energyRef.current = e;
-    root.style.setProperty("--spark-nav-glow", String(e));
+    const norm = Math.min(1, e / BG_NAV_ENERGY_MAX);
+    root.style.setProperty("--spark-nav-glow", String(norm));
+    const pace =
+      BG_AMBIENT_PACE_BASE +
+      (BG_AMBIENT_PACE_NAV_PEAK - BG_AMBIENT_PACE_BASE) * norm;
+    root.style.setProperty("--spark-ambient-pace", String(pace));
 
     const decay = () => {
-      e *= 0.9;
+      e *= BG_NAV_ENERGY_DECAY;
       energyRef.current = e;
       if (e < 0.028) {
         energyRef.current = 0;
         root.style.setProperty("--spark-nav-glow", "0");
+        root.style.setProperty(
+          "--spark-ambient-pace",
+          String(BG_AMBIENT_PACE_BASE),
+        );
         rafRef.current = 0;
         return;
       }
-      root.style.setProperty("--spark-nav-glow", String(e));
+      const n = Math.min(1, e / BG_NAV_ENERGY_MAX);
+      root.style.setProperty("--spark-nav-glow", String(n));
+      root.style.setProperty(
+        "--spark-ambient-pace",
+        String(
+          BG_AMBIENT_PACE_BASE +
+            (BG_AMBIENT_PACE_NAV_PEAK - BG_AMBIENT_PACE_BASE) * n,
+        ),
+      );
       rafRef.current = requestAnimationFrame(decay);
     };
 
@@ -52,12 +76,11 @@ export function EmotionalUxLayer() {
   useEffect(() => {
     const onNav = () => pulseGlow();
     window.addEventListener(SPARKKI_BG_NAV_EVENT, onNav);
-    window.addEventListener("hashchange", onNav);
     return () => {
       window.removeEventListener(SPARKKI_BG_NAV_EVENT, onNav);
-      window.removeEventListener("hashchange", onNav);
       cancelAnimationFrame(rafRef.current);
       document.documentElement.style.removeProperty("--spark-nav-glow");
+      document.documentElement.style.removeProperty("--spark-ambient-pace");
     };
   }, [pulseGlow]);
 

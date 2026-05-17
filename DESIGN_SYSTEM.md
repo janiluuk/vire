@@ -1,8 +1,10 @@
 # Sparkki — Design System & Style Instructions
 
-> For coding agents. This **`DESIGN_SYSTEM.md`** is the **single** merged spec: UI rules, component recipes, and the **Sparkki refine programme** (phases 1–11 implementation log) in one file. Read before writing UI code.
+> For coding agents. This **`DESIGN_SYSTEM.md`** is the **single** spec: UI tokens and components, **product experience vision** (merged from the former **`DESIGN_SYSTEM_IMPROVEMENT.md`**), and the **Sparkki refine programme** (phases 1–23 implementation log). Read before writing UI code.
 
 **Governance:** **`ROADMAP.md`** points here for all visual work (design principles + agent rules). **`FEATURES.md`** defers here for UI on every shipped feature. Implementation lives in **`app/globals.css`** (`:root` + component layers) and **`tailwind.config.ts`** (semantic utilities). If product needs a new pattern, extend this document and the token layer first, then build the screen.
+
+**Status (May 2026):** All **refine programme** engineering phases in this file (rebrand through Phase 23) are **complete**. The **product transformation** programme below is **largely shipped** on the public site; only optional/future items remain open (see table).
 
 ---
 
@@ -1469,9 +1471,64 @@ Removed: document upload gating; name; address on the form. Callout: discount co
 
 ---
 
+## Product experience vision
+
+> Merged from the former **`DESIGN_SYSTEM_IMPROVEMENT.md`** (UX/product transformation brief). This section is **what we say and structure** for normal users; the **refine programme** below is **how the UI is built** (tokens, motion, nav).
+
+### Goal
+
+Transform Sparkki from a technical Linux/upcycling offer into a **calm, trustworthy technology renewal** platform. A non-technical visitor should quickly feel: *I understand this · my computer might still be good · this seems easy · these people are trustworthy · this would simplify my life.*
+
+### Prioritize / avoid
+
+| Prioritize | Avoid |
+|------------|--------|
+| Clarity over technical accuracy | Hacker / cyberpunk aesthetics |
+| Reassurance over complexity | Distro-first or Linux-jargon-led messaging |
+| Outcomes over specifications | Repair-shop or dense spec-sheet feeling |
+| Visual learning over long text | Long text walls, overwhelming nav |
+| Practical benefits over ideology | Neon, excessive parallax, SaaS-dashboard clichés |
+
+**Lead with:** faster everyday use, stability, Finnish support, affordable longevity, “your computer can still be useful.” **Not with:** Linux, open source, distro names as the hero message.
+
+### Tone (FI examples)
+
+- **Good:** “Vanha kone voi tuntua taas nopealta.”
+- **Bad:** “Kevyt Linux-distro optimoi resorssienhallinnan.”
+
+Write **practical, calm, human, reassuring** — not forum/engineering/activist voice.
+
+### Product transformation phases — verification (May 2026)
+
+| Phase | Intent | Status | Shipped as / notes |
+|-------|--------|--------|-------------------|
+| **1 — Homepage** | Service clear in &lt;10s; hero + compatibility entry | **Shipped** | `/` = service landing (`PalveluHero`, hub tabs); **`HomeCompatibilityChecker`** at `#yhteensopivuus` (make/model + specs → `/tilaa`) |
+| **1 — Age/use wizard** | 3-step “how old / what for / result” flow | **Deferred** | Replaced by **computer lookup** + **order wizard** (better fit for real orders); do not rebuild unless product asks |
+| **2 — Service model** | Life-improvement framing, comparison cards | **Partial** | Wizard tiers (`INSTALL_ONLY`, SSD, RAM, full); **`TransformationCard`**, benefit copy; tier names differ from early brief |
+| **3 — Visual info center** | `/tietoa` as visual learning, not blog walls | **Shipped** | Learn hub, Linux/apps/process pages; **`components/ui/DesignSystemSections.tsx`** |
+| **4 — Before / after** | Emotional transformation stories | **Partial** | **`TransformationCard`** on home (before/after lists); no full transformation gallery |
+| **5 — Trust & support** | Human support, FAQ, guides | **Shipped** | Support blocks, migration FAQ, **`/tuki`**, guides (`/itse`), Care |
+| **6 — Process & logistics** | How it works + shipping/pickup | **Shipped** | **`InteractiveDiagram`** (4 steps), logistics **`BenefitGrid`** |
+| **7 — Visual & motion** | Calm premium motion, readable type | **Shipped** | See **refine programme** Phases 2–4, 7, 10; ambient sheen; reduced-motion respected |
+| **8 — Future** | Marketplace, persona profiles, smart engine | **Backlog** | Track in **`FEATURES.md`** / **`ROADMAP.md`**, not this file |
+
+### Reusable marketing components (shipped)
+
+Implement new educational/marketing blocks via **`components/ui/DesignSystemSections.tsx`**:
+
+- `InfoBlock`, `BenefitGrid`, `FAQAccordion`, `TransformationCard`, `VisualExplainer`, `InteractiveDiagram`
+
+Do not duplicate these patterns ad hoc on public pages.
+
+### Open UX follow-ups (not blocking “done”)
+
+Tracked in **`ROADMAP.md`** § *Order wizard & service landing — UX review (May 2026)*: wizard step split, human-readable summary, home→order edit chip, richer `ComputerModel` data, optional web specs on home checker, etc.
+
+---
+
 ## Sparkki refine programme and implementation log
 
-> **Merged** from the former standalone **`DESIGN_SYSTEM_REFINE.md`**. Phases **1–11** record what shipped; **`ROADMAP.md`** and **`FEATURES.md`** remain the backlog and stack contracts.
+> **Merged** from the former standalone **`DESIGN_SYSTEM_REFINE.md`**. Phases **1–23** record what shipped; **`ROADMAP.md`** and **`FEATURES.md`** remain the backlog and stack contracts.
 
 ## Sparkki ⚡
 

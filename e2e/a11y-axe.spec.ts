@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "@playwright/test";
 
 /** Critical paths called out in ROADMAP.md (FI locale, home + service). */
-const PATHS = ["/fi", "/fi/palvelu"] as const;
+const PATHS = ["/fi"] as const;
 
 for (const path of PATHS) {
   test.describe(`axe-core (${path})`, () => {

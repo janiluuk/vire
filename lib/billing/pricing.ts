@@ -15,6 +15,7 @@ export const TIER_BASE_CENTS: Record<
   Exclude<ServiceTier, "B2B">,
   number
 > = {
+  INSTALL_ONLY: 59_00,
   SSD_BASIC: 79_00,
   SSD_RAM: 119_00,
   FULL_SERVICE: 189_00,
@@ -106,6 +107,7 @@ export function serviceCheckoutTotalCents(params: {
 export const USB_ORDER_CENTS = 990;
 
 const TIER_ENV_KEYS: Record<Exclude<ServiceTier, "B2B">, string> = {
+  INSTALL_ONLY: "STRIPE_PRICE_INSTALL_ONLY",
   SSD_BASIC: "STRIPE_PRICE_SSD_BASIC",
   SSD_RAM: "STRIPE_PRICE_SSD_RAM",
   FULL_SERVICE: "STRIPE_PRICE_FULL_SERVICE",

@@ -1,21 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "@/i18n/navigation";
+import {
+  BG_DRIFT_VEL_SCALE,
+  BG_NAV_ENERGY_BUMP,
+  BG_NAV_ENERGY_DECAY,
+  BG_NAV_ENERGY_MAX,
+} from "@/lib/site/background-animation";
+import { SPARKKI_BG_NAV_EVENT } from "@/lib/site/background-nav";
 
 type Category = "distro" | "os" | "penguin" | "app" | "flag";
 
 const CAT_COLORS: Record<Category, { fill: string; stroke: string }> = {
   distro: {
-    fill: "rgba(29,245,160,0.12)",
-    stroke: "rgba(29,245,160,0.44)",
+    fill: "rgba(29,245,160,0.085)",
+    stroke: "rgba(29,245,160,0.32)",
   },
-  os: { fill: "rgba(96,165,250,0.12)", stroke: "rgba(96,165,250,0.48)" },
+  os: { fill: "rgba(96,165,250,0.085)", stroke: "rgba(96,165,250,0.34)" },
   penguin: {
-    fill: "rgba(250,204,21,0.12)",
-    stroke: "rgba(250,204,21,0.5)",
+    fill: "rgba(250,204,21,0.085)",
+    stroke: "rgba(250,204,21,0.36)",
   },
-  app: { fill: "rgba(106,90,154,0.14)", stroke: "rgba(106,90,154,0.48)" },
-  flag: { fill: "rgba(0,53,128,0.13)", stroke: "rgba(0,53,128,0.52)" },
+  app: { fill: "rgba(106,90,154,0.1)", stroke: "rgba(106,90,154,0.34)" },
+  flag: { fill: "rgba(0,53,128,0.095)", stroke: "rgba(0,53,128,0.38)" },
 };
 
 type SymbolDef = {
@@ -140,48 +148,6 @@ function drawWave(ctx: CanvasRenderingContext2D, s: number) {
   ctx.stroke();
 }
 
-function drawBracket(ctx: CanvasRenderingContext2D, s: number) {
-  const h = s * 0.55;
-  const w = s * 0.22;
-  ctx.beginPath();
-  ctx.moveTo(-w, -h / 2);
-  ctx.lineTo(0, -h / 2);
-  ctx.moveTo(-w, h / 2);
-  ctx.lineTo(0, h / 2);
-  ctx.stroke();
-}
-
-function drawGit(ctx: CanvasRenderingContext2D, s: number) {
-  const r = s * 0.14;
-  for (const [dx, dy] of [
-    [0, -s * 0.18],
-    [-s * 0.2, s * 0.16],
-    [s * 0.2, s * 0.16],
-  ] as const) {
-    ctx.beginPath();
-    ctx.arc(dx, dy, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-  }
-  ctx.beginPath();
-  ctx.moveTo(0, -s * 0.04);
-  ctx.lineTo(0, s * 0.02);
-  ctx.moveTo(-s * 0.12, s * 0.08);
-  ctx.lineTo(s * 0.12, s * 0.08);
-  ctx.stroke();
-}
-
-function drawSnowflake(ctx: CanvasRenderingContext2D, s: number) {
-  const r = s * 0.38;
-  for (let i = 0; i < 6; i++) {
-    const a = (i * Math.PI) / 3;
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
-    ctx.stroke();
-  }
-}
-
 function drawPenguin(ctx: CanvasRenderingContext2D, s: number) {
   ctx.beginPath();
   ctx.ellipse(0, s * 0.04, s * 0.22, s * 0.28, 0, 0, Math.PI * 2);
@@ -189,6 +155,13 @@ function drawPenguin(ctx: CanvasRenderingContext2D, s: number) {
   ctx.stroke();
   ctx.beginPath();
   ctx.arc(0, -s * 0.18, s * 0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, -s * 0.12);
+  ctx.lineTo(s * 0.07, -s * 0.06);
+  ctx.lineTo(-s * 0.07, -s * 0.06);
+  ctx.closePath();
   ctx.fill();
   ctx.stroke();
 }
@@ -268,23 +241,24 @@ const SYMBOLS: SymbolDef[] = [
   { name: "Ubuntu", cat: "distro", draw: drawThreeBlobs },
   { name: "Debian", cat: "distro", draw: drawInfinity },
   { name: "Fedora", cat: "distro", draw: drawCircleBadge },
-  { name: "Arch", cat: "distro", draw: drawBracket },
+  { name: "Tux", cat: "penguin", draw: drawPenguin },
   { name: "Mint", cat: "distro", draw: drawHex },
   { name: "elementary", cat: "distro", draw: drawCircleBadge },
-  { name: "NixOS", cat: "distro", draw: drawSnowflake },
+  { name: "Tux", cat: "penguin", draw: drawPenguin },
   { name: "openSUSE", cat: "distro", draw: drawWave },
   { name: "Manjaro", cat: "distro", draw: drawThreeBlobs },
   { name: "Pop!_OS", cat: "distro", draw: drawHex },
+  { name: "Tux", cat: "penguin", draw: drawPenguin },
   { name: "Tux", cat: "penguin", draw: drawPenguin },
   { name: "Kernel", cat: "os", draw: drawGear },
   { name: "systemd", cat: "os", draw: drawWave },
   { name: "bash", cat: "os", draw: drawTerminal },
   { name: "Docker", cat: "app", draw: drawBox },
   { name: "Firefox", cat: "app", draw: drawCircleBadge },
-  { name: "VS Code", cat: "app", draw: drawBracket },
+  { name: "Tux", cat: "penguin", draw: drawPenguin },
   { name: "Neovim", cat: "app", draw: drawWave },
   { name: "Node", cat: "app", draw: drawHex },
-  { name: "Git", cat: "app", draw: drawGit },
+  { name: "Tux", cat: "penguin", draw: drawPenguin },
   { name: "Finnish flag", cat: "flag", draw: drawFinnishFlag },
   { name: "EU flag", cat: "flag", draw: drawEUFlag },
 ];
@@ -305,13 +279,35 @@ type Particle = {
  */
 export function SparkiBackground() {
   const ref = useRef<HTMLCanvasElement>(null);
+  const navEnergyRef = useRef(0);
+  const skipPathnameBumpRef = useRef(true);
+  const pathname = usePathname();
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const onChange = () => setReducedMotion(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (skipPathnameBumpRef.current) {
+      skipPathnameBumpRef.current = false;
+      return;
+    }
+    if (reducedMotion) return;
+    navEnergyRef.current = Math.min(
+      BG_NAV_ENERGY_MAX,
+      navEnergyRef.current + BG_NAV_ENERGY_BUMP,
+    );
+  }, [pathname, reducedMotion]);
 
   useEffect(() => {
     const cvs = ref.current;
     if (!cvs) return;
-    const reduced =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = reducedMotion;
 
     const c2d = cvs.getContext("2d");
     if (!c2d) return;
@@ -321,7 +317,21 @@ export function SparkiBackground() {
     let h = 0;
     let dpr = 1;
     const particles: Particle[] = [];
-    const n = Math.min(48, Math.floor((typeof window !== "undefined" ? window.innerWidth : 1200) / 28));
+    const n = Math.min(
+      48,
+      Math.floor(
+        (typeof window !== "undefined" ? window.innerWidth : 1200) / 28,
+      ),
+    );
+
+    const bumpNavEnergy = () => {
+      if (reduced) return;
+      navEnergyRef.current = Math.min(
+        BG_NAV_ENERGY_MAX,
+        navEnergyRef.current + BG_NAV_ENERGY_BUMP,
+      );
+    };
+    window.addEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -334,17 +344,31 @@ export function SparkiBackground() {
       c2d!.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
+    const penguinSymIndices = SYMBOLS.map((s, i) =>
+      s.cat === "penguin" ? i : -1,
+    ).filter((i) => i >= 0);
+
+    function pickSymbolIndex(): number {
+      if (Math.random() < 0.38 && penguinSymIndices.length > 0) {
+        return penguinSymIndices[
+          Math.floor(Math.random() * penguinSymIndices.length)
+        ]!;
+      }
+      return Math.floor(Math.random() * SYMBOLS.length);
+    }
+
     function spawn() {
       particles.length = 0;
+      const drift = BG_DRIFT_VEL_SCALE;
       for (let i = 0; i < n; i++) {
         particles.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: (Math.random() - 0.5) * 0.28,
+          vx: (Math.random() - 0.5) * 0.065 * drift,
+          vy: (Math.random() - 0.5) * 0.055 * drift,
           rot: Math.random() * Math.PI * 2,
-          spin: (Math.random() - 0.5) * 0.004,
-          sym: Math.floor(Math.random() * SYMBOLS.length),
+          spin: (Math.random() - 0.5) * 0.00075 * drift,
+          sym: pickSymbolIndex(),
           size: 22 + Math.random() * 26,
         });
       }
@@ -352,11 +376,29 @@ export function SparkiBackground() {
 
     function tick() {
       c2d!.clearRect(0, 0, w, h);
+
+      let navBoost = navEnergyRef.current;
+      if (navBoost > 0.02) {
+        navEnergyRef.current *= BG_NAV_ENERGY_DECAY;
+      } else {
+        navBoost = 0;
+        navEnergyRef.current = 0;
+      }
+      const navNorm = Math.min(1, navBoost / BG_NAV_ENERGY_MAX);
+      const motionScale = 1 + navNorm * 1.25;
+
       if (!reduced) {
         for (const p of particles) {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.rot += p.spin;
+          if (navNorm > 0) {
+            p.vx += (Math.random() - 0.5) * 0.045 * navNorm;
+            p.vy += (Math.random() - 0.5) * 0.04 * navNorm;
+          }
+          const maxV = (0.085 + navNorm * 0.14) * BG_DRIFT_VEL_SCALE;
+          p.vx = Math.max(-maxV, Math.min(maxV, p.vx));
+          p.vy = Math.max(-maxV, Math.min(maxV, p.vy));
+          p.x += p.vx * motionScale;
+          p.y += p.vy * motionScale;
+          p.rot += p.spin * motionScale;
           if (p.x < -80) p.x = w + 40;
           if (p.x > w + 80) p.x = -40;
           if (p.y < -80) p.y = h + 40;
@@ -371,7 +413,7 @@ export function SparkiBackground() {
         c2d!.translate(p.x, p.y);
         c2d!.rotate(p.rot);
         const s = p.size;
-        c2d!.globalAlpha = 0.55;
+        c2d!.globalAlpha = 0.36;
         if (def.cat === "flag") {
           c2d!.strokeStyle = col.stroke;
           c2d!.fillStyle = col.fill;
@@ -405,15 +447,17 @@ export function SparkiBackground() {
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <canvas
       ref={ref}
-      className="pointer-events-none fixed inset-0 -z-20 h-full min-h-dvh w-full"
+      className="pointer-events-none fixed inset-0 -z-20 h-full min-h-dvh w-full motion-reduce:opacity-40"
       aria-hidden
+      data-reduced-motion={reducedMotion ? "" : undefined}
     />
   );
 }

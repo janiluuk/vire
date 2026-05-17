@@ -10,7 +10,7 @@ import { computerModelSlug } from "@/lib/site/computer-model-slug";
  */
 const STATIC_PATHS = [
   "",
-  "/palvelu",
+  "/tilaa",
   "/palvelu/b2b",
   "/palvelu/kiitos",
   "/itse",
@@ -28,7 +28,6 @@ const STATIC_PATHS = [
   "/tietoa/sovellukset/mac",
   "/care",
   "/care/kiitos",
-  "/koneet",
   "/sparkki-for-good",
   "/meista",
   "/meista/yhteiso",
@@ -36,12 +35,7 @@ const STATIC_PATHS = [
 
 function priorityFor(path: string): number {
   if (path === "") return 1;
-  if (
-    path === "/palvelu" ||
-    path === "/tietoa" ||
-    path === "/itse" ||
-    path === "/koneet"
-  ) {
+  if (path === "/tietoa" || path === "/itse") {
     return 0.9;
   }
   if (path.endsWith("/kiitos")) return 0.45;

@@ -4,7 +4,7 @@
       "numberOfRuns": 1,
       "url": [
         "http://127.0.0.1:1337/fi",
-        "http://127.0.0.1:1337/fi/palvelu"
+        "http://127.0.0.1:1337/fi"
       ],
       "settings": {
         "preset": "desktop",
