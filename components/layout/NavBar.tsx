@@ -15,6 +15,7 @@ import {
   isMainNavClusterActive,
   MAIN_NAV_ITEMS,
 } from "@/lib/site/main-nav";
+import { ORDER_WIZARD_PATH } from "@/lib/site/order-wizard-path";
 import { feedbackPrimaryCTA } from "@/lib/site/ui-feedback";
 
 function BrandMark({ name }: { name: string }) {
@@ -235,7 +236,7 @@ export function NavBar({ locale }: { locale: string }) {
             className="flex shrink-0 items-center gap-2 sm:gap-3"
           >
             <Link
-              href="/palvelu#palvelu-tilaa"
+              href={ORDER_WIZARD_PATH}
               onClick={onOrderCta}
               className="sparkki-pressable inline-flex min-h-tap shrink-0 items-center justify-center rounded-lg bg-g px-5 py-2.5 text-sm font-bold tracking-tight text-canvas transition-opacity duration-150 hover:opacity-[0.85] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-g"
             >
@@ -357,7 +358,7 @@ export function NavBar({ locale }: { locale: string }) {
                   {tPal("mobileOrderHeading")}
                 </p>
                 <Link
-                  href="/palvelu#palvelu-tilaa"
+                  href={ORDER_WIZARD_PATH}
                   onClick={onMobileOrderCta}
                   className="sparkki-pressable inline-flex min-h-tap w-full items-center justify-center rounded-lg bg-g px-4 py-3 text-sm font-bold text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
                 >

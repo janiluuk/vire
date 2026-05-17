@@ -3,6 +3,11 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { usePathname } from "@/i18n/navigation";
+import {
+  BG_NAV_ENERGY_BUMP,
+  BG_NAV_ENERGY_DECAY,
+  BG_NAV_ENERGY_MAX,
+} from "@/lib/site/background-animation";
 import { SPARKKI_BG_NAV_EVENT } from "@/lib/site/background-nav";
 
 type FloatObject = THREE.Object3D & {
@@ -140,14 +145,14 @@ function spawnFloatIcon(narrow: boolean): FloatObject {
   const mat = makeWireframeMaterial(
     amber,
     amber
-      ? 0.05 + Math.random() * 0.05
-      : 0.06 + Math.random() * 0.12,
+      ? 0.035 + Math.random() * 0.04
+      : 0.042 + Math.random() * 0.085,
   );
   const kind = pickKind(narrow);
   const root = createIcon(kind, mat) as FloatObject;
   root._vel = new THREE.Vector3(
-    (Math.random() - 0.5) * 0.006,
-    (Math.random() - 0.5) * 0.006,
+    (Math.random() - 0.5) * 0.002,
+    (Math.random() - 0.5) * 0.002,
     0,
   );
   const sc = 0.35 + Math.random() * 1.15;
@@ -177,8 +182,8 @@ export function BackgroundCanvas() {
       return;
     }
     navEnergyRef.current = Math.min(
-      1.85,
-      navEnergyRef.current + 0.52,
+      BG_NAV_ENERGY_MAX,
+      navEnergyRef.current + BG_NAV_ENERGY_BUMP,
     );
   }, [pathname]);
 
@@ -192,13 +197,12 @@ export function BackgroundCanvas() {
     const bumpNavEnergy = () => {
       if (reducedMotion) return;
       navEnergyRef.current = Math.min(
-        1.85,
-        navEnergyRef.current + 0.52,
+        BG_NAV_ENERGY_MAX,
+        navEnergyRef.current + BG_NAV_ENERGY_BUMP,
       );
     };
 
     window.addEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
-    window.addEventListener("hashchange", bumpNavEnergy);
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -251,7 +255,6 @@ export function BackgroundCanvas() {
       return () => {
         window.removeEventListener("resize", onResize);
         window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
-        window.removeEventListener("hashchange", bumpNavEnergy);
         disposeFloatObject(mesh);
         renderer.dispose();
       };
@@ -278,20 +281,22 @@ export function BackgroundCanvas() {
 
       let navBoost = navEnergyRef.current;
       if (navBoost > 0.02) {
-        navEnergyRef.current *= 0.9;
+        navEnergyRef.current *= BG_NAV_ENERGY_DECAY;
       } else {
         navBoost = 0;
         navEnergyRef.current = 0;
       }
 
-      const maxVel = 0.028;
+      const navNorm = Math.min(1, navBoost / BG_NAV_ENERGY_MAX);
+      const motionScale = 1 + navNorm * 1.85;
+      const maxVel = 0.011 + navNorm * 0.022;
       floats.forEach((obj) => {
-        obj.position.add(obj._vel);
-        obj.rotation.x += 0.002;
-        obj.rotation.y += 0.001;
+        obj.position.addScaledVector(obj._vel, motionScale);
+        obj.rotation.x += 0.0007 * motionScale;
+        obj.rotation.y += 0.00035 * motionScale;
         if (navBoost > 0) {
-          obj._vel.x += (Math.random() - 0.5) * 0.018 * navBoost;
-          obj._vel.y += (Math.random() - 0.5) * 0.018 * navBoost;
+          obj._vel.x += (Math.random() - 0.5) * 0.024 * navNorm;
+          obj._vel.y += (Math.random() - 0.5) * 0.024 * navNorm;
         }
         obj._vel.x = Math.max(-maxVel, Math.min(maxVel, obj._vel.x));
         obj._vel.y = Math.max(-maxVel, Math.min(maxVel, obj._vel.y));
@@ -318,7 +323,6 @@ export function BackgroundCanvas() {
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
-      window.removeEventListener("hashchange", bumpNavEnergy);
       floats.forEach(disposeFloatObject);
       renderer.dispose();
     };

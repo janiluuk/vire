@@ -13,6 +13,22 @@ export default function middleware(request: NextRequest) {
     url.pathname = `/${legacy[1]}/sparkki-for-good`;
     return NextResponse.redirect(url, 308);
   }
+
+  const legacyPalvelu = pathname.match(/^\/(fi|en)\/palvelu\/?$/);
+  if (legacyPalvelu) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${legacyPalvelu[1]}`;
+    return NextResponse.redirect(url, 308);
+  }
+
+  const legacyKoneet = pathname.match(/^\/(fi|en)\/koneet\/?$/);
+  if (legacyKoneet) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${legacyKoneet[1]}`;
+    url.hash = "yhteensopivuus";
+    return NextResponse.redirect(url, 308);
+  }
+
   return intlMiddleware(request);
 }
 

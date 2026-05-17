@@ -1,8 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { parseWizardPrefill } from "@/lib/wizard/wizard-prefill";
+import {
+  ORDER_WIZARD_HASH,
+  ORDER_WIZARD_PATH,
+} from "@/lib/site/order-wizard-path";
 import {
   DeliveryMethod,
   HddRemovalOption,
@@ -16,15 +22,23 @@ import {
 } from "@/lib/billing/app-bundles";
 import { PORTABLE_VM_ADDON_CENTS } from "@/lib/billing/portable-vm";
 import {
+  DELIVERY_POST_CENTS,
   hddRemovalAddonCents,
   serviceCheckoutTotalCents,
+  TIER_BASE_CENTS,
 } from "@/lib/billing/pricing";
 import {
   getComputerDescriptionIssue,
   getContactFieldIssue,
 } from "@/lib/contact/contact-field-validation";
+import type { ComputerLookupResult } from "@/lib/orders/computer-lookup";
+import { WizardComputerStep } from "@/components/wizard/WizardComputerStep";
+import {
+  formatWizardPriceEuro,
+  WizardPrice,
+} from "@/components/wizard/WizardPrice";
 
-const WIZARD_ANCHOR = "palvelu-tilaa";
+const WIZARD_ANCHOR = ORDER_WIZARD_HASH;
 
 function clearWizardHash() {
   if (typeof window === "undefined") return;
@@ -51,7 +65,9 @@ const STEP_HINT_KEYS = [
   "stepHint3",
 ] as const;
 
-type Tier = "SSD_BASIC" | "SSD_RAM" | "FULL_SERVICE";
+type Tier = "INSTALL_ONLY" | "SSD_BASIC" | "SSD_RAM" | "FULL_SERVICE";
+
+export type WizardSupportChoice = "INCLUDED" | "CARE_PLUS" | "CARE_PRO";
 
 type WizardBundleKey =
   | "bundle_local_ai"
@@ -68,9 +84,14 @@ const WIZ_BUNDLE_MSG: Record<AppBundleId, WizardBundleKey> = {
 
 function useWizardFullscreen() {
   const pathname = usePathname();
-  const [full, setFull] = useState(false);
+  const isOrderPage = pathname === ORDER_WIZARD_PATH;
+  const [full, setFull] = useState(isOrderPage);
 
   useEffect(() => {
+    if (isOrderPage) {
+      setFull(true);
+      return;
+    }
     function fromHash() {
       if (typeof window === "undefined") return false;
       return window.location.hash === `#${WIZARD_ANCHOR}`;
@@ -81,13 +102,13 @@ function useWizardFullscreen() {
     sync();
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
-  }, []);
+  }, [isOrderPage]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!pathname?.includes("palvelu")) return;
+    if (typeof window === "undefined" || isOrderPage) return;
+    if (pathname !== "/" && !pathname?.includes("palvelu")) return;
     setFull(window.location.hash === `#${WIZARD_ANCHOR}`);
-  }, [pathname]);
+  }, [pathname, isOrderPage]);
 
   useEffect(() => {
     if (!full) return;
@@ -115,13 +136,34 @@ function useWizardFullscreen() {
 export function OrderWizard({ locale }: { locale: string }) {
   const t = useTranslations("palvelu");
   const w = useTranslations("palvelu.wizard");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isOrderPage = pathname === ORDER_WIZARD_PATH;
   const fullMode = useWizardFullscreen();
   const wizardRef = useRef<HTMLElement>(null);
+  const appliedPrefillRef = useRef(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || isOrderPage) return;
+    if (
+      (pathname === "/" || pathname?.includes("palvelu")) &&
+      window.location.hash === `#${WIZARD_ANCHOR}`
+    ) {
+      router.replace(ORDER_WIZARD_PATH);
+    }
+  }, [pathname, isOrderPage, router]);
 
   const [step, setStep] = useState(0);
 
   const [computerDescription, setComputerDescription] = useState("");
-  const [tier, setTier] = useState<Tier | null>(null);
+  const [tier, setTier] = useState<Tier | null>("INSTALL_ONLY");
+  const [supportChoice, setSupportChoice] =
+    useState<WizardSupportChoice>("INCLUDED");
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  const [computerLookup, setComputerLookup] =
+    useState<ComputerLookupResult | null>(null);
   const [delivery, setDelivery] = useState<DeliveryMethod | null>(null);
   const [hddRemoval, setHddRemoval] = useState<HddRemovalOption>(
     HddRemovalOption.SPARKKI_REMOVES,
@@ -144,7 +186,7 @@ export function OrderWizard({ locale }: { locale: string }) {
     if (!tier || !delivery) return null;
     return serviceCheckoutTotalCents({
       tier,
-      supportTier: SupportTier.EMAIL,
+      supportTier: SupportTier.FULL,
       migration: null,
       deliveryMethod: delivery,
       hddRemoval,
@@ -159,6 +201,10 @@ export function OrderWizard({ locale }: { locale: string }) {
       : 0;
 
   function closeFullscreen() {
+    if (isOrderPage) {
+      router.push("/");
+      return;
+    }
     clearWizardHash();
   }
 
@@ -207,6 +253,19 @@ export function OrderWizard({ locale }: { locale: string }) {
   }, [appBundles.length, portableVmOn]);
 
   useEffect(() => {
+    if (appliedPrefillRef.current) return;
+    const prefill = parseWizardPrefill(searchParams);
+    if (!prefill) return;
+    appliedPrefillRef.current = true;
+    setComputerDescription(prefill.computer);
+    if (prefill.matchId) setSelectedMatchId(prefill.matchId);
+    if (prefill.year != null) setSelectedYear(prefill.year);
+    if (prefill.step != null && prefill.step >= 1 && prefill.step < 4) {
+      setStep(prefill.step);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     if (step === 0) setComputerFieldBlurred(false);
   }, [step]);
 
@@ -243,6 +302,9 @@ export function OrderWizard({ locale }: { locale: string }) {
           portableVmAddon: portableVmOn && portableVmHandoff != null,
           portableVmHandoff:
             portableVmOn && portableVmHandoff != null ? portableVmHandoff : null,
+          supportChoice,
+          selectedYear,
+          selectedMatchId,
         }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
@@ -265,7 +327,11 @@ export function OrderWizard({ locale }: { locale: string }) {
   }
 
   const totalSteps = 4;
-  const canNextFrom0 = computerDescription.trim().length >= 3;
+  const needsYear =
+    computerLookup != null &&
+    (computerLookup.needsYearChoice || computerLookup.yearOptions.length > 1);
+  const canNextFrom0 =
+    computerDescription.trim().length >= 3 && (!needsYear || selectedYear != null);
   const canNextFrom1 =
     tier != null &&
     delivery != null &&
@@ -455,51 +521,18 @@ export function OrderWizard({ locale }: { locale: string }) {
             aria-describedby={`${stepContentId}-hint`}
           >
           {step === 0 ? (
-            <div className="space-y-4">
-              <h3 className="text-2xl font-semibold text-ink">{w("step1Title")}</h3>
-              <div>
-                <label htmlFor="wiz-computer" className="mb-2 block font-semibold">
-                  {w("computerLabel")}
-                </label>
-                <textarea
-                  id="wiz-computer"
-                  rows={4}
-                  aria-required="true"
-                  aria-invalid={showComputerErr}
-                  aria-describedby={
-                    [
-                      "wiz-computer-hint",
-                      showComputerErr ? "wiz-computer-err" : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ") || undefined
-                  }
-                  className={`sparkki-input w-full resize-y rounded-lg border bg-sunken px-4 py-3 text-ink placeholder:text-dust ${
-                    showComputerErr ? "border-danger" : "border-em"
-                  }`}
-                  value={computerDescription}
-                  onChange={(e) => setComputerDescription(e.target.value)}
-                  onBlur={() => setComputerFieldBlurred(true)}
-                  placeholder={w("computerPlaceholder")}
-                  maxLength={2000}
-                />
-                <p
-                  id="wiz-computer-hint"
-                  className="mt-2 text-base font-light leading-relaxed text-fog"
-                >
-                  {w("computerHint")}
-                </p>
-                {showComputerErr ? (
-                  <p
-                    id="wiz-computer-err"
-                    role="alert"
-                    className="mt-2 text-base text-danger"
-                  >
-                    {w("validationComputerShort")}
-                  </p>
-                ) : null}
-              </div>
-            </div>
+            <WizardComputerStep
+              locale={locale}
+              description={computerDescription}
+              onDescriptionChange={setComputerDescription}
+              onBlur={() => setComputerFieldBlurred(true)}
+              showComputerErr={showComputerErr}
+              selectedYear={selectedYear}
+              onSelectedYearChange={setSelectedYear}
+              selectedMatchId={selectedMatchId}
+              onSelectedMatchIdChange={setSelectedMatchId}
+              onLookupChange={setComputerLookup}
+            />
           ) : null}
 
           {step === 1 ? (
@@ -508,27 +541,107 @@ export function OrderWizard({ locale }: { locale: string }) {
                 <h3 className="text-2xl font-semibold text-ink">
                   {w("step2ServiceTitle")}
                 </h3>
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {(
                     [
-                      ["SSD_BASIC", "tierBasic"],
-                      ["SSD_RAM", "tierRam"],
-                      ["FULL_SERVICE", "tierFull"],
+                      ["INSTALL_ONLY", "tierInstallOnly", "tierInstallOnlyDesc"],
+                      ["SSD_BASIC", "tierBasic", "tierBasicDesc"],
+                      ["SSD_RAM", "tierRam", "tierRamDesc"],
+                      ["FULL_SERVICE", "tierFull", "tierFullDesc"],
                     ] as const
-                  ).map(([value, labelKey]) => (
+                  ).map(([value, labelKey, descKey]) => (
                     <button
                       key={value}
                       type="button"
-                      onClick={() => {
-                        setTier(value);
-                      }}
-                      className={`min-h-tap rounded-2xl border p-6 text-left text-base font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                      onClick={() => setTier(value)}
+                      className={`flex min-h-tap flex-col rounded-2xl border p-5 text-left transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
                         tier === value
                           ? "border-g bg-g/[0.08]"
                           : "border-edge bg-card hover:border-em"
                       }`}
                     >
-                      {w(labelKey)}
+                      <span className="block text-base font-semibold text-ink">
+                        {w(labelKey)}
+                      </span>
+                      <WizardPrice
+                        variant="card"
+                        cents={TIER_BASE_CENTS[value]}
+                        className="mt-2"
+                      />
+                      <span className="mt-2 block text-[13px] font-light leading-snug text-fog">
+                        {w(descKey)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold text-ink">
+                  {w("step2SupportTitle")}
+                </h3>
+                <p className="mt-2 text-base font-light text-fog">
+                  {w("step2SupportIntro")}
+                </p>
+                <div
+                  className="mt-4 grid gap-3 lg:grid-cols-3"
+                  role="radiogroup"
+                  aria-label={w("step2SupportTitle")}
+                >
+                  {(
+                    [
+                      [
+                        "INCLUDED",
+                        "supportIncludedTitle",
+                        "supportIncludedPrice",
+                        [
+                          "supportIncludedF1",
+                          "supportIncludedF2",
+                          "supportIncludedF3",
+                        ],
+                      ],
+                      [
+                        "CARE_PLUS",
+                        "supportCarePlusTitle",
+                        "supportCarePlusPrice",
+                        [
+                          "supportCarePlusF1",
+                          "supportCarePlusF2",
+                          "supportCarePlusF3",
+                        ],
+                      ],
+                      [
+                        "CARE_PRO",
+                        "supportCareProTitle",
+                        "supportCareProPrice",
+                        [
+                          "supportCareProF1",
+                          "supportCareProF2",
+                          "supportCareProF3",
+                        ],
+                      ],
+                    ] as const
+                  ).map(([value, titleKey, priceKey, featureKeys]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      role="radio"
+                      aria-checked={supportChoice === value}
+                      onClick={() => setSupportChoice(value)}
+                      className={`flex min-h-tap flex-col rounded-2xl border p-5 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                        supportChoice === value
+                          ? "border-g bg-g/[0.08]"
+                          : "border-edge bg-card hover:border-em"
+                      }`}
+                    >
+                      <span className="text-base font-semibold text-ink">
+                        {w(titleKey)}
+                      </span>
+                      <WizardPrice variant="card" text={w(priceKey)} className="mt-2" />
+                      <ul className="mt-3 list-inside list-disc space-y-1 text-[13px] font-light text-fog">
+                        {featureKeys.map((fk) => (
+                          <li key={fk}>{w(fk)}</li>
+                        ))}
+                      </ul>
                     </button>
                   ))}
                 </div>
@@ -540,37 +653,39 @@ export function OrderWizard({ locale }: { locale: string }) {
                 <div className="mt-4 grid gap-2.5 md:grid-cols-3">
                   {(
                     [
-                      ["HOME_PICKUP", "deliveryHome", "deliveryHomeSub", "deliveryHomeFee"],
-                      ["DROP_OFF", "deliveryPost", "deliveryPostSub", "deliveryPostFee"],
-                      ["SELF", "deliverySelf", "deliverySelfSub", "deliverySelfFee"],
+                      ["HOME_PICKUP", "deliveryHome", "deliveryHomeSub"],
+                      ["DROP_OFF", "deliveryPost", "deliveryPostSub"],
+                      ["SELF", "deliverySelf", "deliverySelfSub"],
                     ] as const
-                  ).map(([value, titleKey, subKey, feeKey]) => (
+                  ).map(([value, titleKey, subKey]) => (
                     <button
                       key={value}
                       type="button"
                       onClick={() => setDelivery(value as DeliveryMethod)}
-                      className={`min-h-tap rounded-[10px] border bg-sunken p-4 text-center transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
+                      className={`flex min-h-tap flex-col rounded-2xl border p-5 text-left transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-g ${
                         delivery === value
-                          ? "border-g bg-g/[0.05]"
-                          : "border-edge hover:border-em"
+                          ? "border-g bg-g/[0.08]"
+                          : "border-edge bg-card hover:border-em"
                       }`}
                     >
-                      <div className="mb-2 text-2xl text-g" aria-hidden>
+                      <span className="text-2xl leading-none" aria-hidden>
                         {value === "HOME_PICKUP"
                           ? "🚚"
                           : value === "DROP_OFF"
                             ? "📦"
                             : "🏠"}
-                      </div>
-                      <div className="text-[13px] font-semibold text-ink">
+                      </span>
+                      <span className="mt-3 block text-base font-semibold text-ink">
                         {w(titleKey)}
-                      </div>
-                      <div className="mt-1 text-[11px] font-light leading-snug text-fog">
+                      </span>
+                      <span className="mt-1 block text-[13px] font-light leading-snug text-fog">
                         {w(subKey)}
-                      </div>
-                      <div className="mt-1.5 font-mono text-[10px] text-g">
-                        {w(feeKey)}
-                      </div>
+                      </span>
+                      <WizardPrice
+                        variant="line"
+                        cents={value === "DROP_OFF" ? DELIVERY_POST_CENTS : 0}
+                        prefix={value === "DROP_OFF" ? "+" : ""}
+                      />
                     </button>
                   ))}
                 </div>
@@ -632,9 +747,12 @@ export function OrderWizard({ locale }: { locale: string }) {
                               <span className="block text-sm font-semibold text-ink">
                                 {w(WIZ_BUNDLE_MSG[id])}
                               </span>
-                              <span className="mt-0.5 block font-mono text-xs text-g">
-                                +{(APP_BUNDLE_CENTS[id] / 100).toFixed(0)} €
-                              </span>
+                              <WizardPrice
+                                variant="addon"
+                                cents={APP_BUNDLE_CENTS[id]}
+                                prefix="+"
+                                className="mt-1"
+                              />
                             </span>
                           </button>
                         );
@@ -646,9 +764,11 @@ export function OrderWizard({ locale }: { locale: string }) {
                     <p className="mt-2 text-base font-light leading-relaxed text-fog">
                       {w("vmHint")}
                     </p>
-                    <p className="mt-1 font-mono text-sm text-g">
-                      +{(PORTABLE_VM_ADDON_CENTS / 100).toFixed(0)} €
-                    </p>
+                    <WizardPrice
+                      variant="addon"
+                      cents={PORTABLE_VM_ADDON_CENTS}
+                      prefix="+"
+                    />
                     <button
                       type="button"
                       onClick={() => {
@@ -881,7 +1001,26 @@ export function OrderWizard({ locale }: { locale: string }) {
                     </span>
                   </p>
                   <p>
-                    <strong>{w("summaryTier")}:</strong> {tier}
+                    <strong>{w("summaryTier")}:</strong>{" "}
+                    {tier != null
+                      ? w(
+                          tier === "INSTALL_ONLY"
+                            ? "tierInstallOnly"
+                            : tier === "SSD_BASIC"
+                              ? "tierBasic"
+                              : tier === "SSD_RAM"
+                                ? "tierRam"
+                                : "tierFull",
+                        )
+                      : "—"}
+                  </p>
+                  <p>
+                    <strong>{w("summarySupport")}:</strong>{" "}
+                    {supportChoice === "INCLUDED"
+                      ? w("supportIncludedTitle")
+                      : supportChoice === "CARE_PLUS"
+                        ? w("supportCarePlusTitle")
+                        : w("supportCareProTitle")}
                   </p>
                   <p>
                     <strong>{w("summaryDelivery")}:</strong> {delivery}
@@ -889,7 +1028,7 @@ export function OrderWizard({ locale }: { locale: string }) {
                   <p>
                     <strong>{w("summaryHdd")}:</strong> {hddRemoval}
                     {hddExtraCents > 0
-                      ? ` (+${(hddExtraCents / 100).toFixed(0)} €)`
+                      ? ` (${formatWizardPriceEuro(hddExtraCents, { prefix: "+" })})`
                       : ""}
                   </p>
                   {appBundles.length > 0 ? (
@@ -913,9 +1052,17 @@ export function OrderWizard({ locale }: { locale: string }) {
                     {customerContact.trim()}
                   </p>
                   {pricePreview != null ? (
-                    <p className="text-2xl font-bold text-g">
-                      {w("summaryPrice")}: {(pricePreview / 100).toFixed(2)} €
-                    </p>
+                    <div className="rounded-xl border border-edge bg-sunken/40 px-5 py-4">
+                      <p className="text-sm font-semibold text-fog">
+                        {w("summaryPrice")}
+                      </p>
+                      <WizardPrice
+                        variant="total"
+                        cents={pricePreview}
+                        decimals={2}
+                        className="mt-1"
+                      />
+                    </div>
                   ) : null}
                   {checkoutError ? (
                     <p className="font-semibold text-danger" role="alert">

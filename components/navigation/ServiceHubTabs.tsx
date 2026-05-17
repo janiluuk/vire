@@ -6,9 +6,10 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { dispatchBackgroundNavInteraction } from "@/lib/site/background-nav";
 
 const TABS = [
-  { href: "/palvelu", key: "serviceTabOverview" as const, match: "mainPalvelu" as const },
+  { href: "/", key: "serviceTabOverview" as const, match: "mainPalvelu" as const },
+  { href: "/tilaa", key: "ctaOrder" as const, match: "tilaa" as const },
   { href: "/palvelu/b2b", key: "serviceTabB2b" as const, match: "b2b" as const },
-  { href: "/koneet", key: "koneet" as const, match: "koneet" as const },
+  { href: "/#yhteensopivuus", key: "koneet" as const, match: "koneet" as const },
   { href: "/care", key: "serviceTabCare" as const, match: "care" as const },
   { href: "/tilaus", key: "serviceTabTrack" as const, match: "tilaus" as const },
 ] as const;
@@ -28,12 +29,13 @@ function isActive(
   if (!pathname) return false;
   switch (match) {
     case "mainPalvelu":
-      if (!pathname.startsWith("/palvelu")) return false;
-      return pathname !== "/palvelu/b2b";
+      return pathname === "/";
+    case "tilaa":
+      return pathname === "/tilaa";
     case "b2b":
       return pathname === "/palvelu/b2b";
     case "koneet":
-      return pathname === "/koneet" || pathname.startsWith("/koneet/");
+      return pathname.startsWith("/koneet/");
     case "care":
       return pathname === "/care" || pathname.startsWith("/care/");
     case "tilaus":

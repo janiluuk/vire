@@ -28,7 +28,7 @@ test.describe("order wizard (checkout mocked)", () => {
   }) => {
     test.setTimeout(60_000);
 
-    await page.goto("/fi/palvelu", { waitUntil: "networkidle" });
+    await page.goto("/fi/tilaa", { waitUntil: "networkidle" });
     await expect(
       page.getByRole("heading", { name: /Tilaus|Order/i }),
     ).toBeVisible();

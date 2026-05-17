@@ -114,13 +114,13 @@ function ServiceHubBreadcrumbs() {
     if (!pathname || KONEET_DETAIL.test(pathname)) return null;
 
     const home = { href: "/", label: tHome("home") } as const;
-    const hub = { href: "/palvelu", label: tNav("service") } as const;
+    const hub = { href: "/", label: tNav("service") } as const;
 
+    if (pathname === "/tilaa") {
+      return [home, hub, { label: tNav("ctaOrder") }];
+    }
     if (pathname === "/palvelu/b2b") {
       return [home, hub, { label: tNav("serviceTabB2b") }];
-    }
-    if (pathname.startsWith("/palvelu")) {
-      return [home, hub, { label: tNav("serviceTabOverview") }];
     }
     if (pathname.startsWith("/koneet")) {
       return [home, hub, { label: tNav("koneet") }];
@@ -179,6 +179,7 @@ export function AutoHubBreadcrumbs() {
 
   if (
     pathname.startsWith("/palvelu") ||
+    pathname === "/tilaa" ||
     pathname.startsWith("/koneet") ||
     pathname.startsWith("/care") ||
     pathname.startsWith("/tilaus")
@@ -211,8 +212,8 @@ export function KoneetDetailBreadcrumbs({
   const items = useMemo(
     () => [
       { href: "/", label: tHome("home") },
-      { href: "/palvelu", label: tNav("service") },
-      { href: "/koneet", label: tNav("koneet") },
+      { href: "/", label: tNav("service") },
+      { href: "/#yhteensopivuus", label: tNav("koneet") },
       { label: `${make} ${model}` },
     ],
     [make, model, tHome, tNav],

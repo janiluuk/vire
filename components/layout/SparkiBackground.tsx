@@ -1,21 +1,28 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "@/i18n/navigation";
+import {
+  BG_NAV_ENERGY_BUMP,
+  BG_NAV_ENERGY_DECAY,
+  BG_NAV_ENERGY_MAX,
+} from "@/lib/site/background-animation";
+import { SPARKKI_BG_NAV_EVENT } from "@/lib/site/background-nav";
 
 type Category = "distro" | "os" | "penguin" | "app" | "flag";
 
 const CAT_COLORS: Record<Category, { fill: string; stroke: string }> = {
   distro: {
-    fill: "rgba(29,245,160,0.12)",
-    stroke: "rgba(29,245,160,0.44)",
+    fill: "rgba(29,245,160,0.085)",
+    stroke: "rgba(29,245,160,0.32)",
   },
-  os: { fill: "rgba(96,165,250,0.12)", stroke: "rgba(96,165,250,0.48)" },
+  os: { fill: "rgba(96,165,250,0.085)", stroke: "rgba(96,165,250,0.34)" },
   penguin: {
-    fill: "rgba(250,204,21,0.12)",
-    stroke: "rgba(250,204,21,0.5)",
+    fill: "rgba(250,204,21,0.085)",
+    stroke: "rgba(250,204,21,0.36)",
   },
-  app: { fill: "rgba(106,90,154,0.14)", stroke: "rgba(106,90,154,0.48)" },
-  flag: { fill: "rgba(0,53,128,0.13)", stroke: "rgba(0,53,128,0.52)" },
+  app: { fill: "rgba(106,90,154,0.1)", stroke: "rgba(106,90,154,0.34)" },
+  flag: { fill: "rgba(0,53,128,0.095)", stroke: "rgba(0,53,128,0.38)" },
 };
 
 type SymbolDef = {
@@ -305,6 +312,20 @@ type Particle = {
  */
 export function SparkiBackground() {
   const ref = useRef<HTMLCanvasElement>(null);
+  const navEnergyRef = useRef(0);
+  const skipPathnameBumpRef = useRef(true);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (skipPathnameBumpRef.current) {
+      skipPathnameBumpRef.current = false;
+      return;
+    }
+    navEnergyRef.current = Math.min(
+      BG_NAV_ENERGY_MAX,
+      navEnergyRef.current + BG_NAV_ENERGY_BUMP,
+    );
+  }, [pathname]);
 
   useEffect(() => {
     const cvs = ref.current;
@@ -321,7 +342,21 @@ export function SparkiBackground() {
     let h = 0;
     let dpr = 1;
     const particles: Particle[] = [];
-    const n = Math.min(48, Math.floor((typeof window !== "undefined" ? window.innerWidth : 1200) / 28));
+    const n = Math.min(
+      48,
+      Math.floor(
+        (typeof window !== "undefined" ? window.innerWidth : 1200) / 28,
+      ),
+    );
+
+    const bumpNavEnergy = () => {
+      if (reduced) return;
+      navEnergyRef.current = Math.min(
+        BG_NAV_ENERGY_MAX,
+        navEnergyRef.current + BG_NAV_ENERGY_BUMP,
+      );
+    };
+    window.addEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -340,10 +375,10 @@ export function SparkiBackground() {
         particles.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.35,
-          vy: (Math.random() - 0.5) * 0.28,
+          vx: (Math.random() - 0.5) * 0.11,
+          vy: (Math.random() - 0.5) * 0.09,
           rot: Math.random() * Math.PI * 2,
-          spin: (Math.random() - 0.5) * 0.004,
+          spin: (Math.random() - 0.5) * 0.0014,
           sym: Math.floor(Math.random() * SYMBOLS.length),
           size: 22 + Math.random() * 26,
         });
@@ -352,11 +387,29 @@ export function SparkiBackground() {
 
     function tick() {
       c2d!.clearRect(0, 0, w, h);
+
+      let navBoost = navEnergyRef.current;
+      if (navBoost > 0.02) {
+        navEnergyRef.current *= BG_NAV_ENERGY_DECAY;
+      } else {
+        navBoost = 0;
+        navEnergyRef.current = 0;
+      }
+      const navNorm = Math.min(1, navBoost / BG_NAV_ENERGY_MAX);
+      const motionScale = 1 + navNorm * 1.85;
+
       if (!reduced) {
         for (const p of particles) {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.rot += p.spin;
+          if (navNorm > 0) {
+            p.vx += (Math.random() - 0.5) * 0.08 * navNorm;
+            p.vy += (Math.random() - 0.5) * 0.07 * navNorm;
+          }
+          const maxV = 0.14 + navNorm * 0.28;
+          p.vx = Math.max(-maxV, Math.min(maxV, p.vx));
+          p.vy = Math.max(-maxV, Math.min(maxV, p.vy));
+          p.x += p.vx * motionScale;
+          p.y += p.vy * motionScale;
+          p.rot += p.spin * motionScale;
           if (p.x < -80) p.x = w + 40;
           if (p.x > w + 80) p.x = -40;
           if (p.y < -80) p.y = h + 40;
@@ -371,7 +424,7 @@ export function SparkiBackground() {
         c2d!.translate(p.x, p.y);
         c2d!.rotate(p.rot);
         const s = p.size;
-        c2d!.globalAlpha = 0.55;
+        c2d!.globalAlpha = 0.36;
         if (def.cat === "flag") {
           c2d!.strokeStyle = col.stroke;
           c2d!.fillStyle = col.fill;
@@ -405,6 +458,7 @@ export function SparkiBackground() {
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener(SPARKKI_BG_NAV_EVENT, bumpNavEnergy);
       cancelAnimationFrame(raf);
     };
   }, []);

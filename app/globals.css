@@ -124,6 +124,9 @@
 
   /* Phase 10 — nav-linked header glow (0–1, set by EmotionalUxLayer) */
   --spark-nav-glow: 0;
+
+  /* Ambient sheen speed: 1 = slow baseline; higher = faster (set on navigation) */
+  --spark-ambient-pace: 1;
 }
 
 @keyframes spark-backdrop-in {
@@ -194,13 +197,13 @@
 
 @keyframes spark-ambient-sheen {
   0% {
-    opacity: 0.032;
-    transform: translate3d(-1.5%, 0, 0) scale(1.01);
+    opacity: 0.02;
+    transform: translate3d(-1.2%, 0, 0) scale(1.008);
   }
 
   100% {
-    opacity: 0.052;
-    transform: translate3d(1.5%, 0, 0) scale(1.03);
+    opacity: 0.034;
+    transform: translate3d(1.2%, 0, 0) scale(1.02);
   }
 }
 
@@ -290,18 +293,19 @@ body {
   .sparkki-ambient-sheen {
     background: radial-gradient(
       ellipse 110% 58% at 50% -12%,
-      color-mix(in srgb, var(--color-accent) 58%, transparent),
+      color-mix(in srgb, var(--color-accent) 42%, transparent),
       transparent 74%
     );
     mix-blend-mode: screen;
-    opacity: 0.038;
-    animation: spark-ambient-sheen 18s var(--ease-standard) infinite alternate;
+    opacity: 0.026;
+    animation: spark-ambient-sheen calc(38s / var(--spark-ambient-pace, 1))
+      var(--ease-standard) infinite alternate;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .sparkki-ambient-sheen {
       animation: none;
-      opacity: 0.028;
+      opacity: 0.02;
     }
   }
 

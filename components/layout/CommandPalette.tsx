@@ -138,9 +138,9 @@ export function CommandPalette() {
       { href: "/palvelu/b2b", label: tNav("serviceTabB2b"), group: "service" },
       { href: "/care", label: tNav("serviceTabCare"), group: "service" },
       { href: "/tilaus", label: tNav("serviceTabTrack"), group: "service" },
-      { href: "/koneet", label: tNav("koneet"), group: "service" },
+      { href: "/#yhteensopivuus", label: tNav("koneet"), group: "service" },
       {
-        href: "/palvelu#palvelu-tilaa",
+        href: "/tilaa",
         label: tNav("ctaOrder"),
         group: "service",
       },

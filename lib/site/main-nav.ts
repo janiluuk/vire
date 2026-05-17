@@ -17,7 +17,7 @@ export type MainNavItem = {
 };
 
 export const MAIN_NAV_ITEMS: readonly MainNavItem[] = [
-  { href: "/palvelu", labelKey: "service", cluster: "palvelu" },
+  { href: "/", labelKey: "service", cluster: "palvelu" },
   { href: "/tietoa", labelKey: "infoHub", cluster: "tietoa" },
   { href: "/itse", labelKey: "diy", cluster: "itse" },
   { href: "/meista", labelKey: "aboutHub", cluster: "meista" },
@@ -31,6 +31,8 @@ export function isMainNavClusterActive(
   switch (cluster) {
     case "palvelu":
       return (
+        pathname === "/" ||
+        pathname === "/tilaa" ||
         pathname.startsWith("/palvelu") ||
         pathname.startsWith("/care") ||
         pathname.startsWith("/koneet") ||

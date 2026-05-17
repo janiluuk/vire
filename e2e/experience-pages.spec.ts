@@ -33,8 +33,8 @@ test.describe("key public journeys", () => {
     ).toBeVisible();
   });
 
-  test("Service page lists component transparency section", async ({ page }) => {
-    await page.goto("/fi/palvelu", { waitUntil: "domcontentloaded" });
+  test("Home lists component transparency section", async ({ page }) => {
+    await page.goto("/fi", { waitUntil: "domcontentloaded" });
     await expect(
       page.getByRole("heading", {
         level: 2,
@@ -44,10 +44,10 @@ test.describe("key public journeys", () => {
     await expect(page.locator("#komponentit")).toBeVisible();
   });
 
-  test("compatibility search page and empty-query state", async ({ page }) => {
-    await page.goto("/fi/koneet", { waitUntil: "domcontentloaded" });
+  test("compatibility search on home and empty-query state", async ({ page }) => {
+    await page.goto("/fi#yhteensopivuus", { waitUntil: "domcontentloaded" });
     await expect(
-      page.getByRole("heading", { level: 1, name: /Yhteensopivuus|Compatibility/i }),
+      page.getByRole("heading", { level: 2, name: /Yhteensopivuus|Compatibility/i }),
     ).toBeVisible();
     await expect(page.locator("#koneet-q")).toBeVisible();
     await expect(page.getByRole("search").getByRole("button")).toBeVisible();

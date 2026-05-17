@@ -41,7 +41,7 @@ export async function Footer() {
                 </PulseLink>
               </li>
               <li>
-                <PulseLink href="/palvelu#palvelu-tilaa" className={`${linkMuted} px-1`}>
+                <PulseLink href="/tilaa" className={`${linkMuted} px-1`}>
                   {t("orderCta")}
                 </PulseLink>
               </li>

@@ -46,7 +46,7 @@ export default async function KoneetDetailPage({ params }: Props) {
     <div className="mx-auto max-w-2xl space-y-8 px-4 py-12">
       <KoneetDetailBreadcrumbs make={m.make} model={m.model} />
       <p>
-        <Link href="/koneet" className="text-g hover:underline">
+        <Link href="/#yhteensopivuus" className="text-g hover:underline">
           {t("backToList")}
         </Link>
       </p>

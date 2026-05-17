@@ -7,8 +7,11 @@ This file is a **JSON export** of the public **`laptops.csv`** listing from
 ## How Sparkki uses it
 
 - Imported into PostgreSQL as **`LaptopReferenceSpec`** (see Prisma schema).
-- **`resolveLaptopSpecs`** looks up a best-effort row by **make + model** and exposes a **`referenceSummary`** string (FI/EN) alongside SearXNG/LLM results.
+- **`lookupLaptopReference`** / **`computer-lookup`** use it for CPU/RAM/storage rows on the home checker and wizard (database only).
+- **`resolveLaptopSpecs`** also attaches a **`referenceSummary`** string alongside SearXNG/LLM results (`POST /api/public/laptop-specs`).
 - This is **not** a Sparkki compatibility verdict and **not** manufacturer-official; it is a **hint** when the customer’s wording matches a catalog row.
+
+Setup for DB + SearXNG + Ollama: **[`docs/model-search.md`](../docs/model-search.md)**.
 
 ## Refreshing the data
 

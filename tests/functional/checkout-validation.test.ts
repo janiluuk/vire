@@ -32,7 +32,7 @@ describe("POST /api/checkout validation", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tier: "SSD_BASIC",
+          tier: "INSTALL_ONLY",
           deliveryMethod: "SELF",
           hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo T450",
@@ -53,7 +53,7 @@ describe("POST /api/checkout validation", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tier: "SSD_BASIC",
+          tier: "INSTALL_ONLY",
           deliveryMethod: "SELF",
           hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",
@@ -75,7 +75,7 @@ describe("POST /api/checkout validation", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tier: "SSD_BASIC",
+          tier: "INSTALL_ONLY",
           deliveryMethod: "SELF",
           hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",
@@ -96,7 +96,7 @@ describe("POST /api/checkout validation", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tier: "SSD_BASIC",
+          tier: "INSTALL_ONLY",
           deliveryMethod: "SELF",
           hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",
@@ -117,7 +117,7 @@ describe("POST /api/checkout validation", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          tier: "SSD_BASIC",
+          tier: "INSTALL_ONLY",
           deliveryMethod: "SELF",
           hddRemoval: "SPARKKI_REMOVES",
           computerDescription: "Lenovo",

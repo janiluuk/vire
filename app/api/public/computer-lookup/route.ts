@@ -1,0 +1,55 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { lookupComputerForWizard } from "@/lib/orders/computer-lookup";
+import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
+
+const bodySchema = z.object({
+  description: z.string().trim().min(3).max(2000),
+  locale: z.enum(["fi", "en"]).optional(),
+  selectedYear: z.number().int().min(1990).max(2030).optional().nullable(),
+  selectedMatchId: z.string().trim().max(64).optional().nullable(),
+});
+
+export async function POST(req: Request) {
+  const ip = getClientIpFromHeaders(req.headers);
+  if (
+    !(await checkRateLimit(`computer-lookup:${ip}`, {
+      windowMs: 60_000,
+      max: 40,
+    }))
+  ) {
+    return NextResponse.json({ ok: false, code: "rate_limited" } as const, {
+      status: 429,
+    });
+  }
+
+  let json: unknown;
+  try {
+    json = await req.json();
+  } catch {
+    return NextResponse.json({ ok: false, code: "invalid_input" } as const, {
+      status: 400,
+    });
+  }
+
+  const parsed = bodySchema.safeParse(json);
+  if (!parsed.success) {
+    return NextResponse.json({ ok: false, code: "invalid_input" } as const, {
+      status: 400,
+    });
+  }
+
+  const { description, locale, selectedYear, selectedMatchId } = parsed.data;
+  try {
+    const result = await lookupComputerForWizard(description, locale === "en" ? "en" : "fi", {
+      selectedYear: selectedYear ?? null,
+      selectedMatchId: selectedMatchId ?? null,
+    });
+    return NextResponse.json({ ok: true, result } as const);
+  } catch {
+    return NextResponse.json(
+      { ok: false, code: "upstream_error" } as const,
+      { status: 502 },
+    );
+  }
+}

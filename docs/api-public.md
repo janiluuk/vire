@@ -125,7 +125,7 @@ Returns a redacted service or USB order when ID + email match. **429** on rate l
 
 **Response:** `{ "ok": true, "summary": string | null, "specUrl": string | null, "referenceSummary"?: string | null }` — **`referenceSummary`** comes from the imported **`LaptopReferenceSpec`** retail dataset when a row matches **make + model** (best-effort; not a Sparkki compatibility verdict).
 
-Uses SearXNG / optional LLM (server env). **429** on rate limit.
+Uses SearXNG / optional LLM (server env). **429** on rate limit. Configuration: **[`docs/model-search.md`](./model-search.md)**.
 ---
 
 ## Support contact (`/tuki` form)

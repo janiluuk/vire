@@ -33,7 +33,7 @@ function orderConfirmedComponentsBlock(loc: MailLocale): string {
         `${escapeHtml(c.brand)} ${escapeHtml(c.model)} (${escapeHtml(c.capacity)})`,
     )
     .join(", ");
-  const href = loc === "en" ? `${base}/en/palvelu#komponentit` : `${base}/fi/palvelu#komponentit`;
+  const href = loc === "en" ? `${base}/en#komponentit` : `${base}/fi#komponentit`;
   if (loc === "en") {
     return `<p><strong>Parts</strong></p><p>We install new, warranted components such as: ${list}. Detailed specs and retailer links: <a href="${href}">service page — parts</a>.</p><p>Exact SKUs are confirmed for your machine on intake; components are new and covered by manufacturer warranty.</p>`;
   }

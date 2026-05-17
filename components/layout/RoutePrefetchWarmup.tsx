@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 
-const WARM_PATHS = ["/palvelu", "/tietoa", "/tuki", "/itse", "/meista"] as const;
+const WARM_PATHS = ["/", "/tilaa", "/tietoa", "/tuki", "/itse", "/meista"] as const;
 
 /**
  * Phase 8 — warm common navigations after paint (App Router RSC prefetch).

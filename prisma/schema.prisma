@@ -38,6 +38,8 @@ model Order {
   /// Optional P2V-style image before Linux install — priced add-on; see lib/billing/portable-vm.ts
   portableVmAddon  Boolean        @default(false)
   portableVmHandoff PortableVmHandoff?
+  /// Post-checkout Care interest from wizard (`PLUS` | `PRO`).
+  carePackageInterest String?
 }
 
 enum PortableVmHandoff {
@@ -54,6 +56,7 @@ enum OrderStatus {
 }
 
 enum ServiceTier {
+  INSTALL_ONLY
   SSD_BASIC
   SSD_RAM
   FULL_SERVICE
