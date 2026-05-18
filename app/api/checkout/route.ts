@@ -197,15 +197,21 @@ export async function POST(req: Request) {
     },
   });
 
-  const baseUrl = getSiteUrl();
-
   if (process.env.CHECKOUT_E2E_BYPASS === "true") {
+    // Prefer NEXTAUTH_URL / PLAYWRIGHT_BASE_URL so local standalone `.env` cannot
+    // redirect the browser to a production NEXT_PUBLIC_SITE_URL during Playwright.
+    const e2eBase =
+      process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
+      process.env.PLAYWRIGHT_BASE_URL?.replace(/\/$/, "") ||
+      getSiteUrl();
     logApiEvent(requestId, "checkout.e2e_bypass", { orderId: order.id });
     return NextResponse.json({
-      url: `${baseUrl}/${data.locale}/palvelu/kiitos?session_id=e2e_${order.id}`,
+      url: `${e2eBase}/${data.locale}/palvelu/kiitos?session_id=e2e_${order.id}`,
       orderId: order.id,
     });
   }
+
+  const baseUrl = getSiteUrl();
 
   if (!stripeConfigured() || !getStripe()) {
     await prisma.order.delete({ where: { id: order.id } }).catch(() => {});

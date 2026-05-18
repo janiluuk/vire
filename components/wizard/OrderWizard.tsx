@@ -775,6 +775,7 @@ export function OrderWizard({
               />
 
               <details
+                data-testid="wizard-addons-section"
                 className="rounded-2xl border border-edge bg-sunken/15 open:bg-sunken/25"
                 open={addonsSectionOpen}
                 onToggle={(e) =>
