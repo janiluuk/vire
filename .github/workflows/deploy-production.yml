@@ -88,14 +88,28 @@ jobs:
           ssh-add ~/.ssh/deploy_key
           echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" >> "$GITHUB_ENV"
           echo "SSH_AGENT_PID=${SSH_AGENT_PID}" >> "$GITHUB_ENV"
+          {
+            echo "SSH_OPTS=-o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -i ${HOME}/.ssh/deploy_key"
+          } >> "$GITHUB_ENV"
+
+      - name: Trust SSH host keys
+        run: |
+          set -euo pipefail
+          touch ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          # Jumphost is reachable from GitHub runners; production only via jump.
+          ssh-keyscan -p "${DEPLOY_JUMP_PORT}" -H "${DEPLOY_JUMP_HOST}" >> ~/.ssh/known_hosts
+          ${SSH_OPTS} -p "${DEPLOY_JUMP_PORT}" \
+            "${DEPLOY_JUMP_USER}@${DEPLOY_JUMP_HOST}" \
+            "ssh-keyscan -H '${DEPLOY_HOST}'" >> ~/.ssh/known_hosts
 
       - name: Verify jumphost and production SSH
         run: |
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes \
-            -p "${DEPLOY_JUMP_PORT}" "${DEPLOY_JUMP_USER}@${DEPLOY_JUMP_HOST}" \
+          ${SSH_OPTS} -p "${DEPLOY_JUMP_PORT}" \
+            "${DEPLOY_JUMP_USER}@${DEPLOY_JUMP_HOST}" \
             'echo "jumphost ok"'
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes \
-            -J "${SSH_PROXY_JUMP}" "${DEPLOY_USER}@${DEPLOY_HOST}" \
+          ${SSH_OPTS} -J "${SSH_PROXY_JUMP}" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
             "test -d '${DEPLOY_PATH}' && echo 'production ok'"
 
       - name: Deploy stack
@@ -109,6 +123,6 @@ jobs:
 
       - name: Health check
         run: |
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes \
-            -J "${SSH_PROXY_JUMP}" "${DEPLOY_USER}@${DEPLOY_HOST}" \
+          ${SSH_OPTS} -J "${SSH_PROXY_JUMP}" \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
             "curl -sfS http://127.0.0.1:${DEPLOY_APP_PORT}/api/health"

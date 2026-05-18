@@ -102,7 +102,9 @@ Workflow **`.github/workflows/deploy-production.yml`** rsyncs the repo and runs 
 | Secret | **`DEPLOY_SSH_PRIVATE_KEY`** — ed25519 key authorized on **both** hosts |
 | Triggers | Manual **workflow_dispatch**; auto after **CI** succeeds on **`main`** |
 
-Optional repository **variables**: `DEPLOY_JUMP_HOST`, `DEPLOY_JUMP_USER`, `DEPLOY_JUMP_PORT`, `DEPLOY_HOST`, `DEPLOY_PATH`, `DEPLOY_USER`, `DEPLOY_APP_PORT` (defaults match the table).
+Optional repository **variables**: `DEPLOY_JUMP_HOST`, `DEPLOY_JUMP_USER`, `DEPLOY_JUMP_PORT`, `DEPLOY_HOST`, `DEPLOY_PATH`, `DEPLOY_USER`, `DEPLOY_APP_PORT` (defaults match the table). Set **`DEPLOY_JUMP_USER`** if the jumphost account is not `pi` (e.g. `web`).
+
+**CI host keys:** The deploy workflow runs `ssh-keyscan` for the jumphost and production (via jump) before SSH, and uses **`StrictHostKeyChecking=accept-new`** (same as `scripts/lab-stack-up.sh`). If you see `Host key verification failed`, re-run deploy after this workflow is on `main`; ensure the deploy key can reach both hosts (`Permission denied` is a different fix — re-run `ssh-copy-id` above).
 
 **One-time key setup** (from a machine that already reaches both hosts):
 
