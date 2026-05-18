@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { HomeCompatibilityCheckerDynamic } from "@/components/koneet/HomeCompatibilityCheckerDynamic";
+import { HomeValueBenefits } from "@/components/home/HomeValueBenefits";
 import { ComponentSourcingSection } from "@/components/palvelu/ComponentSourcingSection";
 import { SpeedBar } from "@/components/home/SpeedBar";
+import { KONEET_SECTION_ID } from "@/components/koneet/koneet-section-id";
 import { PalveluB2bTeaser } from "@/components/palvelu/PalveluB2bTeaser";
 import { ServicePricingSection } from "@/components/palvelu/ServicePricingSection";
 import {
@@ -15,30 +16,49 @@ import {
 
 export async function PalveluHero() {
   const t = await getTranslations("palvelu");
+  const pillars = [
+    { title: t("heroPillar1Title"), body: t("heroPillar1Body") },
+    { title: t("heroPillar2Title"), body: t("heroPillar2Body") },
+    { title: t("heroPillar3Title"), body: t("heroPillar3Body") },
+  ];
+
   return (
     <section className="sparkki-hero">
       <div className="sparkki-hero-inner">
         <p className="sparkki-eyebrow justify-center">{t("eyebrow")}</p>
         <h1 className="font-display text-balance text-4xl font-extrabold tracking-hero text-ink sm:text-5xl md:text-[3.25rem]">
-          {t("title")}
+          {t("heroTitle")}
         </h1>
         <p className="mx-auto mt-6 max-w-3xl text-xl leading-relaxed text-ink">
-          {t("intro")}
+          {t("heroLead")}
+        </p>
+        <p className="mx-auto mt-4 max-w-2xl text-lg font-light leading-relaxed text-fog">
+          {t("heroSupport")}
+        </p>
+
+        <ul className="mx-auto mt-10 grid max-w-4xl gap-3 text-left sm:grid-cols-3">
+          {pillars.map((pillar) => (
+            <li
+              key={pillar.title}
+              className="rounded-spark-lg border border-edge bg-canvas/40 px-4 py-4 sm:px-5"
+            >
+              <p className="font-display text-base font-bold text-ink">{pillar.title}</p>
+              <p className="mt-2 text-sm leading-relaxed text-fog">{pillar.body}</p>
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-10">
+          <a href={`#${KONEET_SECTION_ID}`} className="sparkki-btn-primary sparkki-pressable">
+            {t("heroCtaCheck")}
+          </a>
         </p>
       </div>
     </section>
   );
 }
 
-type PalveluMainContentProps = {
-  locale: string;
-  initialComputer?: string;
-};
-
-export async function PalveluMainContent({
-  locale,
-  initialComputer = "",
-}: PalveluMainContentProps) {
+export async function PalveluMainContent() {
   const t = await getTranslations("palvelu");
 
   const processItems = [
@@ -131,6 +151,8 @@ export async function PalveluMainContent({
 
   return (
     <>
+      <HomeValueBenefits />
+
       <InfoBlock title={t("howTitle")} intro={t("howIntro")}>
         <InteractiveDiagram items={processItems} />
       </InfoBlock>
@@ -145,11 +167,6 @@ export async function PalveluMainContent({
       />
 
       <SpeedBar />
-
-      <HomeCompatibilityCheckerDynamic
-        locale={locale}
-        initialDescription={initialComputer}
-      />
 
       <InfoBlock title={t("logisticsTitle")} intro={t("logisticsIntro")}>
         <BenefitGrid items={logisticsItems} columns={4} />
