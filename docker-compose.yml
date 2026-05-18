@@ -68,6 +68,13 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@sparkki.fi}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme}
+      SPECS_SEARXNG_BASE_URL: ${SPECS_SEARXNG_BASE_URL:-https://search.dudeisland.eu}
+      SPECS_AI_BASE_URL: ${SPECS_AI_BASE_URL:-}
+      SPECS_AI_MODEL: ${SPECS_AI_MODEL:-qwen3.5:9b}
+      SPECS_AI_KIND: ${SPECS_AI_KIND:-ollama}
+      SPECS_LOOKUP_ENABLED: ${SPECS_LOOKUP_ENABLED:-true}
+      SPECS_PHOTO_ENABLED: ${SPECS_PHOTO_ENABLED:-true}
+      SPECS_VISION_MODEL: ${SPECS_VISION_MODEL:-llava}
     depends_on:
       db:
         condition: service_healthy

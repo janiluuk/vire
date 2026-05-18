@@ -116,3 +116,17 @@ gh secret set DEPLOY_SSH_PRIVATE_KEY < ~/.ssh/sparkki_github_deploy
 Local deploy over the same jump host: **`SSH_PROXY_JUMP=pi@sparkki.dudeisland.eu:4322 ./scripts/lab-stack-up.sh`**. Direct LAN deploy (no jump): **`./scripts/lab-stack-up.sh`** (defaults to `192.168.2.100`).
 
 Production **`.env`** lives on the server only; CI does not overwrite it (rsync excludes `.env.local`; root `.env` is not in the git tree).
+
+## Scheduled jobs (cron)
+
+Set **`CRON_SECRET`** in production. Callers must send **`Authorization: Bearer <CRON_SECRET>`**.
+
+| Route | Schedule (`vercel.json`) | Purpose |
+|-------|--------------------------|---------|
+| **`GET /api/cron/care-lifecycle`** | Daily 08:00 UTC | Day **75** and **88** Care upsell emails for **`DONE`** orders (`careUpsell75SentAt` / `careUpsell88SentAt` on `Order`). Skips active Care subscribers and wizard Care+ interest. Requires **`RESEND_API_KEY`**. |
+| **`GET /api/cron/stale-orders`** | Daily 04:15 UTC | Cancels **`PENDING`** orders older than **`STALE_ORDER_MAX_AGE_HOURS`** (default **24**). |
+| **`GET /api/cron/specs-cache-cleanup`** | Daily 04:30 UTC | Deletes expired rows from **`LaptopSpecsInternetCache`** (`expiresAt` in the past). |
+
+On non-Vercel hosts, trigger the same URLs from cron or Uptime Kuma with the bearer header.
+
+**Rate limiting:** set **`UPSTASH_REDIS_REST_URL`** + **`UPSTASH_REDIS_REST_TOKEN`** in production. Optional **`REQUIRE_UPSTASH_RATE_LIMIT=true`** returns **503** on checkout, support-contact, and compatibility when Upstash is missing (otherwise a one-time warning is logged per process).

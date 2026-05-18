@@ -49,6 +49,16 @@ export function buildComputerSpecRows(
       rows.push({ label: labels.specsRowVerdict, value: primary.verdict });
     }
   }
+  const discovered = lookup.discovered;
+  if (!primary?.ssdSlot && discovered?.ssdSlot) {
+    rows.push({ label: labels.specsRowSsdSlot, value: discovered.ssdSlot });
+  }
+  if (primary?.maxRamGb == null && discovered?.maxRamGb != null) {
+    rows.push({
+      label: labels.specsRowMaxRam,
+      value: `${discovered.maxRamGb} GB`,
+    });
+  }
   const ref = lookup.reference;
   if (ref?.cpu) rows.push({ label: labels.specsRowCpu, value: ref.cpu });
   if (ref?.ram) rows.push({ label: labels.specsRowRam, value: ref.ram });

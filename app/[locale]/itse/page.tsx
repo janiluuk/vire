@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { localePathAlternates } from "@/lib/site/seo";
 import { prisma } from "@/lib/db/prisma";
 import { UsbOrderForm } from "@/components/usb/UsbOrderForm";
+import { StarterKitOrderForm } from "@/components/starter-kit/StarterKitOrderForm";
 
 export async function generateMetadata({
   params: { locale },
@@ -95,6 +96,20 @@ export default async function ItsePage({
         </h2>
         <p className="mt-2 text-lg text-ink">{t("usbBlurb")}</p>
         <UsbOrderForm locale={locale} />
+      </section>
+
+      <section
+        className="rounded-2xl border border-g/30 bg-g/[0.04] p-8"
+        aria-labelledby="starter-kit-title"
+      >
+        <span className="font-mono text-xs uppercase tracking-wider text-g">
+          {t("starterKitBadge")}
+        </span>
+        <h2 id="starter-kit-title" className="mt-2 text-2xl font-bold text-ink">
+          {t("starterKitTitle")}
+        </h2>
+        <p className="mt-2 text-lg font-light text-fog">{t("starterKitBlurb")}</p>
+        <StarterKitOrderForm locale={locale} />
       </section>
     </div>
   );

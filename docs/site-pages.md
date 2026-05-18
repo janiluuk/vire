@@ -12,7 +12,7 @@ Paths below omit the locale prefix (`/fi/…` and `/en/…` mirror the same stru
 
 | Page | Path | Purpose |
 |------|------|---------|
-| Home | `/` | Hero, speed strip, steps, pricing, trust, CTAs. |
+| Home | `/` | Service landing: hero, transformation story, **SpeedBar** (boot-time comparison), compatibility checker, pricing, CTAs. |
 | Learn hub | `/tietoa` | Overview of why Linux refresh, Mint/Fedora, links deeper. |
 | Benefits | `/tietoa/hyodyt` | Privacy, value, games, stability framing. |
 | Upgrade process | `/tietoa/linux` | What happens after the device arrives; OS & hardware picks; HDD note. |
@@ -27,7 +27,7 @@ Paths below omit the locale prefix (`/fi/…` and `/en/…` mirror the same stru
 | DIY thank-you | `/itse/kiitos` | After-guide action thank-you. |
 | Example guide | `/itse/tarkista-levy` | Sample MDX guide page (slug varies). |
 | Support | `/tuki` | Contact, Calendly embed when configured. |
-| Compatibility | `/koneet` | Model search + recommendations. |
+| Compatibility | `/koneet` | Searchable list of verified models (links to `/koneet/[slug]`). Home checker remains at `/#yhteensopivuus`. |
 | Company | `/meista` | About Sparkki (rewrites internally to `/about`). |
 | Community | `/meista/yhteiso` | Discord / YouTube / guidelines. |
 | Sparkki for Good | `/sparkki-for-good` | Discount application. Legacy `/vire-for-good` redirects. |

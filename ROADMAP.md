@@ -20,7 +20,7 @@
 | Auth (admin) | NextAuth.js | Email/password for admin only. No public user accounts at launch. |
 | Payments | Stripe Checkout | Separate products: service tiers, USB stick. |
 | Email | Resend | Order confirmations, support tickets. |
-| CMS (tutorials) | MDX files + Contentlayer | Guides live in `/content/guides/`. Frontmatter-driven. Admin can add via UI or directly. |
+| CMS (tutorials) | MDX files + `gray-matter` | Guides in `/content/guides/`; metadata in Prisma. Admin UI writes MDX via server actions (`lib/content/guide-mdx.ts`). *(Historical note: Contentlayer was planned, not shipped.)* |
 | Background FX | Three.js (r160+) | Ambient canvas behind all pages. Floating particles / soft geometry. See spec below. |
 | i18n | next-intl | FI default. EN secondary. All strings in `/messages/fi.json` and `/messages/en.json`. |
 | Analytics | Plausible | Cookieless. No consent banner. GDPR safe. |
@@ -604,7 +604,7 @@ ADMIN_PASSWORD="changeme"
 
 #### Homepage `/`
 - [x] Hero section: large headline (text-4xl min), subline, two CTA buttons
-- [x] `SpeedBar` component: animated CSS bar showing HDD boot time collapsing to SSD time. Use `IntersectionObserver` to trigger animation on scroll into view. No JS library.
+- [x] `SpeedBar` component: animated CSS bar showing HDD boot time collapsing to SSD time. Use `IntersectionObserver` to trigger animation on scroll into view. No JS library. *(May 2026 audit: component in `components/home/SpeedBar.tsx` but not mounted on `/` — see **Software audit**.)*
 - [x] 1-2-3 step strip: icons (Tabler), short text, large font
 - [x] Pricing cards: 3 tiers, each showing price + customer saving badge
 - [x] Benefits grid: 4 cards — CO₂ / Cost / Apps / Support
@@ -800,7 +800,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 
 ### Review backlog — system audit (rolling)
 
-*Generated from a codebase review. Unchecked items are suggestions or known gaps; prioritize for the next milestones.*
+*Generated from a codebase review. Unchecked items are suggestions or known gaps; prioritize for the next milestones. **May 2026 full verification:** see **Software audit — May 2026** and **Improvement backlog — UX, performance, stability** below.*
 
 ### Next up (prioritized)
 
@@ -907,6 +907,108 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 - [x] **Dependency / secret hygiene** — **`npm audit`** in CI (informational / non-blocking); pre-commit secret scan (gitleaks) optional.
 - [x] **`docs/repository-layout.md`** — Folder conventions; hub tabs under **`components/navigation/`**; Prisma-at-build caveat for Docker images (**`--build-arg DATABASE_URL`** / **`host.docker.internal`**; see § Known sharp edges).
 - [x] **Stripe webhook + order lookup API tests** — **`tests/functional/stripe-webhook.test.ts`** (signature / config paths); **`tests/functional/order-lookup.test.ts`** (validation + 404).
+
+---
+
+## Software audit — May 2026
+
+*Cross-check of implementation phases (0–6), review backlog, and **`FEATURES.md`** priority table. CI was verified locally after `prisma migrate deploy` (functional tests 19/19; unit tests pass). E2E/Lighthouse run in **`.github/workflows/ci.yml`** with Postgres service.*
+
+### Executive summary
+
+| Area | Verdict |
+|------|---------|
+| **Core launch (Phases 0–4)** | **Shipped** — Next.js app, admin, Stripe checkout/webhook, guides (MDX + Prisma), i18n, Three.js background, rate limits, audit log, CSP baseline, E2E + axe. |
+| **Phase 5 post-launch** | **Mostly shipped** — Care checkout, `/koneet/[slug]`, Sparkki for Good, app bundles, portable VM, B2B, order lookup, laptop-specs API, compatibility log. Several **FEATURES.md** items remain **partial** (see gaps). |
+| **Phase 6 try-Linux** | **Shipped** — `infra/try-linux/`, env-gated noVNC links on `/tietoa/linux`. |
+| **UX review backlog (May 2026)** | **Shipped** — five-step wizard, live total, computer chip, pricing on home, debounced lookup, reduced-motion background. |
+| **Docs / roadmap drift** | **Non-trivial** — stack table still says Contentlayer; Phase 1 still describes a six-step wizard and homepage `SpeedBar`; embedded Prisma snippet is stale; **`docs/site-pages.md`** still describes pre–service-landing IA. |
+
+### Verified complete (spot-checked in repo)
+
+- **Payments:** `app/api/checkout/route.ts`, USB checkout, Stripe webhook + `StripeProcessedEvent` idempotency, Care webhook (`lib/billing/care-webhook.ts`).
+- **Order wizard:** Five steps in `components/wizard/OrderWizard.tsx`; `WizardLiveTotalBar`, `WizardOrderSummary`, app bundles + portable VM; `/tilaa` + `#palvelu-tilaa` hash on home.
+- **Admin:** Orders (sort/filter/paginate), USB orders + detail, models + CSV import, guides publish toggle, Care list, compatibility checks, audit log on order detail, admin FI/EN (`ADMIN_LOCALE`).
+- **Public API / ops:** `docs/api-public.md`, `lib/http/rate-limit.ts` (Upstash optional), `POST /api/csp-report`, synthetic monitoring workflow, Docker healthcheck, backup runbook in `docs/operations.md`.
+- **Quality:** 14 Playwright specs under `e2e/`; `e2e/a11y-axe.spec.ts`; Lighthouse CI (informational thresholds in `lighthouserc.json`).
+- **IA redirects:** `/palvelu` → `/` (308), `/koneet` → `/#yhteensopivuus` (308), `vire-for-good` → `sparkki-for-good` (`middleware.ts`).
+- **Design programme:** `BackgroundCanvas.tsx` matches wireframe spec (yellow accent meshes, reduced motion, 30fps cap); `ComponentSourcingSection` on service home.
+
+### Marked done in this file but incomplete or drifted
+
+| Item | Status | Notes |
+|------|--------|--------|
+| Phase 1 homepage **`SpeedBar`** | **Orphan** | `components/home/SpeedBar.tsx` exists but is **not imported** on `/` or elsewhere. Home uses `PalveluMainContent` + compatibility checker instead. Either mount it (design-system hero widget) or remove dead code and update Phase 1 checkbox narrative. |
+| Phase 1 **`OrderWizard` 6 steps** | **Outdated spec** | Live flow is **5 steps** (computer → tier+delivery → support/add-ons → HDD → contact+pay). Step 2 compatibility verdict is folded into **computer lookup**, not a separate step. |
+| Stack **Contentlayer** | **Not used** | Guides use **`gray-matter`** + `lib/content/guide-mdx.ts` and `lib/content/guide-content.ts`. Update stack table when convenient; behaviour matches intent. |
+| Phase 5 **data migration add-on** | **Backend only** | `Order.dataMigration*` in Prisma + checkout validation + admin + order lookup. **No `<DataMigrationCard />` in the wizard** — customers cannot select migration at checkout (**`FEATURES.md` #1**). |
+| **`FEATURES.md` #2 Care lifecycle** | **Partial** | `/care` + Stripe subscription + welcome/payment-failed emails. **Missing:** scheduled day 75/88 upsell emails, `/oma-sparkki` dashboard, monthly tip newsletter, churn flags in admin. |
+| **`FEATURES.md` #3 `/koneet` database** | **Partial** | **`/koneet`** hub + search + request form shipped; **`/koneet/[slug]`** has specs, recommended SSD, related models, dynamic OG, view count. **Still open:** ISR, filter pills on hub, `POST` admin notify on request. |
+| **`FEATURES.md` #4 PDF checker** | **Not started** | `apps/sparkki-checker` outputs **JSON** only; optional LAN fetch to `POST /api/public/laptop-specs`. No PDF/QR report. |
+| **`FEATURES.md` #6 Starter kit** | **Not started** | No product card, Stripe price, `StarterKitOrder`, or `/admin/starter-kit`. |
+| **`FEATURES.md` #8–11** | **Backlog** | Group upgrade day, corporate donations, workshops, annual report — correctly **not** in phase checklists; no app routes found. |
+| **`docs/site-pages.md`** | **Stale** | Describes “speed strip” on home and standalone `/palvelu`; regenerate screenshots after IA stabilises. |
+| Embedded **Prisma schema** (above) | **Stale** | Actual schema adds `locale`, `hddRemoval`, `appBundleIds`, `portableVm*`, `carePackageInterest`, `CareSubscription`, `CompatibilityCheck`, `LaptopSpecsInternetCache`, etc. Treat **`prisma/schema.prisma`** as source of truth. |
+
+### Local dev sharp edge (stability)
+
+Functional tests require migrated DB (`public.Order` etc.). **`npm run test:functional`** fails on a fresh clone until `npx prisma migrate deploy` (CI does this automatically). Document in **`README.md`** or add a Vitest `globalSetup` that skips DB tests when `DATABASE_URL` is unset.
+
+---
+
+## Improvement backlog — UX, performance, stability (May 2026)
+
+*Prioritised suggestions from the audit above. Pick items into the “Next up” queue when planning sprints; cross-link **`FEATURES.md`** for product-sized work.*
+
+### UX — conversion, clarity, trust
+
+| Priority | Item | Rationale |
+|----------|------|-----------|
+| **P0** | **Data migration card in order wizard** | Schema + Stripe line items exist; without UI, Feature 1 does not reduce checkout fear. Add step-3 card per **`FEATURES.md`**; include prep checklist in confirmation email. |
+| **P0** | **Reconcile `/koneet` IA** | Middleware sends `/koneet` → home anchor while sitemap still emits `/koneet/[slug]` URLs. Either restore a dedicated search hub or noindex detail pages until content is rich; avoid confusing SEO + user bookmarks. |
+| **P1** | **Mount or retire `SpeedBar`** | Strong emotional proof on design system; currently unused. Prefer home section below hero with `IntersectionObserver` animation per **`DESIGN_SYSTEM.md`**. |
+| **P1** | **Richer `/koneet/[slug]` pages** | **Shipped** — recommended SSD, boot-time estimate, order CTA, related models, dynamic OG, request-check form on `/koneet`. |
+| **P1** | **Care lifecycle automation** | Cron/worker (Vercel cron, Inngest, or external scheduler): day 75/88 emails tied to `Order.completedAt`; link to `/care`. Reduces manual ops. |
+| **P2** | **`/oma-sparkki` magic-link dashboard** | **Shipped** — HMAC link, request-by-email, cancel at period end, Stripe billing portal, Discord + Calendly cards. |
+| **P2** | **Starter kit checkout** | **Shipped** — `StarterKitOrder`, `/api/checkout/starter-kit`, `/itse` product card, `/admin/starter-kit`. |
+| **P2** | **Sync `docs/site-pages.md` + screenshots** | Run `npm run docs:screenshots` after IA freeze; fix copy (service landing at `/`, `/tilaa` wizard). |
+| **P3** | **Transformation gallery** | Product vision “before/after stories” still partial (`TransformationCard` only). Optional marketing page under `/tietoa/galleria` or home section. |
+
+### Performance — perceived speed and cost
+
+| Priority | Item | Rationale |
+|----------|------|-----------|
+| **P1** | **`/koneet/[slug]` data fetching** | Detail page loads **all** `computerModel` rows then filters in memory (`findMany` + `.find`). Replace with `findFirst` by slug or add DB `slug` + unique index. |
+| **P1** | **Sitemap build at scale** | Same full-table `findMany` for every model on each sitemap generation. Paginate or cache; consider excluding `UNCHECKED` models from public sitemap. |
+| **P2** | **Lighthouse performance budget** | CI threshold is **0.65** (warn). Target **≥0.80** on `/` and `/tilaa`: audit Three.js mesh count on mobile, `next/image` for any hero assets, reduce client JS on home (wizard already lazy). |
+| **P2** | **Laptop-specs cache hygiene** | **Shipped** — `GET /api/cron/specs-cache-cleanup` (daily). |
+| **P2** | **Admin models list** | **Shipped** — server-side search (`q`) + pagination (50/page) on `/admin/models`. |
+| **P3** | **ISR / static generation for approved models** | FEATURES spec called for ISR on detail pages; today fully dynamic. Regenerate on `ComputerModel` update webhook from admin save. |
+
+### Stability — correctness, security, operations
+
+| Priority | Item | Rationale |
+|----------|------|-----------|
+| **P0** | **Require `UPSTASH_REDIS_*` in production** | In-memory rate limits do not work across Vercel/serverless instances; document as required for checkout, support-contact, compatibility POST. |
+| **P1** | **Vitest DB guard** | **Shipped** — `tests/functional/global-setup.ts` + `requireMigratedDatabase()` before functional tests when `DATABASE_URL` is set. |
+| **P1** | **Stripe webhook replay tests** | Extend `stripe-webhook.test.ts` with care subscription + duplicate-event idempotency fixtures. |
+| **P1** | **Order PENDING cleanup** | Abandoned Checkout sessions leave `PENDING` orders; scheduled job to mark stale (>24h) as cancelled or archive for admin clarity. |
+| **P2** | **CSP hardening path** | Baseline shipped with `unsafe-inline` / `unsafe-eval`. Plan nonce-based `script-src` after production violation reports stabilize (`docs/operations.md`). |
+| **P2** | **Try-Linux production checklist** | Enforce TLS + token in prod env; add synthetic check that `NEXT_PUBLIC_TRY_LINUX_PROXY_BASE` responds (optional workflow input). |
+| **P2** | **Webhook failure alerting** | Structured logs exist; add alert on repeated Stripe handler errors or `StripeProcessedEvent` delete+retry loops. |
+| **P3** | **Prisma ↔ ROADMAP schema sync** | Replace embedded schema block in this file with “see `prisma/schema.prisma`” to prevent agent confusion. |
+| **P3** | **E2E: data migration + Care subscribe** | Extend wizard spec once migration UI ships; Care checkout with Stripe test clock (or mocked session). |
+
+### Suggested “next up” queue (May 2026)
+
+*Shipped in repo (May 2026): wizard data migration UI; `/koneet` hub restored + `ComputerModel.slug` + indexed lookup; Upstash production guard + stale-order cron; Care day 75/88 cron + emails; `SpeedBar` on home; optional photo attach on model checker; richer `/koneet/[slug]` (specs, OG image, related models, request-check form); Vitest DB guard for `test:functional`.*
+
+1. **Stricter CSP** (nonces) after production violation reports stabilize.  
+2. **Monthly Care tip newsletter** cron + template.  
+3. **PDF spec checker** (`apps/sparkki-checker` report export).  
+4. **ISR** for `/koneet/[slug]` when model catalog stabilises.
+
+*Shipped (May 2026 continuation): `/oma-sparkki` magic-link dashboard; Starter Kit checkout + admin; specs-cache cleanup cron; admin models search + pagination.*
 
 ---
 

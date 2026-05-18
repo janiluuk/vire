@@ -9,6 +9,7 @@ import {
 } from "@/lib/wizard/computer-spec-rows";
 import { COMPUTER_LOOKUP_DEBOUNCE_MS } from "@/lib/wizard/computer-lookup-client";
 import { ComputerLookupSpecsSkeleton } from "@/components/wizard/ComputerLookupSpecsSkeleton";
+import { ComputerPhotoAttach } from "@/components/koneet/ComputerPhotoAttach";
 
 type Props = {
   locale: string;
@@ -58,6 +59,7 @@ export function WizardComputerStep({
           locale: locale === "en" ? "en" : "fi",
           selectedYear,
           selectedMatchId,
+          includeWebSpecs: true,
         }),
         signal: ac.signal,
       })
@@ -165,6 +167,16 @@ export function WizardComputerStep({
             {w("validationComputerShort")}
           </p>
         ) : null}
+
+        <ComputerPhotoAttach
+          locale={locale}
+          disabled={loading}
+          onApplyDescription={(text) => {
+            onDescriptionChange(text);
+            onSelectedMatchIdChange(null);
+            onSelectedYearChange(null);
+          }}
+        />
       </div>
 
       {loading && trimmed.length >= 3 ? (

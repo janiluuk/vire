@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { checkCompatibility } from "@/lib/specs/compatibility";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
+import { rateLimitUnavailableResponse } from "@/lib/http/rate-limit-production";
 
 const bodySchema = z.object({
   make: z.string(),
@@ -14,6 +15,9 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const blocked = rateLimitUnavailableResponse(req.headers);
+  if (blocked) return blocked;
+
   const ip = getClientIpFromHeaders(req.headers);
   if (
     !(await checkRateLimit(`compatibility:${ip}`, { windowMs: 60_000, max: 60 }))

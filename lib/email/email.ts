@@ -9,6 +9,7 @@ import {
   PORTABLE_VM_HANDOFF_LABEL,
   isPortableVmHandoff,
 } from "@/lib/billing/portable-vm";
+import { careDashboardUrl } from "@/lib/care/care-access-token";
 import { getSiteUrl } from "@/lib/site/site-url";
 import { getServiceComponents } from "@/lib/data/service-components";
 
@@ -170,6 +171,74 @@ export async function sendUsbConfirmedEmail(params: {
     loc === "en"
       ? `<p>Hello ${escapeHtml(params.customerName)},</p><p>Your Linux USB stick order <strong>${escapeHtml(params.orderId)}</strong> is paid. We will ship it to the address you provided.</p>`
       : `<p>Hei ${escapeHtml(params.customerName)},</p><p>Linux-USB-tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on maksettu. Toimitamme tilauksen osoitteeseesi.</p>`;
+  const { error } = await resend.emails.send({
+    from,
+    to: params.to,
+    subject,
+    html,
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function sendStarterKitConfirmedEmail(params: {
+  to: string;
+  orderId: string;
+  customerName: string;
+  locale?: string | null;
+}): Promise<{ ok: boolean; error?: string }> {
+  const resend = getResend();
+  if (!resend) {
+    return { ok: false, error: "resend_not_configured" };
+  }
+  const loc = normalizeMailLocale(params.locale);
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
+  const subject =
+    loc === "en"
+      ? "Starter Kit order confirmed — Sparkki"
+      : "Starter Kit -tilaus vahvistettu — Sparkki";
+  const html =
+    loc === "en"
+      ? `<p>Hello ${escapeHtml(params.customerName)},</p><p>Your Sparkki Starter Kit order <strong>${escapeHtml(params.orderId)}</strong> is paid. We ship within 3–5 business days to the address you provided.</p>`
+      : `<p>Hei ${escapeHtml(params.customerName)},</p><p>Starter Kit -tilauksesi <strong>${escapeHtml(params.orderId)}</strong> on maksettu. Toimitamme 3–5 arkipäivässä antamaasi osoitteeseen.</p>`;
+  const { error } = await resend.emails.send({
+    from,
+    to: params.to,
+    subject,
+    html,
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export async function sendCareAccessLinkEmail(params: {
+  to: string;
+  customerName: string;
+  locale?: string | null;
+  dashboardUrl: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const resend = getResend();
+  if (!resend) {
+    return { ok: false, error: "resend_not_configured" };
+  }
+  const loc = normalizeMailLocale(params.locale);
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
+  const subject =
+    loc === "en"
+      ? "Your Sparkki Care dashboard link"
+      : "Sparkki Care -hallintalinkkisi";
+  const greet =
+    params.customerName.trim().length > 0
+      ? loc === "en"
+        ? `Hi ${escapeHtml(params.customerName)},`
+        : `Hei ${escapeHtml(params.customerName)},`
+      : loc === "en"
+        ? "Hello,"
+        : "Hei,";
+  const html =
+    loc === "en"
+      ? `<p>${greet}</p><p>Open your <strong>Sparkki Care</strong> dashboard to see billing dates, Discord, and cancellation options:</p><p><a href="${escapeHtml(params.dashboardUrl)}">${escapeHtml(params.dashboardUrl)}</a></p><p>This link expires in 7 days. You can request a new link anytime from the same page.</p>`
+      : `<p>${greet}</p><p>Avaa <strong>Sparkki Care</strong> -hallintasivu nähdäksesi laskutusajat, Discord-linkin ja peruutusvaihtoehdot:</p><p><a href="${escapeHtml(params.dashboardUrl)}">${escapeHtml(params.dashboardUrl)}</a></p><p>Linkki vanhenee 7 päivässä. Voit pyytää uuden linkin milloin tahansa samalta sivulta.</p>`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,
@@ -358,10 +427,16 @@ export async function sendCareSubscriptionWelcomeEmail(params: {
         ? "Hello,"
         : "Hei,";
   const base = getSiteUrl();
+  const dashUrl = careDashboardUrl(loc, params.to);
+  const dashBlock = dashUrl
+    ? loc === "en"
+      ? `<p><a href="${escapeHtml(dashUrl)}">Open your Care dashboard</a> (subscription status, Discord, cancel anytime).</p>`
+      : `<p><a href="${escapeHtml(dashUrl)}">Avaa Care-hallintasivu</a> (tilauksen tila, Discord, peruutus milloin tahansa).</p>`
+    : "";
   const html =
     loc === "en"
-      ? `<p>${greet}</p><p>Your <strong>Sparkki Care</strong> subscription is active. You get ongoing remote help, Discord priority, and tips while subscribed.</p><p>Questions? Reply to this email or use our <a href="${base}/en/tuki">support page</a>.</p>`
-      : `<p>${greet}</p><p><strong>Sparkki Care</strong> -tilauksesi on nyt voimassa. Saat jatkuvaa etäapua, Discord-prioriteetin ja kuukausivinkkejä tilauksen ollessa aktiivinen.</p><p>Kysyttävää? Vastaa tähän viestiin tai käytä <a href="${base}/fi/tuki">tukisivua</a>.</p>`;
+      ? `<p>${greet}</p><p>Your <strong>Sparkki Care</strong> subscription is active. You get ongoing remote help, Discord priority, and tips while subscribed.</p>${dashBlock}<p>Questions? Reply to this email or use our <a href="${base}/en/tuki">support page</a>.</p>`
+      : `<p>${greet}</p><p><strong>Sparkki Care</strong> -tilauksesi on nyt voimassa. Saat jatkuvaa etäapua, Discord-prioriteetin ja kuukausivinkkejä tilauksen ollessa aktiivinen.</p>${dashBlock}<p>Kysyttävää? Vastaa tähän viestiin tai käytä <a href="${base}/fi/tuki">tukisivua</a>.</p>`;
   const { error } = await resend.emails.send({
     from,
     to: params.to,
@@ -399,6 +474,59 @@ export async function sendCarePaymentFailedEmail(params: {
     loc === "en"
       ? `<p>${greet}</p><p>We could not charge your card for <strong>Sparkki Care</strong>. Please update your payment method in the Stripe billing portal (link in your last receipt) or contact us at tuki@sparkki.fi.</p>`
       : `<p>${greet}</p><p>Emme voineet veloittaa <strong>Sparkki Care</strong> -tilauksesta. Päivitä maksutapa Stripen laskutusportaalissa (linkki edellisessä kuittissa) tai ota yhteyttä: tuki@sparkki.fi.</p>`;
+  const { error } = await resend.emails.send({
+    from,
+    to: params.to,
+    subject,
+    html,
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+export type CareUpsellKind = "day75" | "day88";
+
+export async function sendCareUpsellEmail(params: {
+  kind: CareUpsellKind;
+  to: string;
+  customerName: string;
+  locale?: string | null;
+  orderId: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const resend = getResend();
+  if (!resend) {
+    return { ok: false, error: "resend_not_configured" };
+  }
+  const loc = normalizeMailLocale(params.locale);
+  const from = process.env.RESEND_FROM ?? "Sparkki <onboarding@resend.dev>";
+  const base = getSiteUrl();
+  const careUrl = `${base}/${loc}/care`;
+  const daysLeft = params.kind === "day75" ? 15 : 2;
+  const subject =
+    loc === "en"
+      ? params.kind === "day75"
+        ? "Your Sparkki support continues — consider Care"
+        : "Support ends soon — Sparkki Care"
+      : params.kind === "day75"
+        ? "Sparkki-tukesi jatkuu — tutustu Careen"
+        : "Tuki päättyy pian — Sparkki Care";
+  const greet =
+    params.customerName.trim().length > 0
+      ? loc === "en"
+        ? `Hi ${escapeHtml(params.customerName)},`
+        : `Hei ${escapeHtml(params.customerName)},`
+      : loc === "en"
+        ? "Hello,"
+        : "Hei,";
+  const bodyEn =
+    params.kind === "day75"
+      ? `<p>${greet}</p><p>About 75 days have passed since we completed your Sparkki service (order <strong>${escapeHtml(params.orderId)}</strong>). Your included email support runs for 90 days after delivery — about <strong>${daysLeft} days</strong> remain.</p><p><strong>Sparkki Care</strong> continues remote help, Discord priority, and practical tips for a small monthly fee. Cancel anytime.</p><p><a href="${careUrl}">Learn about Sparkki Care →</a></p>`
+      : `<p>${greet}</p><p>Your included Sparkki support for order <strong>${escapeHtml(params.orderId)}</strong> ends in about <strong>${daysLeft} days</strong>.</p><p>With <strong>Sparkki Care</strong> you keep calm, ongoing help after the free period — subscribe before support ends.</p><p><a href="${careUrl}">Subscribe to Sparkki Care →</a></p>`;
+  const bodyFi =
+    params.kind === "day75"
+      ? `<p>${greet}</p><p>Noin 75 päivää on kulunut Sparkki-palvelun valmistumisesta (tilaus <strong>${escapeHtml(params.orderId)}</strong>). Mukana tullut sähköpostituki kestää 90 päivää toimituksesta — noin <strong>${daysLeft} päivää</strong> jäljellä.</p><p><strong>Sparkki Care</strong> jatkaa etäapua, Discord-prioriteettia ja käytännön vinkkejä pienellä kuukausimaksulla. Voit lopettaa milloin tahansa.</p><p><a href="${careUrl}">Tutustu Sparkki Careen →</a></p>`
+      : `<p>${greet}</p><p>Tilauksen <strong>${escapeHtml(params.orderId)}</strong> mukainen Sparkki-tuki päättyy noin <strong>${daysLeft} päivän</strong> kuluttua.</p><p><strong>Sparkki Care</strong> -tilauksella saat rauhallisen jatkotuen maksuttoman jakson jälkeen — tilaa ennen tuen päättymistä.</p><p><a href="${careUrl}">Tilaa Sparkki Care →</a></p>`;
+  const html = loc === "en" ? bodyEn : bodyFi;
   const { error } = await resend.emails.send({
     from,
     to: params.to,

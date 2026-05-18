@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { computerModelSlugFields } from "../lib/koneet/computer-model-db";
 
 const prisma = new PrismaClient();
 
@@ -150,8 +151,19 @@ async function main() {
   for (const m of models) {
     await prisma.computerModel.upsert({
       where: { make_model: { make: m.make, model: m.model } },
-      update: {},
-      create: m,
+      update: computerModelSlugFields(m.make, m.model),
+      create: { ...m, ...computerModelSlugFields(m.make, m.model) },
+    });
+  }
+
+  const missingSlug = await prisma.computerModel.findMany({
+    where: { slug: null },
+    select: { id: true, make: true, model: true },
+  });
+  for (const row of missingSlug) {
+    await prisma.computerModel.update({
+      where: { id: row.id },
+      data: computerModelSlugFields(row.make, row.model),
     });
   }
 

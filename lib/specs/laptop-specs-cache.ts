@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
+import { EMPTY_STRUCTURED_SPECS } from "@/lib/specs/laptop-specs-structured";
 
 export type SpecsCacheLocale = "fi" | "en";
 
@@ -50,6 +51,16 @@ function rowToInsight(
   row: {
     summary: string | null;
     specUrl: string | null;
+    cpu: string | null;
+    ram: string | null;
+    storage: string | null;
+    gpu: string | null;
+    display: string | null;
+    weight: string | null;
+    maxRamGb: number | null;
+    ssdSlot: string | null;
+    yearFrom: number | null;
+    yearTo: number | null;
   },
   referenceSummary: string | null | undefined,
 ): LaptopSpecsInsight {
@@ -57,7 +68,34 @@ function rowToInsight(
     summary: row.summary,
     specUrl: row.specUrl,
     referenceSummary: referenceSummary ?? null,
+    specs: {
+      cpu: row.cpu,
+      ram: row.ram,
+      storage: row.storage,
+      gpu: row.gpu,
+      display: row.display,
+      weight: row.weight,
+      maxRamGb: row.maxRamGb,
+      ssdSlot: row.ssdSlot,
+      yearFrom: row.yearFrom,
+      yearTo: row.yearTo,
+    },
   };
+}
+
+function hasUsefulInsight(insight: Pick<LaptopSpecsInsight, "summary" | "specUrl" | "specs">): boolean {
+  if (insight.summary?.trim() || insight.specUrl?.trim()) return true;
+  const s = insight.specs;
+  return Boolean(
+    s.cpu ||
+      s.ram ||
+      s.storage ||
+      s.gpu ||
+      s.display ||
+      s.weight ||
+      s.maxRamGb != null ||
+      s.ssdSlot,
+  );
 }
 
 /**
@@ -90,17 +128,28 @@ export async function writeLaptopSpecsInternetCache(
   make: string,
   model: string,
   locale: SpecsCacheLocale,
-  insight: Pick<LaptopSpecsInsight, "summary" | "specUrl">,
+  insight: LaptopSpecsInsight,
   meta: { searxResultCount: number; usedLlm: boolean },
 ): Promise<void> {
   const key = normalizeSpecsCacheKey(make, model);
   if (!key.makeNorm && !key.modelNorm) return;
 
-  const hasUseful = Boolean(
-    (insight.summary && insight.summary.trim().length > 0) ||
-      (insight.specUrl && insight.specUrl.trim().length > 0),
-  );
+  const specs = insight.specs ?? EMPTY_STRUCTURED_SPECS;
+  const hasUseful = hasUsefulInsight({ ...insight, specs });
   const expiresAt = new Date(Date.now() + cacheTtlMs(hasUseful));
+
+  const structured = {
+    cpu: specs.cpu,
+    ram: specs.ram,
+    storage: specs.storage,
+    gpu: specs.gpu,
+    display: specs.display,
+    weight: specs.weight,
+    maxRamGb: specs.maxRamGb,
+    ssdSlot: specs.ssdSlot,
+    yearFrom: specs.yearFrom,
+    yearTo: specs.yearTo,
+  };
 
   await prisma.laptopSpecsInternetCache.upsert({
     where: {
@@ -118,6 +167,7 @@ export async function writeLaptopSpecsInternetCache(
       modelDisplay: key.modelDisplay,
       summary: insight.summary,
       specUrl: insight.specUrl,
+      ...structured,
       searxResultCount: meta.searxResultCount,
       usedLlm: meta.usedLlm,
       expiresAt,
@@ -127,6 +177,7 @@ export async function writeLaptopSpecsInternetCache(
       modelDisplay: key.modelDisplay,
       summary: insight.summary,
       specUrl: insight.specUrl,
+      ...structured,
       searxResultCount: meta.searxResultCount,
       usedLlm: meta.usedLlm,
       expiresAt,

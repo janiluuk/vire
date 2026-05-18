@@ -67,10 +67,12 @@ async function clickNext(w: Locator): Promise<void> {
 }
 
 async function openAddonsSection(w: Locator): Promise<void> {
-  const details = w.locator("details").first();
-  const isOpen = await details.evaluate((el) => el.hasAttribute("open"));
+  const addonsDetails = w.getByTestId("wizard-addons-section");
+  await expect(addonsDetails).toBeVisible({ timeout: 15_000 });
+  const isOpen = await addonsDetails.evaluate((el) => el.hasAttribute("open"));
   if (!isOpen) {
-    await details.locator("summary").click();
+    await addonsDetails.locator("summary").click();
+    await expect(addonsDetails).toHaveAttribute("open", "", { timeout: 15_000 });
   }
 }
 
@@ -82,7 +84,7 @@ export async function completeServiceOrder(
   const computer = config.computer ?? DEFAULT_COMPUTER;
   const tier = config.tier ?? DEFAULT_TIER;
 
-  await page.goto("/fi/tilaa", { waitUntil: "networkidle" });
+  await page.goto("/fi/tilaa", { waitUntil: "domcontentloaded" });
   await waitForWizardReady(page);
 
   await w.locator("#wiz-computer").fill(computer);
@@ -135,8 +137,8 @@ export async function completeServiceOrder(
 
   await page.waitForURL(/\/fi\/palvelu\/kiitos/, { timeout: 20_000 });
   await expect(
-    page.getByRole("heading", { name: "Kiitos!", exact: true }),
-  ).toBeVisible();
+    page.getByRole("heading", { name: /Kiitos/i }),
+  ).toBeVisible({ timeout: 15_000 });
 }
 
 function adminDd(page: Page, label: string): Locator {
@@ -159,7 +161,7 @@ export async function assertOrderVisibleInAdmin(
 ): Promise<void> {
   await page.goto(
     `/admin/orders?q=${encodeURIComponent(expected.email)}`,
-    { waitUntil: "networkidle" },
+    { waitUntil: "domcontentloaded" },
   );
 
   await expect(

@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { ModelCheckStatus } from "@prisma/client";
 import { recordAdminAudit } from "@/lib/admin/admin-audit";
 import { parseComputerModelCsv } from "@/lib/admin/parse-computer-model-csv";
+import { computerModelSlugFields } from "@/lib/koneet/computer-model-db";
 import { authOptions } from "@/lib/auth/auth-options";
 import { prisma } from "@/lib/db/prisma";
 
@@ -39,6 +40,7 @@ export async function createComputerModel(formData: FormData) {
         yearFrom,
         yearTo,
         status: "UNCHECKED",
+        ...computerModelSlugFields(make, model),
       },
     });
     await recordAdminAudit({
@@ -79,6 +81,15 @@ export async function updateComputerModel(formData: FormData) {
     redirect(`/admin/models/${id}?error=ram`);
   }
   const notes = String(formData.get("notes") ?? "").trim() || null;
+  const recommendedSsd =
+    String(formData.get("recommendedSsd") ?? "").trim() || null;
+  const ssdShopUrl = String(formData.get("ssdShopUrl") ?? "").trim() || null;
+  const bootRaw = String(formData.get("estimatedBootSec") ?? "").trim();
+  const estimatedBootSec = bootRaw ? parseInt(bootRaw, 10) : null;
+  if (bootRaw && Number.isNaN(estimatedBootSec)) {
+    redirect(`/admin/models/${id}?error=boot`);
+  }
+  const publicNotes = String(formData.get("publicNotes") ?? "").trim() || null;
 
   const status: ModelCheckStatus = compatible ? "APPROVED" : "REJECTED";
 
@@ -99,6 +110,10 @@ export async function updateComputerModel(formData: FormData) {
       ssdSlot,
       maxRamGb,
       notes,
+      recommendedSsd,
+      ssdShopUrl,
+      estimatedBootSec,
+      publicNotes,
       status,
       checkedAt: new Date(),
       checkedBy: session.user?.email ?? session.user?.id ?? "admin",
@@ -122,6 +137,14 @@ export async function updateComputerModel(formData: FormData) {
   });
   revalidatePath("/admin/models");
   revalidatePath(`/admin/models/${id}`);
+  const slugRow = await prisma.computerModel.findUnique({
+    where: { id },
+    select: { slug: true, make: true, model: true },
+  });
+  if (slugRow?.slug) {
+    revalidatePath(`/fi/koneet/${slugRow.slug}`);
+    revalidatePath(`/en/koneet/${slugRow.slug}`);
+  }
   redirect(`/admin/models/${id}?saved=1`);
 }
 
@@ -153,6 +176,7 @@ export async function importComputerModelsCsv(formData: FormData) {
         data: {
           make: row.make,
           model: row.model,
+          ...computerModelSlugFields(row.make, row.model),
           yearFrom: row.yearFrom,
           yearTo: row.yearTo,
           compatible: row.compatible,

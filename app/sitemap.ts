@@ -18,6 +18,7 @@ const STATIC_PATHS = [
   "/tuki",
   "/tietosuoja",
   "/tilaus",
+  "/koneet",
   "/tietoa",
   "/tietoa/hyodyt",
   "/tietoa/galleria",
@@ -80,6 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const models = await prisma.computerModel.findMany({
+      where: { status: { in: ["APPROVED", "REJECTED", "IN_REVIEW"] } },
       select: { make: true, model: true, updatedAt: true },
     });
     for (const locale of routing.locales) {

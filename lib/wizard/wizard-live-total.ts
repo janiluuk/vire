@@ -4,6 +4,7 @@ import type { AppBundleId } from "@/lib/billing/app-bundles";
 import { appBundlesAddonCents } from "@/lib/billing/app-bundles";
 import { PORTABLE_VM_ADDON_CENTS } from "@/lib/billing/portable-vm";
 import {
+  dataMigrationAddonCents,
   deliveryAddonCents,
   hddRemovalAddonCents,
   serviceCheckoutTotalCents,
@@ -33,12 +34,20 @@ export function computeWizardLiveTotal(params: {
   tier: Tier | null;
   delivery: DeliveryMethod | null;
   hddRemoval: HddRemovalOption;
+  dataMigration: "none" | "standard" | "large";
   appBundles: readonly AppBundleId[];
   portableVmOn: boolean;
   portableVmReady: boolean;
 }): WizardLiveTotal {
-  const { tier, delivery, hddRemoval, appBundles, portableVmOn, portableVmReady } =
-    params;
+  const {
+    tier,
+    delivery,
+    hddRemoval,
+    dataMigration,
+    appBundles,
+    portableVmOn,
+    portableVmReady,
+  } = params;
 
   if (!tier) {
     return {
@@ -78,16 +87,28 @@ export function computeWizardLiveTotal(params: {
     lines.push({ id: "portableVm", cents: PORTABLE_VM_ADDON_CENTS });
   }
 
+  if (dataMigration === "standard" || dataMigration === "large") {
+    lines.push({
+      id: "migration",
+      cents: dataMigrationAddonCents(dataMigration),
+    });
+  }
+
   const totalCents = lines.reduce((sum, l) => sum + l.cents, 0);
 
   const portableVmOk = !portableVmOn || portableVmReady;
   const complete = delivery != null && portableVmOk;
 
+  const migration =
+    dataMigration === "standard" || dataMigration === "large"
+      ? { size: dataMigration }
+      : null;
+
   const checkoutTotalCents = complete
     ? serviceCheckoutTotalCents({
         tier,
         supportTier: SupportTier.FULL,
-        migration: null,
+        migration,
         deliveryMethod: delivery,
         hddRemoval,
         appBundles,

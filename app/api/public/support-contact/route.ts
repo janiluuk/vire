@@ -3,6 +3,7 @@ import { z } from "zod";
 import { sendSupportContactEmail } from "@/lib/email/email";
 import { getRequestId, logApiEvent } from "@/lib/logging/log";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
+import { rateLimitUnavailableResponse } from "@/lib/http/rate-limit-production";
 import {
   hasUsableCustomerContact,
   parseCustomerContact,
@@ -15,6 +16,9 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const blocked = rateLimitUnavailableResponse(req.headers);
+  if (blocked) return blocked;
+
   const requestId = getRequestId(req);
   const ip = getClientIpFromHeaders(req.headers);
   if (

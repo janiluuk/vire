@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { updateComputerModel } from "@/app/admin/models/actions";
 import { prisma } from "@/lib/db/prisma";
+import { computerModelSlug } from "@/lib/site/computer-model-slug";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getAdminMessages } from "@/lib/admin/get-admin-messages";
 
@@ -148,6 +149,70 @@ export default async function AdminModelDetailPage({
             className="w-full rounded-lg border border-em px-4 py-3 text-lg"
           />
         </div>
+
+        <div>
+          <label htmlFor="recommendedSsd" className="mb-2 block font-semibold">
+            {a.modelFieldRecommendedSsd}
+          </label>
+          <input
+            id="recommendedSsd"
+            name="recommendedSsd"
+            defaultValue={row.recommendedSsd ?? ""}
+            className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="ssdShopUrl" className="mb-2 block font-semibold">
+            {a.modelFieldSsdShopUrl}
+          </label>
+          <input
+            id="ssdShopUrl"
+            name="ssdShopUrl"
+            type="url"
+            defaultValue={row.ssdShopUrl ?? ""}
+            className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="estimatedBootSec" className="mb-2 block font-semibold">
+            {a.modelFieldBootSec}
+          </label>
+          <input
+            id="estimatedBootSec"
+            name="estimatedBootSec"
+            type="number"
+            min={1}
+            max={600}
+            defaultValue={row.estimatedBootSec ?? ""}
+            className="min-h-tap w-full max-w-xs rounded-lg border border-em px-4 text-lg"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="publicNotes" className="mb-2 block font-semibold">
+            {a.modelFieldPublicNotes}
+          </label>
+          <textarea
+            id="publicNotes"
+            name="publicNotes"
+            rows={3}
+            defaultValue={row.publicNotes ?? ""}
+            className="w-full rounded-lg border border-em px-4 py-3 text-lg"
+          />
+        </div>
+
+        <p className="text-sm text-fog">
+          <a
+            href={`/fi/koneet/${row.slug ?? computerModelSlug(row.make, row.model)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-g underline"
+          >
+            {a.modelPreviewPage}
+          </a>
+        </p>
 
         <button
           type="submit"

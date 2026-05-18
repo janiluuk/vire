@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/care-lifecycle",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/stale-orders",
+      "schedule": "15 4 * * *"
+    },
+    {
+      "path": "/api/cron/specs-cache-cleanup",
+      "schedule": "30 4 * * *"
+    }
+  ]
+}

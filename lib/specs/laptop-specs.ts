@@ -1,24 +1,58 @@
 /**
- * Server-only: SearXNG JSON + optional local LLM to summarize laptop specs.
- * Configure via SPECS_* env vars (see .env.example).
- * Successful lookups are persisted in `LaptopSpecsInternetCache` (see laptop-specs-cache.ts).
+ * Server-only: SearXNG + optional LLM agent for laptop specs.
+ * Results persist in `LaptopSpecsInternetCache` and optionally `LaptopReferenceSpec`.
  */
 import {
   readLaptopSpecsInternetCache,
   writeLaptopSpecsInternetCache,
 } from "@/lib/specs/laptop-specs-cache";
+import {
+  EMPTY_STRUCTURED_SPECS,
+  hasStructuredSpecs,
+  mergeStructuredSpecs,
+  parseStructuredSpecs,
+  type LaptopStructuredSpecs,
+} from "@/lib/specs/laptop-specs-structured";
+import { persistWebReferenceSpec } from "@/lib/specs/persist-web-reference";
+import { searxSearch, type SearxResult } from "@/lib/specs/searx-client";
+import {
+  getSpecsAiConfig,
+  getSpecsSearxngBaseUrl,
+  isSpecsLookupEnabled,
+} from "@/lib/specs/specs-env";
+
+export type { LaptopStructuredSpecs } from "@/lib/specs/laptop-specs-structured";
+export { EMPTY_STRUCTURED_SPECS } from "@/lib/specs/laptop-specs-structured";
 
 export type LaptopSpecsInsight = {
   summary: string | null;
   specUrl: string | null;
   /** Retail-style reference specs from imported dataset (not manufacturer-official). */
   referenceSummary?: string | null;
+  /** CPU, RAM, storage, etc. from web agent when available. */
+  specs: LaptopStructuredSpecs;
 };
-
-type SearxResult = { title?: string; url?: string; content?: string };
 
 const cache = new Map<string, { exp: number; value: LaptopSpecsInsight }>();
 const CACHE_MS = 1000 * 60 * 60 * 6;
+
+const LLM_SYSTEM = `You extract laptop hardware specifications from web search snippets.
+Reply with ONLY one JSON object (no markdown outside the object):
+{
+  "summary": "2-4 short sentences in Finnish describing the model for a customer",
+  "specPageUrl": "https://best-spec-or-review-url from the results, or null",
+  "cpu": "processor model string or null",
+  "ram": "installed or max RAM as human text e.g. 8 GB or null",
+  "storage": "default storage e.g. 500 GB HDD or 256 GB SSD or null",
+  "gpu": "graphics chip or null",
+  "display": "screen size/resolution or null",
+  "weight": "weight or null",
+  "maxRamGb": number or null,
+  "ssdSlot": "upgrade slot note e.g. 2.5 inch SATA, M.2 or null",
+  "yearFrom": number or null,
+  "yearTo": number or null
+}
+Use null for unknown fields. Prefer facts clearly stated in the snippets.`;
 
 function cacheKey(make: string, model: string, locale: string) {
   const mk = make.trim().toLowerCase();
@@ -28,7 +62,7 @@ function cacheKey(make: string, model: string, locale: string) {
 
 function pickSpecUrlFromResults(results: SearxResult[]): string | null {
   const preferred =
-    /notebookcheck\.net|laptopmedia\.com|psref\.lenovo\.com|support\.hp\.com|dell\.com\/support|asus\.com|acer\.com|fcc\.id/i;
+    /notebookcheck\.net|laptopmedia\.com|psref\.lenovo\.com|support\.hp\.com|dell\.com\/support|asus\.com|acer\.com|fcc\.id|laptoping\.com/i;
   for (const r of results) {
     const u = r.url;
     if (u && preferred.test(u)) return u;
@@ -58,14 +92,14 @@ function searchOnlyInsight(
     parts.length > 0
       ? `Haulla “${query}” löytyi muun muassa:\n\n${parts.join("\n\n")}`
       : null;
-  return { summary, specUrl };
+  return { summary, specUrl, specs: { ...EMPTY_STRUCTURED_SPECS } };
 }
 
 /** @internal exported for unit tests */
 export function extractJsonObject(text: string): Record<string, unknown> | null {
   const trimmed = text.trim().replace(/^\uFEFF/, "");
   const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const candidate = fence ? fence[1].trim() : trimmed;
+  const candidate = fence ? fence[1]!.trim() : trimmed;
   try {
     const o = JSON.parse(candidate) as Record<string, unknown>;
     return o && typeof o === "object" ? o : null;
@@ -74,7 +108,10 @@ export function extractJsonObject(text: string): Record<string, unknown> | null 
     const end = candidate.lastIndexOf("}");
     if (start < 0 || end <= start) return null;
     try {
-      const o = JSON.parse(candidate.slice(start, end + 1)) as Record<string, unknown>;
+      const o = JSON.parse(candidate.slice(start, end + 1)) as Record<
+        string,
+        unknown
+      >;
       return o && typeof o === "object" ? o : null;
     } catch {
       return null;
@@ -98,7 +135,9 @@ function pickFirstString(
 
 /** @internal exported for unit tests */
 export function parseAiInsight(o: Record<string, unknown> | null): LaptopSpecsInsight {
-  if (!o) return { summary: null, specUrl: null };
+  if (!o) {
+    return { summary: null, specUrl: null, specs: { ...EMPTY_STRUCTURED_SPECS } };
+  }
   const summary = pickFirstString(o, [
     "summary",
     "yhteenveto",
@@ -117,30 +156,8 @@ export function parseAiInsight(o: Record<string, unknown> | null): LaptopSpecsIn
   if (specUrl && !/^https?:\/\//i.test(specUrl)) {
     specUrl = null;
   }
-  return { summary, specUrl };
-}
-
-async function searxSearch(query: string): Promise<SearxResult[]> {
-  const base = process.env.SPECS_SEARXNG_BASE_URL?.replace(/\/$/, "");
-  if (!base) return [];
-  const u = new URL(`${base}/search`);
-  u.searchParams.set("q", query);
-  u.searchParams.set("format", "json");
-  const ac = new AbortController();
-  const t = setTimeout(() => ac.abort(), 12_000);
-  try {
-    const res = await fetch(u.toString(), {
-      headers: { Accept: "application/json" },
-      signal: ac.signal,
-    });
-    if (!res.ok) return [];
-    const data = (await res.json()) as { results?: SearxResult[] };
-    return Array.isArray(data.results) ? data.results.slice(0, 10) : [];
-  } catch {
-    return [];
-  } finally {
-    clearTimeout(t);
-  }
+  const specs = parseStructuredSpecs(o);
+  return { summary, specUrl, specs };
 }
 
 async function callOpenAiCompatible(
@@ -149,7 +166,7 @@ async function callOpenAiCompatible(
   userPayload: string,
 ): Promise<string | null> {
   const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), 45_000);
+  const timer = setTimeout(() => ac.abort(), 50_000);
   try {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -162,13 +179,9 @@ async function callOpenAiCompatible(
       headers,
       body: JSON.stringify({
         model,
-        temperature: 0.2,
+        temperature: 0.15,
         messages: [
-          {
-            role: "system",
-            content:
-              "You help summarize laptop hardware from web search snippets. Reply with ONLY a JSON object: {\"summary\":\"...\",\"specPageUrl\":\"https://...\" or null}. Field summary: 2–5 short sentences in Finnish. Field specPageUrl: the single best URL from the provided results for detailed specs/reviews (prefer notebookcheck, laptopmedia, manufacturer support/spec), or null if unsure.",
-          },
+          { role: "system", content: LLM_SYSTEM },
           { role: "user", content: userPayload },
         ],
       }),
@@ -193,7 +206,7 @@ async function callOllamaChat(
   userPayload: string,
 ): Promise<string | null> {
   const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), 45_000);
+  const timer = setTimeout(() => ac.abort(), 50_000);
   try {
     const res = await fetch(`${base}/api/chat`, {
       method: "POST",
@@ -202,11 +215,7 @@ async function callOllamaChat(
         model,
         stream: false,
         messages: [
-          {
-            role: "system",
-            content:
-              'Reply with ONLY JSON: {"summary":"...","specPageUrl":"https://..." or null}. summary in Finnish (2–5 short sentences). specPageUrl = best spec page from results.',
-          },
+          { role: "system", content: LLM_SYSTEM },
           { role: "user", content: userPayload },
         ],
       }),
@@ -235,18 +244,15 @@ async function runLlm(
   query: string,
   results: SearxResult[],
 ): Promise<LaptopSpecsInsight | null> {
-  const base = process.env.SPECS_AI_BASE_URL?.replace(/\/$/, "");
+  const { base, model, kind } = getSpecsAiConfig();
   if (!base) return null;
-
-  const model = process.env.SPECS_AI_MODEL?.trim() || "llama3";
-  const kind = (process.env.SPECS_AI_KIND ?? "auto").toLowerCase();
 
   const payload = JSON.stringify({
     query,
     results: results.map((r) => ({
       title: r.title ?? "",
       url: r.url ?? "",
-      content: (r.content ?? "").slice(0, 600),
+      content: (r.content ?? "").slice(0, 700),
     })),
   });
 
@@ -265,7 +271,7 @@ async function runLlm(
 }
 
 /**
- * Fetches web results via SearXNG, optionally refines with a local OpenAI-compatible or Ollama API.
+ * Fetches web results via SearXNG, optionally refines with LLM, persists to DB.
  */
 export async function resolveLaptopSpecs(
   make: string,
@@ -274,11 +280,14 @@ export async function resolveLaptopSpecs(
 ): Promise<LaptopSpecsInsight> {
   const m = make.trim();
   const mo = model.trim();
-  if (!m && !mo) return { summary: null, specUrl: null };
+  const empty: LaptopSpecsInsight = {
+    summary: null,
+    specUrl: null,
+    specs: { ...EMPTY_STRUCTURED_SPECS },
+  };
+  if (!m && !mo) return empty;
 
-  if (process.env.SPECS_LOOKUP_ENABLED === "false") {
-    return { summary: null, specUrl: null };
-  }
+  if (!isSpecsLookupEnabled()) return empty;
 
   const locale = options?.locale === "en" ? "en" : "fi";
 
@@ -312,24 +321,28 @@ export async function resolveLaptopSpecs(
     /* continue to live lookup */
   }
 
-  const query = `${[m, mo].filter(Boolean).join(" ")} laptop specifications review`.trim();
-  const results = await searxSearch(query);
+  const searxBase = getSpecsSearxngBaseUrl();
+  if (!searxBase) {
+    const noWeb = attachReference({ ...empty, referenceSummary });
+    cache.set(key, { exp: Date.now() + CACHE_MS, value: noWeb });
+    return noWeb;
+  }
+
+  const query =
+    `${[m, mo].filter(Boolean).join(" ")} laptop specifications CPU RAM storage`.trim();
+  const results = await searxSearch(searxBase, query);
   if (results.length === 0) {
-    const empty: LaptopSpecsInsight = {
-      summary: null,
-      specUrl: null,
-      referenceSummary,
-    };
-    cache.set(key, { exp: Date.now() + CACHE_MS, value: empty });
+    const none = attachReference({ ...empty, referenceSummary });
+    cache.set(key, { exp: Date.now() + CACHE_MS, value: none });
     try {
-      await writeLaptopSpecsInternetCache(m, mo, locale, empty, {
+      await writeLaptopSpecsInternetCache(m, mo, locale, none, {
         searxResultCount: 0,
         usedLlm: false,
       });
     } catch {
       /* non-fatal */
     }
-    return empty;
+    return none;
   }
 
   let insight: LaptopSpecsInsight = {
@@ -345,6 +358,7 @@ export async function resolveLaptopSpecs(
       insight = {
         summary: ai.summary ?? insight.summary,
         specUrl: ai.specUrl ?? insight.specUrl,
+        specs: mergeStructuredSpecs(insight.specs, ai.specs),
         referenceSummary,
       };
     }
@@ -352,15 +366,20 @@ export async function resolveLaptopSpecs(
     /* keep search-only */
   }
 
+  if (hasStructuredSpecs(insight.specs)) {
+    try {
+      await persistWebReferenceSpec(m, mo, insight.specs);
+    } catch {
+      /* non-fatal */
+    }
+  }
+
   cache.set(key, { exp: Date.now() + CACHE_MS, value: insight });
   try {
-    await writeLaptopSpecsInternetCache(
-      m,
-      mo,
-      locale,
-      { summary: insight.summary, specUrl: insight.specUrl },
-      { searxResultCount: results.length, usedLlm },
-    );
+    await writeLaptopSpecsInternetCache(m, mo, locale, insight, {
+      searxResultCount: results.length,
+      usedLlm,
+    });
   } catch {
     /* non-fatal */
   }

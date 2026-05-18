@@ -21,14 +21,6 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
-  const legacyKoneet = pathname.match(/^\/(fi|en)\/koneet\/?$/);
-  if (legacyKoneet) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${legacyKoneet[1]}`;
-    url.hash = "yhteensopivuus";
-    return NextResponse.redirect(url, 308);
-  }
-
   return intlMiddleware(request);
 }
 

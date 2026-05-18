@@ -105,6 +105,7 @@ export function serviceCheckoutTotalCents(params: {
 }
 
 export const USB_ORDER_CENTS = 990;
+export const STARTER_KIT_ORDER_CENTS = 1990;
 
 const TIER_ENV_KEYS: Record<Exclude<ServiceTier, "B2B">, string> = {
   INSTALL_ONLY: "STRIPE_PRICE_INSTALL_ONLY",
@@ -123,5 +124,10 @@ export function getStripePriceIdForTier(
 
 export function getUsbStripePriceId(): string | undefined {
   const v = process.env.STRIPE_PRICE_USB_STICK;
+  return v && v.length > 0 ? v : undefined;
+}
+
+export function getStarterKitStripePriceId(): string | undefined {
+  const v = process.env.STRIPE_PRICE_STARTER_KIT;
   return v && v.length > 0 ? v : undefined;
 }

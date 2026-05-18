@@ -6,7 +6,7 @@ import {
   toPublicUsbOrder,
 } from "@/lib/orders/public-order";
 import { coerceLaptopMakeModelForLookup } from "@/lib/specs/laptop-reference-lookup";
-import { resolveLaptopSpecs, withSpecsTimeout } from "@/lib/specs/laptop-specs";
+import { resolveLaptopSpecs, withSpecsTimeout, EMPTY_STRUCTURED_SPECS } from "@/lib/specs/laptop-specs";
 import { checkRateLimit, getClientIpFromHeaders } from "@/lib/http/rate-limit";
 
 const bodySchema = z.object({
@@ -67,6 +67,7 @@ export async function POST(req: Request) {
         )) ?? {
           summary: null,
           specUrl: null,
+          specs: EMPTY_STRUCTURED_SPECS,
         };
     }
     return NextResponse.json({

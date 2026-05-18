@@ -38,6 +38,10 @@ import {
 } from "@/lib/contact/contact-field-validation";
 import type { ComputerLookupResult } from "@/lib/orders/computer-lookup";
 import { WizardComputerStep } from "@/components/wizard/WizardComputerStep";
+import {
+  WizardDataMigration,
+  type DataMigrationChoice,
+} from "@/components/wizard/WizardDataMigration";
 import { WizardPrice } from "@/components/wizard/WizardPrice";
 import { WizardComputerChip } from "@/components/wizard/WizardComputerChip";
 import { WizardLiveTotalBar } from "@/components/wizard/WizardLiveTotal";
@@ -190,6 +194,8 @@ export function OrderWizard({
   const [portableVmOn, setPortableVmOn] = useState(false);
   const [portableVmHandoff, setPortableVmHandoff] =
     useState<PortableVmHandoff | null>(null);
+  const [dataMigration, setDataMigration] =
+    useState<DataMigrationChoice>("none");
   const [customerContact, setCustomerContact] = useState("");
   const [computerFieldBlurred, setComputerFieldBlurred] = useState(false);
   const [contactFieldBlurred, setContactFieldBlurred] = useState(false);
@@ -206,11 +212,20 @@ export function OrderWizard({
         tier,
         delivery,
         hddRemoval,
+        dataMigration,
         appBundles,
         portableVmOn,
         portableVmReady: portableVmHandoff != null,
       }),
-    [tier, delivery, hddRemoval, appBundles, portableVmOn, portableVmHandoff],
+    [
+      tier,
+      delivery,
+      hddRemoval,
+      dataMigration,
+      appBundles,
+      portableVmOn,
+      portableVmHandoff,
+    ],
   );
 
   function closeFullscreen() {
@@ -323,6 +338,11 @@ export function OrderWizard({
           supportChoice,
           selectedYear,
           selectedMatchId,
+          dataMigration: dataMigration !== "none",
+          dataMigrationSize:
+            dataMigration === "standard" || dataMigration === "large"
+              ? dataMigration
+              : null,
         }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
@@ -748,7 +768,14 @@ export function OrderWizard({
                   ))}
                 </div>
               </div>
+
+              <WizardDataMigration
+                value={dataMigration}
+                onChange={setDataMigration}
+              />
+
               <details
+                data-testid="wizard-addons-section"
                 className="rounded-2xl border border-edge bg-sunken/15 open:bg-sunken/25"
                 open={addonsSectionOpen}
                 onToggle={(e) =>
@@ -1057,6 +1084,7 @@ export function OrderWizard({
                     supportChoice={supportChoice}
                     delivery={delivery}
                     hddRemoval={hddRemoval}
+                    dataMigration={dataMigration}
                     appBundles={appBundles}
                     portableVmOn={portableVmOn}
                     portableVmHandoff={portableVmHandoff}

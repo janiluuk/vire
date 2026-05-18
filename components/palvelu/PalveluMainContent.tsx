@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { HomeCompatibilityCheckerDynamic } from "@/components/koneet/HomeCompatibilityCheckerDynamic";
 import { ComponentSourcingSection } from "@/components/palvelu/ComponentSourcingSection";
+import { SpeedBar } from "@/components/home/SpeedBar";
 import { PalveluB2bTeaser } from "@/components/palvelu/PalveluB2bTeaser";
 import { ServicePricingSection } from "@/components/palvelu/ServicePricingSection";
 import {
@@ -142,6 +143,8 @@ export async function PalveluMainContent({
         beforeItems={[t("storyBefore1"), t("storyBefore2"), t("storyBefore3")]}
         afterItems={[t("storyAfter1"), t("storyAfter2"), t("storyAfter3")]}
       />
+
+      <SpeedBar />
 
       <HomeCompatibilityCheckerDynamic
         locale={locale}

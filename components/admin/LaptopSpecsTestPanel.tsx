@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { LaptopSpecsCard } from "@/components/laptop-specs/LaptopSpecsCard";
-import type { LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
+import { EMPTY_STRUCTURED_SPECS, type LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
 
 type CardLabels = {
   title: string;
@@ -72,7 +72,8 @@ export function LaptopSpecsTestPanel(props: {
           summary: json.summary ?? null,
           specUrl: json.specUrl ?? null,
           referenceSummary: json.referenceSummary ?? null,
-        });
+          specs: EMPTY_STRUCTURED_SPECS,
+        } as LaptopSpecsInsight);
       } else {
         setError(`${formLabels.errorPrefix}: ${json.code ?? "unknown"}`);
       }

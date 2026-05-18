@@ -3,6 +3,7 @@ import { getStripe } from "@/lib/billing/stripe";
 export type ThankYouView =
   | { ok: true; kind: "service"; orderId: string }
   | { ok: true; kind: "usb"; orderId: string }
+  | { ok: true; kind: "starter_kit"; orderId: string }
   | { ok: false };
 
 export async function thankYouFromSession(
@@ -27,6 +28,16 @@ export async function thankYouFromSession(
         ok: true,
         kind: "usb",
         orderId: session.metadata.usbOrderId,
+      };
+    }
+    if (
+      session.metadata?.kind === "starter_kit" &&
+      session.metadata.starterKitOrderId
+    ) {
+      return {
+        ok: true,
+        kind: "starter_kit",
+        orderId: session.metadata.starterKitOrderId,
       };
     }
   } catch {

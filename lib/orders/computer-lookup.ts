@@ -1,9 +1,24 @@
 import { prisma } from "@/lib/db/prisma";
 import {
+  mergeReferenceFromWebInsight,
+  webSpecsFromInsight,
+} from "@/lib/orders/merge-web-specs";
+import { checkCompatibility } from "@/lib/specs/compatibility";
+import {
   coerceLaptopMakeModelForLookup,
   lookupLaptopReference,
 } from "@/lib/specs/laptop-reference-lookup";
-import { checkCompatibility } from "@/lib/specs/compatibility";
+import {
+  resolveLaptopSpecs,
+  withSpecsTimeout,
+} from "@/lib/specs/laptop-specs";
+import type { LaptopStructuredSpecs } from "@/lib/specs/laptop-specs-structured";
+import {
+  getSpecsSearxngBaseUrl,
+  isSpecsLookupEnabled,
+} from "@/lib/specs/specs-env";
+
+const WEB_SPECS_LOOKUP_MS = 28_000;
 
 export type ComputerLookupMatch = {
   id: string;
@@ -37,6 +52,7 @@ export type ComputerLookupCompatibility = {
 export type ComputerLookupWebSpecs = {
   summary: string | null;
   specUrl: string | null;
+  specs: LaptopStructuredSpecs;
 };
 
 export type ComputerLookupResult = {
@@ -48,6 +64,8 @@ export type ComputerLookupResult = {
   compatibility: ComputerLookupCompatibility | null;
   /** Optional SearXNG/LLM hints when `includeWebSpecs` is requested and configured. */
   webSpecs?: ComputerLookupWebSpecs | null;
+  /** Structured fields from web agent (also merged into `reference` where empty). */
+  discovered?: LaptopStructuredSpecs | null;
 };
 
 function normalizeSearch(s: string): string {
@@ -126,10 +144,25 @@ async function loadReference(
   };
 }
 
+function yearOptionsFromDiscovered(
+  specs: LaptopStructuredSpecs | null | undefined,
+): number[] {
+  if (!specs?.yearFrom) return [];
+  const from = specs.yearFrom;
+  const to = specs.yearTo ?? specs.yearFrom;
+  const years: number[] = [];
+  for (let y = from; y <= to && y <= from + 8; y++) years.push(y);
+  return years.sort((a, b) => b - a);
+}
+
 export async function lookupComputerForWizard(
   description: string,
   locale: "fi" | "en",
-  options?: { selectedYear?: number | null; selectedMatchId?: string | null },
+  options?: {
+    selectedYear?: number | null;
+    selectedMatchId?: string | null;
+    includeWebSpecs?: boolean;
+  },
 ): Promise<ComputerLookupResult | null> {
   const trimmed = description.trim();
   if (trimmed.length < 3) return null;
@@ -173,11 +206,6 @@ export async function lookupComputerForWizard(
     status: m.status,
   }));
 
-  const yearOptions = yearOptionsFromMatches(mapped);
-  const needsYearChoice =
-    yearOptions.length > 1 &&
-    (options?.selectedYear == null || options.selectedYear === undefined);
-
   let selected = options?.selectedMatchId
     ? mapped.find((m) => m.id === options.selectedMatchId) ?? null
     : null;
@@ -188,7 +216,34 @@ export async function lookupComputerForWizard(
 
   const refMake = selected?.make ?? make;
   const refModel = selected?.model ?? model;
-  const reference = await loadReference(refMake, refModel, locale);
+  let reference = await loadReference(refMake, refModel, locale);
+
+  let webSpecs: ComputerLookupWebSpecs | null = null;
+  let discovered: LaptopStructuredSpecs | null = null;
+
+  if (
+    options?.includeWebSpecs &&
+    isSpecsLookupEnabled() &&
+    getSpecsSearxngBaseUrl()
+  ) {
+    const insight = await withSpecsTimeout(
+      resolveLaptopSpecs(refMake, refModel, { locale }),
+      WEB_SPECS_LOOKUP_MS,
+    );
+    if (insight) {
+      reference = mergeReferenceFromWebInsight(reference, insight);
+      webSpecs = webSpecsFromInsight(insight);
+      discovered = insight.specs;
+    }
+  }
+
+  let yearOptions = yearOptionsFromMatches(mapped);
+  if (yearOptions.length === 0 && discovered) {
+    yearOptions = yearOptionsFromDiscovered(discovered);
+  }
+  const needsYearChoice =
+    yearOptions.length > 1 &&
+    (options?.selectedYear == null || options.selectedYear === undefined);
 
   let compatibility: ComputerLookupCompatibility | null = null;
   if (selected) {
@@ -225,5 +280,7 @@ export async function lookupComputerForWizard(
     yearOptions,
     needsYearChoice,
     compatibility,
+    webSpecs,
+    discovered,
   };
 }

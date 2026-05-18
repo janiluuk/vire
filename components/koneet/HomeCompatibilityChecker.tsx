@@ -15,6 +15,7 @@ import { ORDER_WIZARD_PATH } from "@/lib/site/order-wizard-path";
 import { usePrefetchRouteHandlers } from "@/lib/site/route-prefetch";
 import { ComputerLookupSpecsSkeleton } from "@/components/wizard/ComputerLookupSpecsSkeleton";
 import { KONEET_SECTION_ID } from "@/components/koneet/koneet-section-id";
+import { ComputerPhotoAttach } from "@/components/koneet/ComputerPhotoAttach";
 
 type Props = {
   locale: string;
@@ -166,6 +167,16 @@ export function HomeCompatibilityChecker({
         <p className="text-base font-light leading-relaxed text-fog">
           {w("computerHint")}
         </p>
+
+        <ComputerPhotoAttach
+          locale={locale}
+          disabled={loading}
+          onApplyDescription={(text) => {
+            setDescription(text);
+            setSelectedMatchId(null);
+            setSelectedYear(null);
+          }}
+        />
       </div>
 
       {loading && trimmed.length >= 3 ? (
@@ -260,7 +271,9 @@ export function HomeCompatibilityChecker({
         </p>
       ) : null}
 
-      {!loading && lookup?.webSpecs?.summary ? (
+      {!loading &&
+      lookup?.webSpecs &&
+      (lookup.webSpecs.summary || lookup.webSpecs.specUrl) ? (
         <div
           className="mt-4 rounded-lg border border-edge bg-sunken/40 px-4 py-3 text-sm text-ink"
           data-testid="home-web-specs-hint"

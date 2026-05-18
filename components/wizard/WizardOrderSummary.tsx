@@ -12,6 +12,7 @@ import {
   tierLabelKey,
   WIZARD_STEP,
 } from "@/lib/wizard/wizard-display-labels";
+import type { DataMigrationChoice } from "@/components/wizard/WizardDataMigration";
 import type { WizardSupportChoice, WizardTier } from "@/lib/wizard/wizard-types";
 import {
   formatWizardPriceEuro,
@@ -37,6 +38,7 @@ type Props = {
   supportChoice: WizardSupportChoice;
   delivery: DeliveryMethod | null;
   hddRemoval: HddRemovalOption;
+  dataMigration: DataMigrationChoice;
   appBundles: AppBundleId[];
   portableVmOn: boolean;
   portableVmHandoff: PortableVmHandoff | null;
@@ -80,6 +82,7 @@ export function WizardOrderSummary({
   supportChoice,
   delivery,
   hddRemoval,
+  dataMigration,
   appBundles,
   portableVmOn,
   portableVmHandoff,
@@ -146,6 +149,18 @@ export function WizardOrderSummary({
           {portableVmHandoff === PortableVmHandoff.CUSTOMER_STORAGE
             ? w("vmHandoffCustomerSummary")
             : w("vmHandoffShippedSummary")}
+        </SummaryRow>
+      ) : null}
+
+      {dataMigration !== "none" ? (
+        <SummaryRow
+          label={w("summaryMigration")}
+          editStep={WIZARD_STEP.supportAddons}
+          onEditStep={onEditStep}
+        >
+          {dataMigration === "large"
+            ? w("migrationLarge")
+            : w("migrationStandard")}
         </SummaryRow>
       ) : null}
 
