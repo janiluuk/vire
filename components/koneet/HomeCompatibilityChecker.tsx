@@ -132,18 +132,19 @@ export function HomeCompatibilityChecker({
     <section
       id={KONEET_SECTION_ID}
       aria-labelledby="home-compat-title"
-      className="scroll-mt-28"
+      className="sparkki-card scroll-mt-28 p-6 sm:p-8"
       data-testid="home-compatibility-checker"
     >
       <header>
+        <p className="sparkki-eyebrow">{t("homeCompatEyebrow")}</p>
         <h2
           id="home-compat-title"
-          className="font-display text-3xl font-extrabold tracking-section text-ink"
+          className="font-display text-3xl font-extrabold tracking-section text-ink md:text-4xl"
         >
-          {t("title")}
+          {t("homeCompatTitle")}
         </h2>
         <p className="mt-4 max-w-3xl text-lg font-light leading-relaxed text-fog">
-          {t("homeIntro")}
+          {t("homeCompatIntro")}
         </p>
       </header>
 

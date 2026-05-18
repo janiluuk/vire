@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { HomeCompatibilityCheckerDynamic } from "@/components/koneet/HomeCompatibilityCheckerDynamic";
 import { PalveluHero, PalveluMainContent } from "@/components/palvelu/PalveluMainContent";
 import { ServiceHubTabs } from "@/components/navigation/ServiceHubTabs";
 import { OrderWizardLazy } from "@/components/wizard/OrderWizardLazy";
@@ -12,19 +13,19 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "palvelu" });
   return {
-    title: t("title"),
-    description: t("intro"),
+    title: t("heroTitle"),
+    description: t("metaDescription"),
     ...localePathAlternates(locale, ""),
     openGraph: {
-      title: t("title"),
-      description: t("intro"),
+      title: t("heroTitle"),
+      description: t("metaDescription"),
       type: "website",
       locale: locale === "fi" ? "fi_FI" : "en_US",
     },
     twitter: {
       card: "summary_large_image",
-      title: t("title"),
-      description: t("intro"),
+      title: t("heroTitle"),
+      description: t("metaDescription"),
     },
   };
 }
@@ -47,7 +48,11 @@ export default async function HomePage({
       <ServiceHubTabs />
       <div className="mx-auto max-w-content flex-1 space-y-16 px-6 py-12 sm:px-12 sm:py-16">
         <PalveluHero />
-        <PalveluMainContent locale={locale} initialComputer={initialComputer} />
+        <HomeCompatibilityCheckerDynamic
+          locale={locale}
+          initialDescription={initialComputer}
+        />
+        <PalveluMainContent />
         <OrderWizardLazy locale={locale} />
       </div>
     </div>
