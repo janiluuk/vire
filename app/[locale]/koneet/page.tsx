@@ -17,12 +17,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function KoneetPage({ searchParams }: Props) {
+export default async function KoneetPage({ params, searchParams }: Props) {
   const query = searchParams.q?.trim() ?? "";
 
   return (
     <div className="mx-auto max-w-content px-6 py-12 sm:px-12 sm:py-16">
-      <KoneetCompatibilitySection query={query} searchPath="/koneet" />
+      <KoneetCompatibilitySection
+        query={query}
+        locale={params.locale}
+        searchPath="/koneet"
+        showRequestForm
+      />
     </div>
   );
 }

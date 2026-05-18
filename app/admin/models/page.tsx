@@ -4,6 +4,10 @@ import {
   createComputerModel,
   importComputerModelsCsv,
 } from "@/app/admin/models/actions";
+import {
+  MODELS_PAGE_SIZE,
+  parseModelsListParams,
+} from "@/lib/admin/models-query";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getAdminMessages } from "@/lib/admin/get-admin-messages";
@@ -27,6 +31,8 @@ export default async function AdminModelsPage({
 }: {
   searchParams?: {
     status?: string;
+    q?: string;
+    page?: string;
     error?: string;
     detail?: string;
     imported?: string;
@@ -54,18 +60,18 @@ export default async function AdminModelsPage({
   }
 
   const statusParam = searchParams?.status;
-  const where =
-    statusParam &&
-    ["UNCHECKED", "IN_REVIEW", "APPROVED", "REJECTED"].includes(statusParam)
-      ? { status: statusParam as ModelCheckStatus }
-      : {};
+  const { where, page, q } = parseModelsListParams(searchParams);
+  const skip = (page - 1) * MODELS_PAGE_SIZE;
 
-  const [models, referenceCount, internetCacheCount, internetCacheRows] =
+  const [models, modelsTotal, referenceCount, internetCacheCount, internetCacheRows] =
     await Promise.all([
       prisma.computerModel.findMany({
         where,
         orderBy: [{ status: "asc" }, { updatedAt: "desc" }],
+        skip,
+        take: MODELS_PAGE_SIZE,
       }),
+      prisma.computerModel.count({ where }),
       prisma.laptopReferenceSpec.count(),
       prisma.laptopSpecsInternetCache.count({
         where: { expiresAt: { gt: now } },
@@ -252,27 +258,98 @@ export default async function AdminModelsPage({
         <h2 id="compat-models-title" className="text-xl font-bold text-ink">
           {a.modelsStatCompatibility}
         </h2>
+
+        <form
+          method="get"
+          className="mt-4 flex flex-wrap items-end gap-3"
+          role="search"
+        >
+          {statusParam ? (
+            <input type="hidden" name="status" value={statusParam} />
+          ) : null}
+          <div className="min-w-[200px] flex-1">
+            <label htmlFor="models-q" className="mb-2 block text-sm font-semibold">
+              {a.modelsSearchLabel}
+            </label>
+            <input
+              id="models-q"
+              name="q"
+              type="search"
+              defaultValue={q}
+              placeholder={a.modelsSearchPlaceholder}
+              className="min-h-tap w-full rounded-lg border border-em px-4 text-lg"
+            />
+          </div>
+          <button
+            type="submit"
+            className="min-h-tap rounded-lg bg-sparkki-green px-5 py-2.5 font-semibold text-canvas"
+          >
+            {a.modelsSearchSubmit}
+          </button>
+        </form>
+
+        <p className="mt-3 text-sm text-fog">
+          {a.modelsPaginationSummary
+            .replace("{from}", String(models.length === 0 ? 0 : skip + 1))
+            .replace("{to}", String(skip + models.length))
+            .replace("{total}", String(modelsTotal))}
+        </p>
+
         <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={a.modelsFilterLabel}>
           <Link
-            href="/admin/models"
+            href={q ? `/admin/models?q=${encodeURIComponent(q)}` : "/admin/models"}
             className={`min-h-tap rounded-lg border border-em px-4 py-2 font-semibold ${
               !statusParam ? "border-g bg-sparkki-green text-canvas" : "bg-card hover:bg-canvas"
             }`}
           >
             {a.filterAll}
           </Link>
-          {(["UNCHECKED", "IN_REVIEW", "APPROVED", "REJECTED"] as const).map((s) => (
+          {(["UNCHECKED", "IN_REVIEW", "APPROVED", "REJECTED"] as const).map((s) => {
+            const qs = new URLSearchParams();
+            qs.set("status", s);
+            if (q) qs.set("q", q);
+            return (
             <Link
               key={s}
-              href={`/admin/models?status=${s}`}
+              href={`/admin/models?${qs.toString()}`}
               className={`min-h-tap rounded-lg border border-em px-4 py-2 font-semibold ${
                 statusParam === s ? "border-g bg-sparkki-green text-canvas" : "bg-card hover:bg-canvas"
               }`}
             >
               {statusLabel(s)}
             </Link>
-          ))}
+          );
+          })}
         </div>
+
+        {modelsTotal > MODELS_PAGE_SIZE ? (
+          <nav className="mt-4 flex flex-wrap gap-2" aria-label={a.modelsPaginationNav}>
+            {page > 1 ? (
+              <Link
+                href={`/admin/models?${new URLSearchParams({
+                  ...(statusParam ? { status: statusParam } : {}),
+                  ...(q ? { q } : {}),
+                  page: String(page - 1),
+                }).toString()}`}
+                className="min-h-tap rounded-lg border border-em px-4 py-2 font-semibold hover:bg-canvas"
+              >
+                {a.modelsPaginationPrev}
+              </Link>
+            ) : null}
+            {skip + models.length < modelsTotal ? (
+              <Link
+                href={`/admin/models?${new URLSearchParams({
+                  ...(statusParam ? { status: statusParam } : {}),
+                  ...(q ? { q } : {}),
+                  page: String(page + 1),
+                }).toString()}`}
+                className="min-h-tap rounded-lg border border-em px-4 py-2 font-semibold hover:bg-canvas"
+              >
+                {a.modelsPaginationNext}
+              </Link>
+            ) : null}
+          </nav>
+        ) : null}
 
         <div className="sparkki-card mt-4 overflow-x-auto">
           <table className="min-w-full text-left text-lg">

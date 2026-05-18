@@ -125,6 +125,7 @@ Set **`CRON_SECRET`** in production. Callers must send **`Authorization: Bearer 
 |-------|--------------------------|---------|
 | **`GET /api/cron/care-lifecycle`** | Daily 08:00 UTC | Day **75** and **88** Care upsell emails for **`DONE`** orders (`careUpsell75SentAt` / `careUpsell88SentAt` on `Order`). Skips active Care subscribers and wizard Care+ interest. Requires **`RESEND_API_KEY`**. |
 | **`GET /api/cron/stale-orders`** | Daily 04:15 UTC | Cancels **`PENDING`** orders older than **`STALE_ORDER_MAX_AGE_HOURS`** (default **24**). |
+| **`GET /api/cron/specs-cache-cleanup`** | Daily 04:30 UTC | Deletes expired rows from **`LaptopSpecsInternetCache`** (`expiresAt` in the past). |
 
 On non-Vercel hosts, trigger the same URLs from cron or Uptime Kuma with the bearer header.
 

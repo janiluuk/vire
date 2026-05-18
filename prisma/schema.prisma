@@ -96,6 +96,21 @@ model UsbOrder {
   locale          String   @default("fi")
 }
 
+/// Sparkki Starter Kit — USB + quick-start card + stickers (FEATURES.md #6).
+model StarterKitOrder {
+  id              String    @id @default(cuid())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  status          String    @default("pending")
+  customerName    String
+  customerEmail   String
+  address         String
+  stripeSessionId String?
+  shippedAt       DateTime?
+  trackingNumber  String?
+  locale          String    @default("fi")
+}
+
 /// Processed Stripe webhook event ids (idempotency; delete row on handler failure so Stripe can retry).
 model StripeProcessedEvent {
   id        String   @id
@@ -134,6 +149,16 @@ model LaptopSpecsInternetCache {
   modelDisplay     String
   summary          String?
   specUrl          String?
+  cpu              String?
+  ram              String?
+  storage          String?
+  gpu              String?
+  display          String?
+  weight           String?
+  maxRamGb         Int?
+  ssdSlot          String?
+  yearFrom         Int?
+  yearTo           Int?
   searxResultCount Int      @default(0)
   usedLlm          Boolean  @default(false)
   expiresAt        DateTime
@@ -179,7 +204,12 @@ model ComputerModel {
   checkedBy  String?
   checkedAt  DateTime?
   /// Public URL segment (`/koneet/[slug]`); derived from make+model.
-  slug       String?  @unique
+  slug              String?  @unique
+  recommendedSsd    String?
+  ssdShopUrl        String?
+  estimatedBootSec  Int?
+  publicNotes       String?
+  viewCount         Int      @default(0)
 
   @@unique([make, model])
 }

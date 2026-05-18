@@ -30,6 +30,9 @@ const baseOrder = {
   appBundleIds: [],
   portableVmAddon: false,
   portableVmHandoff: null,
+  carePackageInterest: null,
+  careUpsell75SentAt: null,
+  careUpsell88SentAt: null,
 } satisfies Order;
 
 const baseUsb = {

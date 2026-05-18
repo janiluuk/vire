@@ -256,3 +256,31 @@ export function buildUsbLineItems(
     },
   ];
 }
+
+export function buildStarterKitLineItems(
+  amountCents: number,
+  priceId?: string,
+  receiptLocale: "fi" | "en" = "fi",
+): CheckoutLineItem[] {
+  if (priceId) {
+    return [{ price: priceId, quantity: 1 }];
+  }
+  const name =
+    receiptLocale === "en"
+      ? "Sparkki Starter Kit"
+      : "Sparkki Starter Kit";
+  const description =
+    receiptLocale === "en"
+      ? "Bootable USB, laminated quick-start card, keyboard stickers — postage included (Finland)"
+      : "Käynnistettävä USB, laminoitu pika-aloituskortti, näppäintarrat — postitus sisältyy (Suomi)";
+  return [
+    {
+      quantity: 1,
+      price_data: {
+        currency: "eur",
+        unit_amount: amountCents,
+        product_data: { name, description },
+      },
+    },
+  ];
+}

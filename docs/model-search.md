@@ -103,7 +103,9 @@ Accept: application/json
 
 Query example: `Lenovo ThinkPad T450 laptop specifications review`.
 
-Timeout: **12 s**. On failure or empty results, `summary` / `specUrl` stay null (reference DB text may still appear).
+Timeout: **14 s**. On failure or empty results, `summary` / `specUrl` stay null (reference DB text may still appear).
+
+If `format=json` returns **403** (common behind WAF), Sparkki automatically falls back to parsing the **HTML** results page (same query, no `format` param).
 
 ### SearXNG instance requirements
 
@@ -247,7 +249,7 @@ Open **`/admin/ai-testing`** (admin login required). The env panel shows whether
 
 ### Not required for basic model match
 
-- SearXNG and Ollama are **not** used by `computer-lookup` today. The home checker specs table comes from **`ComputerModel`** + **`LaptopReferenceSpec`** only. Web search enriches **`/api/public/laptop-specs`**, order lookup, and admin AI testing.
+- With **`includeWebSpecs: true`**, `POST /api/public/computer-lookup` runs the same SearXNG + LLM agent (up to ~28 s), merges **CPU/RAM/storage** into the specs table, and persists rows in **`LaptopSpecsInternetCache`** + **`LaptopReferenceSpec`**. The home checker and wizard computer step send this flag by default.
 
 ---
 

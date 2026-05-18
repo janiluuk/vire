@@ -117,6 +117,34 @@ Returns a redacted service or USB order when ID + email match. **429** on rate l
 
 ---
 
+## Computer lookup (home checker / wizard)
+
+### `POST /api/public/computer-lookup`
+
+**Body:** `{ "description": string, "locale"?: "fi"|"en", "selectedYear"?: number, "selectedMatchId"?: string, "includeWebSpecs"?: boolean }`
+
+Returns matched `ComputerModel` rows, optional web specs (when `SPECS_*` configured), and a compatibility verdict. **429** on rate limit.
+
+### `POST /api/public/computer-photo-hint` (optional)
+
+**Body:** `{ "imageBase64": string, "mimeType": "image/jpeg"|"image/png"|"image/webp", "locale"?: "fi"|"en" }`
+
+Vision hint for make/model from a customer photo (Ollama). **503** if `SPECS_PHOTO_ENABLED=false` or AI not configured. **429** on rate limit.
+
+### `POST /api/checkout/starter-kit`
+
+**Body:** `{ "customerName", "customerEmail", "address", "locale": "fi"|"en" }` — same shape as USB checkout.
+
+Returns `{ url, orderId }` for Stripe Checkout (`metadata.kind=starter_kit`). **503** if Stripe not configured.
+
+### `POST /api/public/model-request`
+
+**Body:** `{ "make", "model", "contact" (phone or email), "locale"?: "fi"|"en" }`
+
+Creates or updates an `UNCHECKED` `ComputerModel` and stores contact in admin notes. **429** on rate limit.
+
+---
+
 ## Laptop spec hints
 
 ### `POST /api/public/laptop-specs`
@@ -126,6 +154,28 @@ Returns a redacted service or USB order when ID + email match. **429** on rate l
 **Response:** `{ "ok": true, "summary": string | null, "specUrl": string | null, "referenceSummary"?: string | null }` — **`referenceSummary`** comes from the imported **`LaptopReferenceSpec`** retail dataset when a row matches **make + model** (best-effort; not a Sparkki compatibility verdict).
 
 Uses SearXNG / optional LLM (server env). **429** on rate limit. Configuration: **[`docs/model-search.md`](./model-search.md)**.
+---
+
+## Sparkki Care (`/oma-sparkki`)
+
+### `POST /api/care/access-link`
+
+**Body:** `{ "email": string, "locale"?: "fi"|"en" }`
+
+Sends a 7-day magic link to active Care subscribers (always returns `{ ok: true }` to avoid enumeration). Requires Resend + `NEXTAUTH_SECRET` or `CARE_ACCESS_SECRET`.
+
+### `POST /api/care/cancel`
+
+**Body:** `{ "token": string }` — token from `/oma-sparkki?token=…`
+
+Schedules Stripe subscription cancellation at period end. **401** if token invalid.
+
+### `POST /api/care/billing-portal`
+
+**Body:** `{ "token": string, "locale"?: "fi"|"en" }`
+
+Returns `{ ok: true, url }` for Stripe Customer Portal (update card). Requires `stripeCustomerId` on `CareSubscription`.
+
 ---
 
 ## Support contact (`/tuki` form)

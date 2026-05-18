@@ -943,7 +943,7 @@ noVNC entry URLs are documented in `infra/try-linux/README.md` (typically `.../t
 | Stack **Contentlayer** | **Not used** | Guides use **`gray-matter`** + `lib/content/guide-mdx.ts` and `lib/content/guide-content.ts`. Update stack table when convenient; behaviour matches intent. |
 | Phase 5 **data migration add-on** | **Backend only** | `Order.dataMigration*` in Prisma + checkout validation + admin + order lookup. **No `<DataMigrationCard />` in the wizard** — customers cannot select migration at checkout (**`FEATURES.md` #1**). |
 | **`FEATURES.md` #2 Care lifecycle** | **Partial** | `/care` + Stripe subscription + welcome/payment-failed emails. **Missing:** scheduled day 75/88 upsell emails, `/oma-sparkki` dashboard, monthly tip newsletter, churn flags in admin. |
-| **`FEATURES.md` #3 `/koneet` database** | **Partial** | List route redirects to home checker; **`/koneet/[slug]`** pages work but lack FEATURES spec fields (`recommendedSsd`, `viewCount`, dynamic OG, ISR, “request check” form). `ComputerModel` schema has no `slug` column (slug derived in code). |
+| **`FEATURES.md` #3 `/koneet` database** | **Partial** | **`/koneet`** hub + search + request form shipped; **`/koneet/[slug]`** has specs, recommended SSD, related models, dynamic OG, view count. **Still open:** ISR, filter pills on hub, `POST` admin notify on request. |
 | **`FEATURES.md` #4 PDF checker** | **Not started** | `apps/sparkki-checker` outputs **JSON** only; optional LAN fetch to `POST /api/public/laptop-specs`. No PDF/QR report. |
 | **`FEATURES.md` #6 Starter kit** | **Not started** | No product card, Stripe price, `StarterKitOrder`, or `/admin/starter-kit`. |
 | **`FEATURES.md` #8–11** | **Backlog** | Group upgrade day, corporate donations, workshops, annual report — correctly **not** in phase checklists; no app routes found. |
@@ -967,10 +967,10 @@ Functional tests require migrated DB (`public.Order` etc.). **`npm run test:func
 | **P0** | **Data migration card in order wizard** | Schema + Stripe line items exist; without UI, Feature 1 does not reduce checkout fear. Add step-3 card per **`FEATURES.md`**; include prep checklist in confirmation email. |
 | **P0** | **Reconcile `/koneet` IA** | Middleware sends `/koneet` → home anchor while sitemap still emits `/koneet/[slug]` URLs. Either restore a dedicated search hub or noindex detail pages until content is rich; avoid confusing SEO + user bookmarks. |
 | **P1** | **Mount or retire `SpeedBar`** | Strong emotional proof on design system; currently unused. Prefer home section below hero with `IntersectionObserver` animation per **`DESIGN_SYSTEM.md`**. |
-| **P1** | **Richer `/koneet/[slug]` pages** | Add recommended SSD, boot-time estimate, order CTA with wizard prefill, related models — unlocks FEATURES #3 SEO value. |
+| **P1** | **Richer `/koneet/[slug]` pages** | **Shipped** — recommended SSD, boot-time estimate, order CTA, related models, dynamic OG, request-check form on `/koneet`. |
 | **P1** | **Care lifecycle automation** | Cron/worker (Vercel cron, Inngest, or external scheduler): day 75/88 emails tied to `Order.completedAt`; link to `/care`. Reduces manual ops. |
-| **P2** | **`/oma-sparkki` magic-link dashboard** | Cancel subscription, Discord link, annual Calendly — completes Care feature without full accounts. |
-| **P2** | **Starter kit checkout** | Low-effort SKU adjacent to USB flow; reuse Stripe + postal field pattern from `/itse`. |
+| **P2** | **`/oma-sparkki` magic-link dashboard** | **Shipped** — HMAC link, request-by-email, cancel at period end, Stripe billing portal, Discord + Calendly cards. |
+| **P2** | **Starter kit checkout** | **Shipped** — `StarterKitOrder`, `/api/checkout/starter-kit`, `/itse` product card, `/admin/starter-kit`. |
 | **P2** | **Sync `docs/site-pages.md` + screenshots** | Run `npm run docs:screenshots` after IA freeze; fix copy (service landing at `/`, `/tilaa` wizard). |
 | **P3** | **Transformation gallery** | Product vision “before/after stories” still partial (`TransformationCard` only). Optional marketing page under `/tietoa/galleria` or home section. |
 
@@ -981,8 +981,8 @@ Functional tests require migrated DB (`public.Order` etc.). **`npm run test:func
 | **P1** | **`/koneet/[slug]` data fetching** | Detail page loads **all** `computerModel` rows then filters in memory (`findMany` + `.find`). Replace with `findFirst` by slug or add DB `slug` + unique index. |
 | **P1** | **Sitemap build at scale** | Same full-table `findMany` for every model on each sitemap generation. Paginate or cache; consider excluding `UNCHECKED` models from public sitemap. |
 | **P2** | **Lighthouse performance budget** | CI threshold is **0.65** (warn). Target **≥0.80** on `/` and `/tilaa`: audit Three.js mesh count on mobile, `next/image` for any hero assets, reduce client JS on home (wizard already lazy). |
-| **P2** | **Laptop-specs cache hygiene** | `LaptopSpecsInternetCache` has `expiresAt` — add scheduled cleanup job so Postgres does not grow unbounded in production. |
-| **P2** | **Admin models list** | For large CSV imports, add server-side search/pagination (admin UX + DB load). |
+| **P2** | **Laptop-specs cache hygiene** | **Shipped** — `GET /api/cron/specs-cache-cleanup` (daily). |
+| **P2** | **Admin models list** | **Shipped** — server-side search (`q`) + pagination (50/page) on `/admin/models`. |
 | **P3** | **ISR / static generation for approved models** | FEATURES spec called for ISR on detail pages; today fully dynamic. Regenerate on `ComputerModel` update webhook from admin save. |
 
 ### Stability — correctness, security, operations
@@ -990,7 +990,7 @@ Functional tests require migrated DB (`public.Order` etc.). **`npm run test:func
 | Priority | Item | Rationale |
 |----------|------|-----------|
 | **P0** | **Require `UPSTASH_REDIS_*` in production** | In-memory rate limits do not work across Vercel/serverless instances; document as required for checkout, support-contact, compatibility POST. |
-| **P1** | **Vitest DB guard** | Fail fast with clear message if migrations not applied; optional `globalSetup` that runs `migrate deploy` in CI only (already does). |
+| **P1** | **Vitest DB guard** | **Shipped** — `tests/functional/global-setup.ts` + `requireMigratedDatabase()` before functional tests when `DATABASE_URL` is set. |
 | **P1** | **Stripe webhook replay tests** | Extend `stripe-webhook.test.ts` with care subscription + duplicate-event idempotency fixtures. |
 | **P1** | **Order PENDING cleanup** | Abandoned Checkout sessions leave `PENDING` orders; scheduled job to mark stale (>24h) as cancelled or archive for admin clarity. |
 | **P2** | **CSP hardening path** | Baseline shipped with `unsafe-inline` / `unsafe-eval`. Plan nonce-based `script-src` after production violation reports stabilize (`docs/operations.md`). |
@@ -1001,13 +1001,14 @@ Functional tests require migrated DB (`public.Order` etc.). **`npm run test:func
 
 ### Suggested “next up” queue (May 2026)
 
-*Shipped in repo (May 2026): wizard data migration UI; `/koneet` hub restored + `ComputerModel.slug` + indexed lookup; Upstash production guard + stale-order cron; Care day 75/88 cron + emails; `SpeedBar` on home; `docs/site-pages.md` refresh.*
+*Shipped in repo (May 2026): wizard data migration UI; `/koneet` hub restored + `ComputerModel.slug` + indexed lookup; Upstash production guard + stale-order cron; Care day 75/88 cron + emails; `SpeedBar` on home; optional photo attach on model checker; richer `/koneet/[slug]` (specs, OG image, related models, request-check form); Vitest DB guard for `test:functional`.*
 
-1. **Richer `/koneet/[slug]`** pages (recommended SSD, dynamic OG, related models).  
-2. **`/oma-sparkki`** magic-link dashboard.  
-3. **Starter kit** checkout.  
-4. **Vitest DB guard** for local `test:functional` without migrate.  
-5. **Stricter CSP** (nonces) after production violation reports stabilize.
+1. **Stricter CSP** (nonces) after production violation reports stabilize.  
+2. **Monthly Care tip newsletter** cron + template.  
+3. **PDF spec checker** (`apps/sparkki-checker` report export).  
+4. **ISR** for `/koneet/[slug]` when model catalog stabilises.
+
+*Shipped (May 2026 continuation): `/oma-sparkki` magic-link dashboard; Starter Kit checkout + admin; specs-cache cleanup cron; admin models search + pagination.*
 
 ---
 

@@ -4,18 +4,24 @@ import { searchComputerModels } from "@/lib/koneet/computer-model-db";
 import { computerModelSlug } from "@/lib/site/computer-model-slug";
 
 import { KONEET_SECTION_ID } from "@/components/koneet/koneet-section-id";
+import { KoneetRequestCheckForm } from "@/components/koneet/KoneetRequestCheckForm";
 
 export { KONEET_SECTION_ID };
 
 type Props = {
   query?: string;
+  locale?: string;
   /** GET form target path (default `/` for home embed). */
   searchPath?: string;
+  /** Show “request a check” form (default on `/koneet` hub). */
+  showRequestForm?: boolean;
 };
 
 export async function KoneetCompatibilitySection({
   query = "",
+  locale = "fi",
   searchPath = "/",
+  showRequestForm = false,
 }: Props) {
   const t = await getTranslations("koneet");
   const q = query.trim();
@@ -113,6 +119,10 @@ export async function KoneetCompatibilitySection({
           })}
         </ul>
       )}
+
+      {showRequestForm ? (
+        <KoneetRequestCheckForm locale={locale} />
+      ) : null}
     </section>
   );
 }

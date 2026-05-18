@@ -2,7 +2,11 @@ import Stripe from "stripe";
 import { getRequestId, logApiEvent } from "@/lib/logging/log";
 import { prisma } from "@/lib/db/prisma";
 import { getStripe } from "@/lib/billing/stripe";
-import { sendOrderConfirmedEmail, sendUsbConfirmedEmail } from "@/lib/email/email";
+import {
+  sendOrderConfirmedEmail,
+  sendStarterKitConfirmedEmail,
+  sendUsbConfirmedEmail,
+} from "@/lib/email/email";
 import {
   notifyCarePaymentFailed,
   refreshCareSubscriptionFromInvoice,
@@ -87,6 +91,27 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         orderId: usb.id,
         customerName: usb.customerName,
         locale: usb.locale,
+      });
+    }
+  }
+
+  if (kind === "starter_kit" && session.metadata?.starterKitOrderId) {
+    const kitId = session.metadata.starterKitOrderId;
+    const kit = await prisma.starterKitOrder.findUnique({ where: { id: kitId } });
+    if (
+      kit &&
+      kit.stripeSessionId === session.id &&
+      kit.status === "pending"
+    ) {
+      await prisma.starterKitOrder.update({
+        where: { id: kitId },
+        data: { status: "paid" },
+      });
+      await sendStarterKitConfirmedEmail({
+        to: kit.customerEmail,
+        orderId: kit.id,
+        customerName: kit.customerName,
+        locale: kit.locale,
       });
     }
   }

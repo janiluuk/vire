@@ -9,7 +9,7 @@ describe("computeWizardLiveTotal", () => {
     const live = computeWizardLiveTotal({
       tier: "INSTALL_ONLY",
       delivery: null,
-      hddRemoval: HddRemovalOption.CUSTOMER_KEEPS,
+      hddRemoval: HddRemovalOption.CUSTOMER_REMOVES,
       dataMigration: "none",
       appBundles: [],
       portableVmOn: false,
@@ -25,7 +25,7 @@ describe("computeWizardLiveTotal", () => {
     const live = computeWizardLiveTotal({
       tier: "SSD_BASIC",
       delivery: "DROP_OFF",
-      hddRemoval: HddRemovalOption.CUSTOMER_KEEPS,
+      hddRemoval: HddRemovalOption.CUSTOMER_REMOVES,
       dataMigration: "standard",
       appBundles: [],
       portableVmOn: false,
@@ -36,7 +36,7 @@ describe("computeWizardLiveTotal", () => {
       supportTier: SupportTier.FULL,
       migration: { size: "standard" },
       deliveryMethod: "DROP_OFF",
-      hddRemoval: HddRemovalOption.CUSTOMER_KEEPS,
+      hddRemoval: HddRemovalOption.CUSTOMER_REMOVES,
       appBundles: [],
       portableVm: false,
     });

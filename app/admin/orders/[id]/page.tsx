@@ -6,6 +6,7 @@ import {
   resolveLaptopSpecs,
   withSpecsTimeout,
   type LaptopSpecsInsight,
+  EMPTY_STRUCTURED_SPECS,
 } from "@/lib/specs/laptop-specs";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { prisma } from "@/lib/db/prisma";
@@ -102,6 +103,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
       )) ?? {
         summary: null,
         specUrl: null,
+        specs: EMPTY_STRUCTURED_SPECS,
       };
   }
 
