@@ -1031,6 +1031,7 @@ These apply to every coding session on this project.
 13. **Tailwind only for styling.** No inline `style={{}}` except for Three.js canvas positioning.
 14. **Test Stripe with test keys** (`sk_test_`, `pk_test_`) in development. Never commit real keys.
 15. **Seed script** must be idempotent: running it twice should not create duplicate records.
+16. **Before opening a pull request**, run **`npm run lint`** (and **`npm run test:unit`** when logic changed). CI runs **`next build`**, which fails on ESLint errors — fix lint locally before **`git push`** / **`gh pr create`**.
 
 ---
 

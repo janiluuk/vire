@@ -78,6 +78,9 @@ See [`.env.example`](./.env.example) for `DATABASE_URL`, auth, Stripe, email, pu
 
 ### Tests and CI
 
+**Before a pull request:** run **`npm run lint`** (ESLint via Next.js; same check as production **`next build`**). Add **`npm run test:unit`** when you changed application logic.
+
+- **`npm run lint`** — ESLint; must pass before push/PR.
 - **`npm run test`** — Vitest unit tests plus functional tests (`vitest.functional.config.ts`).
 - **`npm run test:e2e`** — Ensures **`.next/standalone/server.js`** exists (runs **`npm run build`** if not), then **Playwright** runs **`prisma migrate deploy`** and starts **`node server.js`** on **`http://127.0.0.1:1337`**. Free **port 1337** first, or stop **`docker compose` `web`** / **`npm run dev`**. To attach to a server you already started on that port, set **`PLAYWRIGHT_REUSE_SERVER=1`**.
 - **`npm run lh:ci`** — Lighthouse budgets via **`lighthouserc.json`**; the standalone app must already be listening on **1337** (same assumption as the CI Lighthouse step).

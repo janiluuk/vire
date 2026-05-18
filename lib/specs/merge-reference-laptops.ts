@@ -148,7 +148,11 @@ export function mergeReferenceLaptopRows(
   }
 
   return Array.from(map.values())
-    .map(({ _source: _s, ...row }) => row)
+    .map((entry) => {
+      const row = { ...entry };
+      delete row._source;
+      return row;
+    })
     .sort((a, b) => {
       const ma = a.Manufacturer.localeCompare(b.Manufacturer);
       if (ma !== 0) return ma;
