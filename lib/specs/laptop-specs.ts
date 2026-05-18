@@ -296,19 +296,38 @@ export async function resolveLaptopSpecs(
   if (hit && hit.exp > Date.now()) return hit.value;
 
   let referenceSummary: string | null = null;
+  let catalogInsight: LaptopSpecsInsight | null = null;
   try {
-    const { lookupLaptopReference } = await import(
-      "@/lib/specs/laptop-reference-lookup"
-    );
+    const {
+      findLaptopReferenceRow,
+      lookupLaptopReference,
+      referenceRowIsStrong,
+      structuredSpecsFromReferenceRow,
+    } = await import("@/lib/specs/laptop-reference-lookup");
     referenceSummary = await lookupLaptopReference(m, mo, locale);
+    const refRow = await findLaptopReferenceRow(m, mo);
+    if (refRow && referenceRowIsStrong(refRow)) {
+      catalogInsight = {
+        summary: referenceSummary,
+        specUrl: null,
+        referenceSummary,
+        specs: structuredSpecsFromReferenceRow(refRow),
+      };
+    }
   } catch {
     referenceSummary = null;
+    catalogInsight = null;
   }
 
   const attachReference = (insight: LaptopSpecsInsight): LaptopSpecsInsight => ({
     ...insight,
     referenceSummary,
   });
+
+  if (catalogInsight) {
+    cache.set(key, { exp: Date.now() + CACHE_MS, value: catalogInsight });
+    return catalogInsight;
+  }
 
   try {
     const dbCached = await readLaptopSpecsInternetCache(m, mo, locale);

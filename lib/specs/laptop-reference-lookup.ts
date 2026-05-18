@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
+import { hasStrongReferenceFromFields } from "@/lib/specs/reference-laptop-strong";
+import type { LaptopStructuredSpecs } from "@/lib/specs/laptop-specs-structured";
 import type { LaptopReferenceSpec } from "@prisma/client";
 
 /** Normalize brand / model for substring matching. */
@@ -220,14 +222,32 @@ function pickBestRow(
   return rev ?? rows[0] ?? null;
 }
 
+export function structuredSpecsFromReferenceRow(
+  row: LaptopReferenceSpec,
+): LaptopStructuredSpecs {
+  const display =
+    [row.screenSize, row.screenDetail].filter(Boolean).join(" — ") || null;
+  return {
+    cpu: row.cpu,
+    ram: row.ram,
+    storage: row.storage,
+    gpu: row.gpu,
+    display,
+    weight: row.weight,
+    maxRamGb: null,
+    ssdSlot: null,
+    yearFrom: null,
+    yearTo: null,
+  };
+}
+
 /**
- * Looks up a retail-style reference row (imported dataset). Not a compatibility verdict.
+ * Best matching imported catalog row (retail-style dataset). Not a compatibility verdict.
  */
-export async function lookupLaptopReference(
+export async function findLaptopReferenceRow(
   make: string,
   model: string,
-  locale: "fi" | "en" = "fi",
-): Promise<string | null> {
+): Promise<LaptopReferenceSpec | null> {
   const mo = model.trim();
   if (!mo) return null;
 
@@ -236,8 +256,7 @@ export async function lookupLaptopReference(
       where: { modelName: { contains: mo, mode: "insensitive" } },
       take: 120,
     });
-    const best = pickBestRow(rows, mo);
-    return best ? formatReferenceSummary(best, locale) : null;
+    return pickBestRow(rows, mo);
   }
 
   const brands = manufacturerCandidates(make);
@@ -258,7 +277,7 @@ export async function lookupLaptopReference(
   });
 
   let best = pickBestRow(rows, mo);
-  if (best) return formatReferenceSummary(best, locale);
+  if (best) return best;
 
   for (const man of brands) {
     const narrow = await prisma.laptopReferenceSpec.findMany({
@@ -266,8 +285,25 @@ export async function lookupLaptopReference(
       take: 250,
     });
     best = pickBestRow(narrow, mo);
-    if (best) return formatReferenceSummary(best, locale);
+    if (best) return best;
   }
 
   return null;
+}
+
+/** True when the imported catalog row has CPU plus RAM or storage. */
+export function referenceRowIsStrong(row: LaptopReferenceSpec | null): boolean {
+  return hasStrongReferenceFromFields(row);
+}
+
+/**
+ * Looks up a retail-style reference row (imported dataset). Not a compatibility verdict.
+ */
+export async function lookupLaptopReference(
+  make: string,
+  model: string,
+  locale: "fi" | "en" = "fi",
+): Promise<string | null> {
+  const best = await findLaptopReferenceRow(make, model);
+  return best ? formatReferenceSummary(best, locale) : null;
 }

@@ -19,7 +19,7 @@ All `SPECS_*` calls run **on the Sparkki Node.js server** (Docker `web`, `next s
 ### Tables
 
 - **`ComputerModel`** — Sparkki’s own compatibility list (make, model, years, verdict, SSD slot, max RAM, status). Powers list matching and the compatibility estimate on the home checker.
-- **`LaptopReferenceSpec`** — Imported retail-style catalog (`data/reference-laptops.json`). Powers CPU/RAM/storage **reference** rows in the specs table (not an official manufacturer spec sheet).
+- **`LaptopReferenceSpec`** — Merged open retail-style catalog (`data/reference-laptops.json`, built from `data/sources/`). Powers CPU/RAM/storage **reference** rows in the specs table (not an official manufacturer spec sheet). **~1.2k+ SKU rows**; see `data/sources/README.md` for provenance.
 - **`LaptopSpecsInternetCache`** — Persisted SearXNG/LLM results (`summary`, `specUrl`) per make+model+locale. Filled automatically on each live `resolveLaptopSpecs` call; repeat lookups skip the web until `expiresAt`. View and counts in **Admin → Models** (`/admin/models`).
 
 See also [`data/README-reference-laptops.md`](../data/README-reference-laptops.md).
@@ -40,7 +40,7 @@ Seed creates:
 ### Ongoing data
 
 - Add or edit verified models in **Admin → Models** (`/admin/models`).
-- To refresh reference data: replace `data/reference-laptops.json`, clear `LaptopReferenceSpec`, re-run seed (or add an import script).
+- To refresh reference data: edit `data/sources/`, run `npm run reference:build`, then `npm run reference:import` (or seed on empty DB).
 
 ### Verify DB lookup (no web)
 
@@ -84,11 +84,12 @@ Restart the app after changing env vars.
 
 ### Lookup order (web specs)
 
-1. In-memory cache (per Node process, ~6 h).
-2. **`LaptopSpecsInternetCache`** in PostgreSQL (if not expired).
-3. Live SearXNG (+ optional LLM), then **upsert** into the database.
+1. **`LaptopReferenceSpec`** — if the row has **CPU + (RAM or storage)**, return catalog specs immediately (**no web**).
+2. In-memory cache (per Node process, ~6 h).
+3. **`LaptopSpecsInternetCache`** in PostgreSQL (if not expired).
+4. Live SearXNG (+ optional LLM), then **upsert** into the database.
 
-Reference dataset text (`referenceSummary`) is always resolved fresh from **`LaptopReferenceSpec`** on each request.
+`computer-lookup` with `includeWebSpecs: true` also skips step 4 when the catalog row is strong.
 
 ---
 

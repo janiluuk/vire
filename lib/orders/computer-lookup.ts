@@ -6,8 +6,14 @@ import {
 import { checkCompatibility } from "@/lib/specs/compatibility";
 import {
   coerceLaptopMakeModelForLookup,
-  lookupLaptopReference,
+  findLaptopReferenceRow,
+  formatReferenceSummary,
+  manufacturerCandidates,
+  normalizeSpecToken,
+  referenceRowIsStrong,
+  structuredSpecsFromReferenceRow,
 } from "@/lib/specs/laptop-reference-lookup";
+import { hasStrongLookupReference } from "@/lib/specs/reference-laptop-strong";
 import {
   resolveLaptopSpecs,
   withSpecsTimeout,
@@ -115,23 +121,9 @@ async function loadReference(
   model: string,
   locale: "fi" | "en",
 ): Promise<ComputerLookupReference | null> {
-  const summary = await lookupLaptopReference(make, model, locale);
-  if (!summary) return null;
-
-  const row = await prisma.laptopReferenceSpec.findFirst({
-    where: {
-      OR: [
-        {
-          manufacturer: { equals: make, mode: "insensitive" },
-          modelName: { contains: model, mode: "insensitive" },
-        },
-        { modelName: { contains: model, mode: "insensitive" } },
-      ],
-    },
-  });
-  if (!row) {
-    return { cpu: null, ram: null, storage: null, gpu: null, display: null, weight: null, summary };
-  }
+  const row = await findLaptopReferenceRow(make, model);
+  if (!row) return null;
+  const summary = formatReferenceSummary(row, locale);
   const display = [row.screenSize, row.screenDetail].filter(Boolean).join(" — ") || null;
   return {
     cpu: row.cpu,
@@ -142,6 +134,117 @@ async function loadReference(
     weight: row.weight,
     summary,
   };
+}
+
+async function searchComputerModels(
+  coerced: { make: string; model: string },
+  trimmed: string,
+): Promise<ComputerLookupMatch[]> {
+  const q = normalizeSearch(trimmed);
+  const { make, model } = coerced;
+
+  if (make && model) {
+    const mk = normalizeSpecToken(make);
+    const md = normalizeSpecToken(model);
+    const brands = manufacturerCandidates(make);
+    const rows = await prisma.computerModel.findMany({
+      where: {
+        OR: [
+          ...brands.flatMap((b) => [
+            {
+              AND: [
+                { make: { equals: b, mode: "insensitive" as const } },
+                { model: { contains: model, mode: "insensitive" as const } },
+              ],
+            },
+            {
+              AND: [
+                { make: { equals: b, mode: "insensitive" as const } },
+                { model: { equals: model, mode: "insensitive" as const } },
+              ],
+            },
+          ]),
+          {
+            model: { contains: trimmed, mode: "insensitive" as const },
+          },
+        ],
+      },
+      take: 40,
+      orderBy: [{ make: "asc" }, { model: "asc" }],
+    });
+    const filtered = rows.filter((m) => {
+      const hay = normalizeSearch(`${m.make} ${m.model}`);
+      return hay.includes(mk) && hay.includes(md);
+    });
+    if (filtered.length > 0) {
+      return filtered.map((m) => ({
+        id: m.id,
+        make: m.make,
+        model: m.model,
+        yearFrom: m.yearFrom,
+        yearTo: m.yearTo,
+        compatible: m.compatible,
+        verdict: m.verdict,
+        ssdSlot: m.ssdSlot,
+        maxRamGb: m.maxRamGb,
+        status: m.status,
+      }));
+    }
+  }
+
+  if (q.length >= 3) {
+    const rows = await prisma.computerModel.findMany({
+      where: {
+        OR: [
+          { model: { contains: trimmed, mode: "insensitive" } },
+          { make: { contains: trimmed, mode: "insensitive" } },
+        ],
+      },
+      take: 40,
+      orderBy: [{ make: "asc" }, { model: "asc" }],
+    });
+    if (rows.length > 0) {
+      return rows.map((m) => ({
+        id: m.id,
+        make: m.make,
+        model: m.model,
+        yearFrom: m.yearFrom,
+        yearTo: m.yearTo,
+        compatible: m.compatible,
+        verdict: m.verdict,
+        ssdSlot: m.ssdSlot,
+        maxRamGb: m.maxRamGb,
+        status: m.status,
+      }));
+    }
+  }
+
+  if (make) {
+    const brands = manufacturerCandidates(make);
+    const rows = await prisma.computerModel.findMany({
+      where: {
+        OR: brands.map((b) => ({
+          make: { equals: b, mode: "insensitive" as const },
+        })),
+      },
+      take: 20,
+      orderBy: [{ make: "asc" }, { model: "asc" }],
+    });
+    return rows.map((m) => ({
+      id: m.id,
+      make: m.make,
+      model: m.model,
+      yearFrom: m.yearFrom,
+      yearTo: m.yearTo,
+      compatible: m.compatible,
+      verdict: m.verdict,
+      ssdSlot: m.ssdSlot,
+      maxRamGb: m.maxRamGb,
+      status: m.status,
+    }));
+  }
+
+  return [];
 }
 
 function yearOptionsFromDiscovered(
@@ -171,40 +274,7 @@ export async function lookupComputerForWizard(
   if (!coerced) return null;
 
   const { make, model } = coerced;
-  const q = normalizeSearch(trimmed);
-
-  const allModels = await prisma.computerModel.findMany({
-    orderBy: [{ make: "asc" }, { model: "asc" }],
-  });
-
-  let matches = allModels.filter((m) => {
-    const hay = normalizeSearch(`${m.make} ${m.model}`);
-    if (make && model) {
-      const mk = normalizeSearch(make);
-      const md = normalizeSearch(model);
-      return hay.includes(mk) && hay.includes(md);
-    }
-    return hay.includes(q) || q.includes(hay);
-  });
-
-  if (matches.length === 0 && make) {
-    matches = allModels.filter((m) =>
-      normalizeSearch(m.make).includes(normalizeSearch(make)),
-    );
-  }
-
-  const mapped: ComputerLookupMatch[] = matches.map((m) => ({
-    id: m.id,
-    make: m.make,
-    model: m.model,
-    yearFrom: m.yearFrom,
-    yearTo: m.yearTo,
-    compatible: m.compatible,
-    verdict: m.verdict,
-    ssdSlot: m.ssdSlot,
-    maxRamGb: m.maxRamGb,
-    status: m.status,
-  }));
+  const mapped = await searchComputerModels(coerced, trimmed);
 
   let selected = options?.selectedMatchId
     ? mapped.find((m) => m.id === options.selectedMatchId) ?? null
@@ -217,15 +287,21 @@ export async function lookupComputerForWizard(
   const refMake = selected?.make ?? make;
   const refModel = selected?.model ?? model;
   let reference = await loadReference(refMake, refModel, locale);
+  const refRow = await findLaptopReferenceRow(refMake, refModel);
+  const catalogStrong = referenceRowIsStrong(refRow);
 
   let webSpecs: ComputerLookupWebSpecs | null = null;
-  let discovered: LaptopStructuredSpecs | null = null;
+  let discovered: LaptopStructuredSpecs | null = catalogStrong
+    ? structuredSpecsFromReferenceRow(refRow!)
+    : null;
 
-  if (
+  const shouldFetchWeb =
     options?.includeWebSpecs &&
     isSpecsLookupEnabled() &&
-    getSpecsSearxngBaseUrl()
-  ) {
+    getSpecsSearxngBaseUrl() &&
+    !hasStrongLookupReference(reference);
+
+  if (shouldFetchWeb) {
     const insight = await withSpecsTimeout(
       resolveLaptopSpecs(refMake, refModel, { locale }),
       WEB_SPECS_LOOKUP_MS,

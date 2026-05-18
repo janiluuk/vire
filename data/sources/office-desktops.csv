@@ -1,0 +1,37 @@
+Manufacturer,Model Name,Category,Screen Size,Screen,CPU,RAM,Storage,GPU,Operating System,Operating System Version,Weight,Price (Euros)
+Dell,OptiPlex 3020,Desktop,,,Intel Core i5-4590,8GB,500GB HDD,Intel HD Graphics 4600,Windows,,,0
+Dell,OptiPlex 3040,Desktop,,,Intel Core i5-6500,8GB,256GB SSD,Intel HD Graphics 530,Windows,,,0
+Dell,OptiPlex 3050,Desktop,,,Intel Core i5-7500,8GB,256GB SSD,Intel HD Graphics 630,Windows,,,0
+Dell,OptiPlex 3060,Desktop,,,Intel Core i5-8500,8GB,256GB SSD,Intel UHD Graphics 630,Windows,,,0
+Dell,OptiPlex 3070,Desktop,,,Intel Core i5-9500,8GB,256GB SSD,Intel UHD Graphics 630,Windows,,,0
+Dell,OptiPlex 3080,Desktop,,,Intel Core i5-10500,8GB,256GB SSD,Intel UHD Graphics 630,Windows,,,0
+Dell,OptiPlex 3090,Desktop,,,Intel Core i5-10500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+Dell,OptiPlex 7010,Desktop,,,Intel Core i5-3470,8GB,500GB HDD,Intel HD Graphics 2500,Windows,,,0
+Dell,OptiPlex 7020,Desktop,,,Intel Core i5-4590,8GB,500GB HDD,Intel HD Graphics 4600,Windows,,,0
+Dell,OptiPlex 7040,Desktop,,,Intel Core i5-6500,8GB,256GB SSD,Intel HD Graphics 530,Windows,,,0
+Dell,OptiPlex 7050,Desktop,,,Intel Core i5-7500,8GB,256GB SSD,Intel HD Graphics 630,Windows,,,0
+Dell,OptiPlex 7060,Desktop,,,Intel Core i5-8500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+Dell,OptiPlex 7070,Desktop,,,Intel Core i5-9500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+Dell,OptiPlex 7080,Desktop,,,Intel Core i5-10500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+HP,ProDesk 400 G1,Desktop,,,Intel Core i5-4570,8GB,500GB HDD,Intel HD Graphics 4600,Windows,,,0
+HP,ProDesk 400 G2,Desktop,,,Intel Core i5-6500,8GB,256GB SSD,Intel HD Graphics 530,Windows,,,0
+HP,ProDesk 400 G3,Desktop,,,Intel Core i5-7500,8GB,256GB SSD,Intel HD Graphics 630,Windows,,,0
+HP,ProDesk 400 G4,Desktop,,,Intel Core i5-8500,8GB,256GB SSD,Intel UHD Graphics 630,Windows,,,0
+HP,ProDesk 400 G5,Desktop,,,Intel Core i5-9500,8GB,256GB SSD,Intel UHD Graphics 630,Windows,,,0
+HP,ProDesk 400 G6,Desktop,,,Intel Core i5-10500,8GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+HP,EliteDesk 800 G1,Desktop,,,Intel Core i5-4570,8GB,500GB HDD,Intel HD Graphics 4600,Windows,,,0
+HP,EliteDesk 800 G2,Desktop,,,Intel Core i5-6500,8GB,256GB SSD,Intel HD Graphics 530,Windows,,,0
+HP,EliteDesk 800 G3,Desktop,,,Intel Core i5-7500,16GB,512GB SSD,Intel HD Graphics 630,Windows,,,0
+HP,EliteDesk 800 G4,Desktop,,,Intel Core i5-8500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+HP,EliteDesk 800 G5,Desktop,,,Intel Core i5-9500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+Lenovo,ThinkCentre M73,Desktop,,,Intel Core i5-4570,8GB,500GB HDD,Intel HD Graphics 4600,Windows,,,0
+Lenovo,ThinkCentre M83,Desktop,,,Intel Core i5-4590,8GB,500GB HDD,Intel HD Graphics 4600,Windows,,,0
+Lenovo,ThinkCentre M93,Desktop,,,Intel Core i5-4590,8GB,256GB SSD,Intel HD Graphics 4600,Windows,,,0
+Lenovo,ThinkCentre M700,Desktop,,,Intel Core i5-6500,8GB,256GB SSD,Intel HD Graphics 530,Windows,,,0
+Lenovo,ThinkCentre M710,Desktop,,,Intel Core i5-7500,8GB,256GB SSD,Intel HD Graphics 630,Windows,,,0
+Lenovo,ThinkCentre M720,Desktop,,,Intel Core i5-8500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+Lenovo,ThinkCentre M920,Desktop,,,Intel Core i5-9500,16GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
+Asus,ExpertCenter D500,Desktop,,,Intel Core i5-10400,8GB,256GB SSD,Intel UHD Graphics 630,Windows,,,0
+Acer,Veriton X4660G,Desktop,,,Intel Core i5-7400,8GB,256GB SSD,Intel HD Graphics 630,Windows,,,0
+Fujitsu,Esprimo D556,Desktop,,,Intel Core i5-6500,8GB,256GB SSD,Intel HD Graphics 530,Windows,,,0
+Fujitsu,Esprimo D957,Desktop,,,Intel Core i5-8500,8GB,512GB SSD,Intel UHD Graphics 630,Windows,,,0
