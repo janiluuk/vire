@@ -19,9 +19,10 @@ export function parseCustomerContact(raw: string): {
     return { email: null, phone: s };
   }
   if (s.includes("@")) {
-    return { email: s.toLowerCase(), phone: null };
+    // Looks like email but failed SIMPLE_EMAIL (e.g. "foo@", "not-an-email").
+    return { email: null, phone: null };
   }
-  return { email: null, phone: s };
+  return { email: null, phone: null };
 }
 
 export function hasUsableCustomerContact(parsed: {

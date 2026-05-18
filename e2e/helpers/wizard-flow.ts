@@ -36,6 +36,30 @@ export async function waitForWizardReady(page: Page): Promise<void> {
   );
 }
 
+/** Advance wizard to step 5 (contact + summary). Assumes mocked computer lookup. */
+export async function goToWizardContactStep(page: Page): Promise<Locator> {
+  await mockComputerLookupRoute(page);
+  const w = wizard(page);
+  await page.goto("/fi/tilaa", { waitUntil: "domcontentloaded" });
+  await waitForWizardReady(page);
+  await w.locator("#wiz-computer").fill(DEFAULT_COMPUTER);
+  await expect(w.getByRole("button", { name: "Seuraava" })).toBeEnabled({
+    timeout: 15_000,
+  });
+  await clickNext(w);
+  await w.getByRole("button", { name: "Nouto kotoa" }).click();
+  await clickNext(w);
+  await clickNext(w);
+  await w
+    .getByRole("button", { name: /Sparkki poistaa HDD:n puolestani/i })
+    .click();
+  await clickNext(w);
+  await expect(
+    w.getByRole("heading", { name: "Yhteystieto", exact: true }),
+  ).toBeVisible({ timeout: 15_000 });
+  return w;
+}
+
 export async function mockCheckoutRoute(page: Page): Promise<void> {
   const origin =
     process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:1337";
