@@ -7,8 +7,7 @@ alwaysApply: true
 
 Before **`git push`** or **`gh pr create`**:
 
-1. **`npm run lint`** — required; CI **`next build`** fails on ESLint errors.
-2. **`npm run test:unit`** — when TypeScript/application logic changed.
-3. **`npm run test`** or **`npm run test:functional`** — when APIs, Prisma, or integrations changed.
+1. **`npm run ci:fast`** — lint + unit (quick), or **`npm run ci`** for the full GitHub pipeline ([`scripts/ci-local.sh`](../../scripts/ci-local.sh)).
+2. **`npm run test:functional`** — when APIs, Prisma, or integrations changed (included in **`npm run ci`**).
 
-Do not open or update a PR until **`npm run lint`** exits 0.
+Do not open or update a PR until at least **`npm run ci:fast`** exits 0; run **`npm run ci`** before merge when you touched checkout, e2e, or build paths.

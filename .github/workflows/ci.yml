@@ -40,6 +40,8 @@ jobs:
       NEXT_PUBLIC_SITE_URL: http://127.0.0.1:1337
       ADMIN_EMAIL: admin@sparkki.fi
       ADMIN_PASSWORD: testpassword123
+      CI: "true"
+      PLAYWRIGHT_BASE_URL: http://127.0.0.1:1337
 
     steps:
       - uses: actions/checkout@v4
@@ -52,55 +54,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: npm audit (dependency tree — informational)
-        run: |
-          echo "=== Production dependencies ==="
-          npm audit --omit=dev || true
-          echo "=== All dependencies ==="
-          npm audit --audit-level=critical || true
-        continue-on-error: true
-
-      - name: Prisma migrate
-        run: npx prisma migrate deploy
-
-      - name: Prisma seed
-        run: npx prisma db seed
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Unit tests
-        run: npm run test:unit
-
-      - name: Functional tests
-        run: npm run test:functional
-
-      - name: Build
-        run: npm run build
-
-      # E2E before Lighthouse: both use :1337. Playwright owns the server here; Lighthouse
-      # starts its own short-lived process afterward so we never bind twice in a row.
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: E2E tests
-        run: npm run test:e2e
-        env:
-          CI: "true"
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:1337
-
-      - name: Lighthouse CI (budgets, informational)
-        continue-on-error: true
-        run: |
-          cd .next/standalone
-          PORT=1337 HOSTNAME=127.0.0.1 node server.js &
-          SERVER_PID=$!
-          cd ../..
-          for i in $(seq 1 90); do
-            if curl -sf "http://127.0.0.1:1337/fi" >/dev/null; then echo "Lighthouse: server ready"; break; fi
-            sleep 2
-          done
-          npx @lhci/cli autorun --config=./lighthouserc.json
-          kill $SERVER_PID 2>/dev/null || true
-          wait $SERVER_PID 2>/dev/null || true
-          for p in $(lsof -ti:1337 2>/dev/null || true); do kill -9 "$p" 2>/dev/null || true; done
+      - name: Run CI pipeline
+        run: ./scripts/ci-local.sh --skip-install --skip-db

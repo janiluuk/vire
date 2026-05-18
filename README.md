@@ -78,14 +78,22 @@ See [`.env.example`](./.env.example) for `DATABASE_URL`, auth, Stripe, email, pu
 
 ### Tests and CI
 
-**Before a pull request:** run **`npm run lint`** (ESLint via Next.js; same check as production **`next build`**). Add **`npm run test:unit`** when you changed application logic.
+**Before a pull request:** run **`npm run ci`** locally — it uses the same script as GitHub Actions ([`scripts/ci-local.sh`](scripts/ci-local.sh), documented in [`docs/ci.md`](docs/ci.md)). For a quick check: **`npm run ci:fast`** (lint + unit only).
 
-- **`npm run lint`** — ESLint; must pass before push/PR.
-- **`npm run test`** — Vitest unit tests plus functional tests (`vitest.functional.config.ts`).
-- **`npm run test:e2e`** — Ensures **`.next/standalone/server.js`** exists (runs **`npm run build`** if not), then **Playwright** runs **`prisma migrate deploy`** and starts **`node server.js`** on **`http://127.0.0.1:1337`**. Free **port 1337** first, or stop **`docker compose` `web`** / **`npm run dev`**. To attach to a server you already started on that port, set **`PLAYWRIGHT_REUSE_SERVER=1`**.
-- **`npm run lh:ci`** — Lighthouse budgets via **`lighthouserc.json`**; the standalone app must already be listening on **1337** (same assumption as the CI Lighthouse step).
+[![CI](https://github.com/janiluuk/sparkki/actions/workflows/ci.yml/badge.svg)](https://github.com/janiluuk/sparkki/actions/workflows/ci.yml)
 
-**GitHub Actions** (`.github/workflows/ci.yml`) runs **E2E before Lighthouse** so Playwright and Lighthouse never compete for **:1337** in the same job. In CI, Playwright also enables **`reuseExistingServer`** when **`CI=true`** so a stray listener on **1337** does not hard-fail the run.
+| Command | Purpose |
+|---------|---------|
+| **`npm run ci`** | Full pipeline: lint, unit, functional, build, e2e, Lighthouse (informational) |
+| **`npm run ci:fast`** | Lint + unit tests only |
+| **`npm run lint`** | ESLint (also runs during `next build`) |
+| **`npm run test`** | Unit + functional Vitest suites |
+| **`npm run test:e2e`** | Playwright (builds standalone if needed; uses port **1337**) |
+| **`npm run ci:act`** | Run `.github/workflows/ci.yml` via [act](https://github.com/nektos/act) (optional) |
+
+**GitHub:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) on push/PR to `main` runs **`./scripts/ci-local.sh`** after `npm ci` and a Postgres service. Successful CI on `main` can trigger [deploy-production](.github/workflows/deploy-production.yml).
+
+Free **port 1337** before e2e/Lighthouse, or stop **`docker compose` `web`** / **`npm run dev`**. Set **`PLAYWRIGHT_REUSE_SERVER=1`** to reuse an existing server on that port.
 
 ### Security audits
 
