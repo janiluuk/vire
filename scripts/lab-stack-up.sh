@@ -99,10 +99,25 @@ if [[ -n "$NO_CACHE" ]]; then
   BUILD_CMD+=" --no-cache"
 fi
 
-echo "==> Remote: ${BUILD_CMD} && docker compose up -d (port ${REMOTE_PORT})"
+echo "==> Remote: start db → ${BUILD_CMD} → docker compose up -d (port ${REMOTE_PORT})"
 # shellcheck disable=SC2029
 ssh_remote "${REMOTE_USER}@${HOST}" \
-  "cd '${REMOTE_PATH}' && APP_PORT=${REMOTE_PORT} ${BUILD_CMD} && APP_PORT=${REMOTE_PORT} docker compose up -d"
+  "set -e
+   cd '${REMOTE_PATH}'
+   if [ -f .env ]; then set -a; . ./.env; set +a; fi
+   docker compose up -d db
+   for i in \$(seq 1 90); do
+     if docker compose exec -T db pg_isready -U \"\${POSTGRES_USER:-postgres}\" -d \"\${POSTGRES_DB:-sparkki}\" >/dev/null 2>&1; then
+       break
+     fi
+     if [ \"\$i\" -eq 90 ]; then
+       echo 'Postgres did not become ready before web image build' >&2
+       exit 1
+     fi
+     sleep 1
+   done
+   APP_PORT=${REMOTE_PORT} ${BUILD_CMD}
+   APP_PORT=${REMOTE_PORT} docker compose up -d"
 
 BASE_URL="http://${HOST}:${REMOTE_PORT}"
 echo ""
