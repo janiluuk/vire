@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { compressPhotoFile } from "@/lib/client/compress-photo";
@@ -152,10 +153,13 @@ export function ComputerPhotoAttach({
       </div>
 
       {previewUrl ? (
-        <img
+        <Image
           src={previewUrl}
           alt=""
-          className="mt-4 max-h-40 w-auto max-w-full rounded-lg border border-edge object-contain"
+          width={640}
+          height={320}
+          unoptimized
+          className="mt-4 h-auto max-h-40 w-auto max-w-full rounded-lg border border-edge object-contain"
         />
       ) : null}
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { LaptopSpecsCard } from "@/components/laptop-specs/LaptopSpecsCard";
-import { EMPTY_STRUCTURED_SPECS, type LaptopSpecsInsight, type LaptopStructuredSpecs } from "@/lib/specs/laptop-specs";
+import { EMPTY_STRUCTURED_SPECS, type LaptopSpecsInsight } from "@/lib/specs/laptop-specs";
 
 type CardLabels = {
   title: string;
