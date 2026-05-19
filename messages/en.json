@@ -429,6 +429,8 @@
     "homeNoMatchSupport": "We could not match this model in our verified list. You can still continue — our support team will confirm the exact model with you before any work starts.",
     "homeContactSupport": "Contact support",
     "homeSupportEmail": "support@sparkki.fi",
+    "lookupImageAlt": "Photo: {model}",
+    "lookupCategoryFallback": "Laptop",
     "homeWebSpecsLabel": "Web lookup (reference only, not a verified check)",
     "homeWebSpecsLink": "Open source",
     "orderCta": "Order service for this model",

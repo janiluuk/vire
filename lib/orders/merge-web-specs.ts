@@ -45,6 +45,7 @@ export function webSpecsFromInsight(
   return {
     summary: insight.summary,
     specUrl: insight.specUrl,
+    imageUrl: null,
     specs: insight.specs,
   };
 }

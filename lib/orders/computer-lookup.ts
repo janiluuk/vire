@@ -23,6 +23,7 @@ import {
   getSpecsSearxngBaseUrl,
   isSpecsLookupEnabled,
 } from "@/lib/specs/specs-env";
+import { fetchOgImageUrl } from "@/lib/specs/page-og-image";
 
 const WEB_SPECS_LOOKUP_MS = 28_000;
 
@@ -37,6 +38,7 @@ export type ComputerLookupMatch = {
   ssdSlot: string | null;
   maxRamGb: number | null;
   status: string;
+  imageUrl: string | null;
 };
 
 export type ComputerLookupReference = {
@@ -47,6 +49,7 @@ export type ComputerLookupReference = {
   display: string | null;
   weight: string | null;
   summary: string | null;
+  category: string | null;
 };
 
 export type ComputerLookupCompatibility = {
@@ -58,6 +61,7 @@ export type ComputerLookupCompatibility = {
 export type ComputerLookupWebSpecs = {
   summary: string | null;
   specUrl: string | null;
+  imageUrl: string | null;
   specs: LaptopStructuredSpecs;
 };
 
@@ -72,6 +76,9 @@ export type ComputerLookupResult = {
   webSpecs?: ComputerLookupWebSpecs | null;
   /** Structured fields from web agent (also merged into `reference` where empty). */
   discovered?: LaptopStructuredSpecs | null;
+  /** Resolved listing photo or catalog image for the primary match. */
+  imageUrl?: string | null;
+  category?: string | null;
 };
 
 function normalizeSearch(s: string): string {
@@ -133,6 +140,35 @@ async function loadReference(
     display,
     weight: row.weight,
     summary,
+    category: row.category,
+  };
+}
+
+function mapModelRow(m: {
+  id: string;
+  make: string;
+  model: string;
+  yearFrom: number | null;
+  yearTo: number | null;
+  compatible: boolean | null;
+  verdict: string | null;
+  ssdSlot: string | null;
+  maxRamGb: number | null;
+  status: string;
+  imageUrl: string | null;
+}): ComputerLookupMatch {
+  return {
+    id: m.id,
+    make: m.make,
+    model: m.model,
+    yearFrom: m.yearFrom,
+    yearTo: m.yearTo,
+    compatible: m.compatible,
+    verdict: m.verdict,
+    ssdSlot: m.ssdSlot,
+    maxRamGb: m.maxRamGb,
+    status: m.status,
+    imageUrl: m.imageUrl,
   };
 }
 
@@ -177,18 +213,7 @@ async function searchComputerModels(
       return hay.includes(mk) && hay.includes(md);
     });
     if (filtered.length > 0) {
-      return filtered.map((m) => ({
-        id: m.id,
-        make: m.make,
-        model: m.model,
-        yearFrom: m.yearFrom,
-        yearTo: m.yearTo,
-        compatible: m.compatible,
-        verdict: m.verdict,
-        ssdSlot: m.ssdSlot,
-        maxRamGb: m.maxRamGb,
-        status: m.status,
-      }));
+      return filtered.map((m) => mapModelRow(m));
     }
   }
 
@@ -204,18 +229,7 @@ async function searchComputerModels(
       orderBy: [{ make: "asc" }, { model: "asc" }],
     });
     if (rows.length > 0) {
-      return rows.map((m) => ({
-        id: m.id,
-        make: m.make,
-        model: m.model,
-        yearFrom: m.yearFrom,
-        yearTo: m.yearTo,
-        compatible: m.compatible,
-        verdict: m.verdict,
-        ssdSlot: m.ssdSlot,
-        maxRamGb: m.maxRamGb,
-        status: m.status,
-      }));
+      return rows.map((m) => mapModelRow(m));
     }
   }
 
@@ -230,18 +244,7 @@ async function searchComputerModels(
       take: 20,
       orderBy: [{ make: "asc" }, { model: "asc" }],
     });
-    return rows.map((m) => ({
-      id: m.id,
-      make: m.make,
-      model: m.model,
-      yearFrom: m.yearFrom,
-      yearTo: m.yearTo,
-      compatible: m.compatible,
-      verdict: m.verdict,
-      ssdSlot: m.ssdSlot,
-      maxRamGb: m.maxRamGb,
-      status: m.status,
-    }));
+    return rows.map((m) => mapModelRow(m));
   }
 
   return [];
@@ -313,6 +316,22 @@ export async function lookupComputerForWizard(
     }
   }
 
+  let imageUrl: string | null = selected?.imageUrl ?? null;
+  const category = reference?.category ?? refRow?.category ?? null;
+
+  if (!imageUrl && webSpecs?.specUrl) {
+    const ogImage = await withSpecsTimeout(
+      fetchOgImageUrl(webSpecs.specUrl),
+      4_000,
+    );
+    if (ogImage) {
+      imageUrl = ogImage;
+      if (webSpecs) {
+        webSpecs = { ...webSpecs, imageUrl: ogImage };
+      }
+    }
+  }
+
   let yearOptions = yearOptionsFromMatches(mapped);
   if (yearOptions.length === 0 && discovered) {
     yearOptions = yearOptionsFromDiscovered(discovered);
@@ -358,5 +377,7 @@ export async function lookupComputerForWizard(
     compatibility,
     webSpecs,
     discovered,
+    imageUrl,
+    category,
   };
 }

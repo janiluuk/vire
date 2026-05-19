@@ -429,6 +429,8 @@
     "homeNoMatchSupport": "Emme löytäneet tätä mallia tarkistetusta listastamme. Voit silti jatkaa — asiakastuki varmistaa tarkan mallin kanssasi ennen työn aloitusta.",
     "homeContactSupport": "Ota yhteyttä tukeen",
     "homeSupportEmail": "tuki@sparkki.fi",
+    "lookupImageAlt": "Kuva: {model}",
+    "lookupCategoryFallback": "Kannettava",
     "homeWebSpecsLabel": "Verkkohaku (viite, ei virallinen tarkistus)",
     "homeWebSpecsLink": "Avaa lähde",
     "orderCta": "Tilaa palvelu tälle mallille",

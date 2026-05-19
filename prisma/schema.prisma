@@ -210,6 +210,8 @@ model ComputerModel {
   estimatedBootSec  Int?
   publicNotes       String?
   viewCount         Int      @default(0)
+  /// Optional product/listing image for compatibility UI.
+  imageUrl          String?
 
   @@unique([make, model])
 }

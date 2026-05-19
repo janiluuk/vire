@@ -15,6 +15,7 @@ export const E2E_COMPUTER_LOOKUP = {
         ssdSlot: '2.5" SATA',
         maxRamGb: 16,
         status: "APPROVED",
+        imageUrl: null,
       },
     ],
     reference: {
@@ -25,6 +26,7 @@ export const E2E_COMPUTER_LOOKUP = {
       display: '14" — 1920x1080',
       weight: "1.81kg",
       summary: "E2E catalog reference summary.",
+      category: "Ultrabook",
     },
     yearOptions: [2015],
     needsYearChoice: false,
