@@ -136,9 +136,9 @@ export function ComputerLookupResults({
   return (
     <>
       {!loading && lookup.matches.length > 1 ? (
-        <div className="mt-4 space-y-1.5">
+        <div className="space-y-2">
           <p className="text-sm font-semibold text-ink">{labels.specsPickModel}</p>
-          <ul className="space-y-1.5" role="listbox" aria-label={labels.specsPickModel}>
+          <ul className="space-y-2" role="listbox" aria-label={labels.specsPickModel}>
             {lookup.matches.slice(0, 8).map((m) => {
               const tone = matchCompatTone(m.compatible);
               const iconClass =
@@ -205,7 +205,7 @@ export function ComputerLookupResults({
       ) : null}
 
       {!loading && showYearPicker ? (
-        <div className="mt-4 space-y-2">
+        <div className="mt-5 space-y-2">
           <label
             htmlFor="lookup-compat-year"
             className="block text-sm font-semibold text-ink"
@@ -255,7 +255,7 @@ export function ComputerLookupResults({
       {!loading &&
       (chips.length > 0 || primary || lookup.reference?.summary || lookup.reference?.cpu) ? (
         <article
-          className="mt-4 overflow-hidden rounded-xl border border-edge bg-card/60"
+          className="mt-5 overflow-hidden rounded-xl border border-edge bg-card/60"
           aria-label={labels.specsTableCaption}
           data-testid="computer-lookup-visual"
         >
@@ -290,7 +290,7 @@ export function ComputerLookupResults({
           </div>
 
           {chips.length > 0 ? (
-            <ul className="grid gap-2 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-3">
+            <ul className="grid gap-3 p-4 sm:grid-cols-2 sm:p-5">
               {chips.map((c) => (
                 <li key={c.id}>
                   <SpecChip chip={c} />

@@ -134,7 +134,7 @@ export function HomeCompatibilityChecker({
     <section
       id={KONEET_SECTION_ID}
       aria-labelledby="home-compat-title"
-      className="sparkki-card scroll-mt-28 p-6 sm:p-8"
+      className="sparkki-card scroll-mt-28 p-6 sm:p-8 lg:p-10"
       data-testid="home-compatibility-checker"
     >
       <header>
@@ -145,83 +145,87 @@ export function HomeCompatibilityChecker({
         >
           {t("homeCompatTitle")}
         </h2>
-        <p className="mt-4 max-w-3xl text-lg font-light leading-relaxed text-fog">
+        <p className="mt-3 max-w-2xl text-base font-light leading-relaxed text-fog sm:text-lg">
           {t("homeCompatIntro")}
         </p>
       </header>
 
-      <div className="mt-8 space-y-4">
-        <label htmlFor="home-compat-computer" className="block font-semibold text-ink">
-          {w("computerLabel")}
-        </label>
-        <textarea
-          id="home-compat-computer"
-          rows={3}
-          className="sparkki-input w-full resize-y rounded-lg border border-em bg-sunken px-4 py-3 text-lg font-light text-ink placeholder:text-dust"
-          value={description}
-          onChange={(e) => {
-            setDescription(e.target.value);
-            setSelectedMatchId(null);
-            setSelectedYear(null);
-          }}
-          placeholder={w("computerPlaceholder")}
-          maxLength={2000}
-        />
-        <p className="text-base font-light leading-relaxed text-fog">
-          {w("computerHint")}
-        </p>
+      <div className="mt-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-10">
+        {/* ── left: input ── */}
+        <div className="space-y-4">
+          <label htmlFor="home-compat-computer" className="block font-semibold text-ink">
+            {w("computerLabel")}
+          </label>
+          <textarea
+            id="home-compat-computer"
+            rows={3}
+            className="sparkki-input w-full resize-y rounded-lg border border-em bg-sunken px-4 py-3 text-lg font-light text-ink placeholder:text-dust lg:rows-4"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              setSelectedMatchId(null);
+              setSelectedYear(null);
+            }}
+            placeholder={w("computerPlaceholder")}
+            maxLength={2000}
+          />
+          <p className="text-sm font-light leading-relaxed text-fog">
+            {w("computerHint")}
+          </p>
+          <ComputerPhotoAttach
+            locale={locale}
+            disabled={loading}
+            onApplyDescription={(text) => {
+              setDescription(text);
+              setSelectedMatchId(null);
+              setSelectedYear(null);
+            }}
+          />
+        </div>
 
-        <ComputerPhotoAttach
-          locale={locale}
-          disabled={loading}
-          onApplyDescription={(text) => {
-            setDescription(text);
-            setSelectedMatchId(null);
-            setSelectedYear(null);
-          }}
-        />
-      </div>
+        {/* ── right: results + CTA ── */}
+        <div className="mt-6 lg:mt-0">
+          {loading && trimmed.length >= 3 ? (
+            <ComputerLookupSpecsSkeleton />
+          ) : null}
 
-      {loading && trimmed.length >= 3 ? (
-        <ComputerLookupSpecsSkeleton className="mt-6" />
-      ) : null}
+          {!loading && lookup ? (
+            <ComputerLookupResults
+              lookup={lookup}
+              selectedMatchId={selectedMatchId}
+              onSelectMatch={setSelectedMatchId}
+              selectedYear={selectedYear}
+              onSelectYear={setSelectedYear}
+              loading={loading}
+              noVerifiedMatch={noVerifiedMatch}
+              labels={lookupLabels}
+              webSpecsLabel={t("homeWebSpecsLabel")}
+              webSpecsLinkLabel={t("homeWebSpecsLink")}
+              homeNoMatchSupport={t("homeNoMatchSupport")}
+            />
+          ) : null}
 
-      {!loading && lookup ? (
-        <ComputerLookupResults
-          lookup={lookup}
-          selectedMatchId={selectedMatchId}
-          onSelectMatch={setSelectedMatchId}
-          selectedYear={selectedYear}
-          onSelectYear={setSelectedYear}
-          loading={loading}
-          noVerifiedMatch={noVerifiedMatch}
-          labels={lookupLabels}
-          webSpecsLabel={t("homeWebSpecsLabel")}
-          webSpecsLinkLabel={t("homeWebSpecsLink")}
-          homeNoMatchSupport={t("homeNoMatchSupport")}
-        />
-      ) : null}
-
-
-      <div className="mt-8 flex flex-wrap items-center gap-3">
-        {noVerifiedMatch ? (
-          <a
-            href={`mailto:${t("homeSupportEmail")}`}
-            className="min-h-tap rounded-lg border border-em px-6 py-3 text-sm font-semibold text-ink transition-colors hover:border-g hover:text-g focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
-            data-testid="home-contact-support"
-          >
-            {t("homeContactSupport")}
-          </a>
-        ) : null}
-        <button
-          type="button"
-          className="min-h-tap rounded-lg bg-g px-6 py-3 text-sm font-semibold text-canvas hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-          disabled={!canContinue}
-          onClick={goToOrder}
-          {...orderPrefetch}
-        >
-          {t("homeContinueCta")}
-        </button>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            {noVerifiedMatch ? (
+              <a
+                href={`mailto:${t("homeSupportEmail")}`}
+                className="min-h-tap rounded-lg border border-em px-6 py-3 text-sm font-semibold text-ink transition-colors hover:border-g hover:text-g focus-visible:outline focus-visible:outline-2 focus-visible:outline-g"
+                data-testid="home-contact-support"
+              >
+                {t("homeContactSupport")}
+              </a>
+            ) : null}
+            <button
+              type="button"
+              className="min-h-tap rounded-lg bg-g px-6 py-3 text-sm font-semibold text-canvas hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!canContinue}
+              onClick={goToOrder}
+              {...orderPrefetch}
+            >
+              {t("homeContinueCta")}
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );
